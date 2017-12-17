@@ -1,0 +1,1672 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"imag",
+				"imageData"
+			],
+			[
+				"uint8A",
+				"uint8array"
+			],
+			[
+				"uin",
+				"uint8array"
+			],
+			[
+				"ddl_",
+				"ddl_detectives"
+			],
+			[
+				"__update",
+				"__updateState_value"
+			],
+			[
+				"update",
+				"__updateState_validity"
+			],
+			[
+				"num",
+				"numChildFields"
+			],
+			[
+				"__",
+				"__onInput"
+			],
+			[
+				"__on",
+				"__onInput"
+			],
+			[
+				"my",
+				"myValidate"
+			],
+			[
+				"email",
+				"email_outline"
+			],
+			[
+				"per",
+				"person_outline"
+			],
+			[
+				"isT",
+				"isTextInput"
+			],
+			[
+				"valida",
+				"validateImmediate"
+			],
+			[
+				"is",
+				"isTextInput"
+			],
+			[
+				"has",
+				"hasInvalid"
+			],
+			[
+				"up",
+				"__updateState_validity"
+			],
+			[
+				"ref_",
+				"ref_floatLabel"
+			],
+			[
+				"lock",
+				"lock_outline"
+			],
+			[
+				"detect",
+				"detectiveName"
+			],
+			[
+				"em",
+				"email_outline"
+			],
+			[
+				"t",
+				"targetWidth"
+			],
+			[
+				"ite",
+				"item-delimiter"
+			],
+			[
+				"dis",
+				"displayValue"
+			],
+			[
+				"delimit",
+				"item-delimiter"
+			],
+			[
+				"__up",
+				"__updateState_counter"
+			],
+			[
+				"vnode",
+				"vnode_input"
+			],
+			[
+				"vnod",
+				"vnode_input"
+			],
+			[
+				"St",
+				"STRUCTURE"
+			],
+			[
+				"maxlength",
+				"myMaxlength"
+			],
+			[
+				"target",
+				"target-only"
+			],
+			[
+				"css_Field",
+				"css_FieldTarget"
+			],
+			[
+				"draw",
+				"draw_TargetOnly"
+			],
+			[
+				"draw_I",
+				"draw_ItemLayout"
+			],
+			[
+				"ref",
+				"ref_FieldTarget"
+			],
+			[
+				"ddl_l",
+				"ddl_layout_list_options"
+			],
+			[
+				"card",
+				"card-title"
+			],
+			[
+				"option",
+				"options_multiSelect"
+			],
+			[
+				"model",
+				"model_multiSelect"
+			],
+			[
+				"add",
+				"addBitmap"
+			],
+			[
+				"table-",
+				"table-cell"
+			],
+			[
+				"tabl",
+				"table-row-group"
+			],
+			[
+				"ru",
+				"rule_showOption_FilterSelected"
+			],
+			[
+				"show",
+				"showPagination"
+			],
+			[
+				"__s",
+				"__sortable"
+			],
+			[
+				"__D",
+				"__dataview_filtered"
+			],
+			[
+				"__DA",
+				"__dataview_selected"
+			],
+			[
+				"__dat",
+				"__dataview_selected"
+			],
+			[
+				"__da",
+				"__daview_selected"
+			],
+			[
+				"data",
+				"__dataview_selected"
+			],
+			[
+				"selec",
+				"selectedRows"
+			],
+			[
+				"sin",
+				"singleSelectedRow"
+			],
+			[
+				"_select",
+				"__dataview_selected"
+			],
+			[
+				"on",
+				"onSelectRows"
+			],
+			[
+				"sele",
+				"selectionMode"
+			],
+			[
+				"for",
+				"forEach"
+			],
+			[
+				"sel",
+				"selectionMode"
+			],
+			[
+				"_data",
+				"_dataSelected"
+			],
+			[
+				"seac",
+				"searchQuery"
+			],
+			[
+				"numRow",
+				"numRowsCurrentPage"
+			],
+			[
+				"p",
+				"placeholder\tAttr"
+			],
+			[
+				"_da",
+				"_dataview_page"
+			],
+			[
+				"ad",
+				"addr_region_code"
+			],
+			[
+				"bold",
+				"bolder"
+			],
+			[
+				"backg",
+				"background-color"
+			],
+			[
+				"rows",
+				"rowsPerPage"
+			],
+			[
+				"comput",
+				"computedData"
+			],
+			[
+				"gr",
+				"grid-demo"
+			],
+			[
+				"layou",
+				"layout-main"
+			],
+			[
+				"V",
+				"VueRouter"
+			],
+			[
+				"o",
+				"minPercentageOffset"
+			],
+			[
+				"min",
+				"minPercentageOffset"
+			],
+			[
+				"mi",
+				"minPercentageOffset"
+			],
+			[
+				"currentM",
+				"currentMaxPercentage"
+			],
+			[
+				"max",
+				"maxPercentageOffset"
+			],
+			[
+				"trans",
+				"transparent"
+			],
+			[
+				"percenta",
+				"percentageMax"
+			],
+			[
+				"current",
+				"currentMaxPercentage"
+			],
+			[
+				"perce",
+				"percentageMinLimit"
+			],
+			[
+				"disable",
+				"disabled"
+			],
+			[
+				"ran",
+				"range-handle-size"
+			],
+			[
+				"j",
+				"jCanvas"
+			],
+			[
+				"mo",
+				"moeStore"
+			],
+			[
+				"nu",
+				"Number"
+			],
+			[
+				"margin",
+				"margin-top"
+			],
+			[
+				"too",
+				"j-panel-toolbar"
+			],
+			[
+				"image",
+				"image-q"
+			],
+			[
+				"test",
+				"testJon"
+			],
+			[
+				"colo",
+				"colorUtils"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "/C/_JON_TEMP_tmp/mauve/src/moe/moe.editor.js",
+			"settings":
+			{
+				"buffer_size": 878,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/C/_JON_TEMP_tmp/mauve/src/store/store.js",
+			"settings":
+			{
+				"buffer_size": 3223,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/C/_JON_TEMP_tmp/mauve/src/main.js",
+			"settings":
+			{
+				"buffer_size": 871,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/C/_JON_TEMP_tmp/mauve/src/moe/moe.store.js",
+			"settings":
+			{
+				"buffer_size": 2749,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/C/_JON_TEMP_tmp/mauve/src/components/views/view-mauve.vue",
+			"settings":
+			{
+				"buffer_size": 4735,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "j-panel.vue",
+			"settings":
+			{
+				"buffer_size": 11848,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "j-component.vue",
+			"settings":
+			{
+				"buffer_size": 1499,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "j-collection.vue",
+			"settings":
+			{
+				"buffer_size": 7462,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "j-item.vue",
+			"settings":
+			{
+				"buffer_size": 4475,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "j-canvas.vue",
+			"settings":
+			{
+				"buffer_size": 1761,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 129.0,
+		"last_filter": "Package Control: install",
+		"selected_items":
+		[
+			[
+				"Package Control: install",
+				"Package Control: Install Package"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: in",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: ",
+				"Package Control: List Packages"
+			],
+			[
+				"traili",
+				"Trailing Spaces: Delete Trailing Spaces"
+			],
+			[
+				"pack",
+				"Package Control: List Packages"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"list",
+				"Package Control: List Packages"
+			],
+			[
+				"instal",
+				"Package Control: Install Package"
+			],
+			[
+				"package",
+				"Package Control: Install Package"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"install pack",
+				"Package Control: Install Package"
+			],
+			[
+				"list p",
+				"Package Control: List Packages"
+			],
+			[
+				"package control",
+				"Package Control: Install Package"
+			],
+			[
+				"install package",
+				"Package Control: Advanced Install Package"
+			],
+			[
+				"packag",
+				"Install Package Control"
+			]
+		],
+		"width": 490.0
+	},
+	"console":
+	{
+		"height": 192.0,
+		"history":
+		[
+			"? a++",
+			"a++",
+			"dir",
+			"a",
+			"a=4",
+			"npm",
+			"npm  run  dev",
+			"dir"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/C/_JON_TEMP_tmp/mauve",
+		"/C/_JON_TEMP_tmp/mauve/src",
+		"/C/_JON_TEMP_tmp/mauve/src/components/custom",
+		"/C/_JON_TEMP_tmp/mauve/src/components/custom/float-label",
+		"/C/_JON_TEMP_tmp/mauve/src/store"
+	],
+	"file_history":
+	[
+		"/C/_JON_TEMP_tmp/mauve/package.json",
+		"/C/_JON_TEMP_tmp/mauve/src/components/custom/bitmap.vue",
+		"/C/_JON_TEMP_tmp/mauve/src/components/custom/j-component.vue",
+		"/C/_JON_TEMP_tmp/mauve/src/components/custom/j-collection.vue",
+		"/C/_JON_TEMP_tmp/mauve/node_modules/quasar-framework/src/utils.js",
+		"/C/_JON_TEMP_tmp/mauve/build/webpack.base.conf.js",
+		"/C/_JON_TEMP_tmp/mauve/build/utils.js",
+		"/C/_JON_TEMP_tmp/mauve/src/moe/objects/moe.object.bitmap.js",
+		"/C/_JON_TEMP_tmp/mauve/src/components/custom/j-item.vue",
+		"/C/_JON_TEMP_tmp/mauve/src/moe/editor.vue.js",
+		"/C/_JON_TEMP_tmp/mauve/src/moe/moe.palettes.js",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/src/themes/core/colors.styl",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/src/vue-install.js",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/node_modules/vue-router/src/install.js",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/dev/components/form/float-label.vue",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/src/vue-components/field/FieldTarget.vue",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/src/themes/core/flex.styl",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/dev/components/form/float-label.bakup.vue",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/dev/components/form/float-label - Last good here.vue",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/src/vue-components/field/Field3.vue",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/node_modules/vue/src/core/vdom/create-element.js",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/src/css-components/textfield/textfield.mat.styl",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/src/vue-components/float-label/FloatLabel.vue",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/node_modules/vue/src/core/vdom/create-component.js",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/src/css-components/list/list.mat.styl",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/src/vue-components/field/Field.vue",
+		"/C/Users/Scott/AppData/Roaming/Sublime Text 3/Packages/User/trailing_spaces.sublime-settings",
+		"/C/Users/Scott/AppData/Roaming/Sublime Text 3/Packages/TrailingSpaces/trailing_spaces.sublime-settings",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/src/vue-components/checkbox/Checkbox.vue",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/dev/components/form/checkbox.vue",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/dev/components/index.vue",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/dev/components/form/textarea.vue",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/src/themes/core/form.variables.styl",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/dev/components/form/textbox.vue",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/src/themes/quasar.core.variables.styl",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/node_modules/coa/lib/color.js",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/src/css-components/card/card.mat.styl",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/src/themes/core/flex.variables.styl",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/node_modules/clean-css/lib/properties/can-override.js",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/src/utils/dom.js",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/dev/components/form/float-label - Copy.vue",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/src/themes/core/colors.variables.styl",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/src/themes/quasar.mat.styl",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/src/vue-components/float-label/FloatLabel.ios.styl",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/src/vue-components/float-label/FloatLabel.mat.styl",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/src/vue-components/popover/Popover.vue",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/node_modules/autoprefixer/lib/transition.js",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/build/script.dev.js",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/src/features/events.js",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/dev/components/form/floating-label.vue",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/src/vue-components/float-label/FloatingLabel.vue",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/src/vue-components/float-label/FloatingLabel.mat.styl",
+		"/C/_JON_TEMP_tmp/GitHubRepos/quasar/src/vue-components/float-label/FloatingLabel.ios.styl",
+		"/C/_JON_TEMP_tmp/quasar/dev/components/form/float-label.vue",
+		"/C/_JON_TEMP_tmp/quasar/src/vue-install.js",
+		"/C/_JON_TEMP_tmp/quasar/src/index.js",
+		"/C/_JON_TEMP_tmp/quasar/dev/pages.js",
+		"/C/_JON_TEMP_tmp/quasar/dev/components/form/double-range.vue",
+		"/C/_JON_TEMP_tmp/mauve/node_modules/readable-stream/doc/wg-meetings/2015-01-30.md",
+		"/C/_JON_TEMP_tmp/mauve/node_modules/quasar-framework/dist/quasar.mat.styl",
+		"/C/_JON_TEMP_tmp/mauve/node_modules/async/dist/async.js",
+		"/C/_JON_TEMP_tmp/mauve/src/components/layouts/layout-main.vue",
+		"/C/_JON_TEMP_tmp/mauve/src/components/views/view-panels.vue",
+		"/C/_JON_TEMP_tmp/mauve/src/moe/moe.store.js",
+		"/C/_JON_TEMP_tmp/mauve/src/moe/moe.editor.js",
+		"/C/_JON_TEMP_tmp/mauve/src/components/custom/j-panel.vue",
+		"/C/_JON_TEMP_tmp/mauve/src/components/views/view-sortable.vue",
+		"/C/_JON_TEMP_tmp/mauve/src/main.js",
+		"/C/_JON_TEMP_tmp/qua2/test/e2e/specs/test.js",
+		"/C/_JON_TEMP_tmp/qua2/templates/layout.vue",
+		"/C/_JON_TEMP_tmp/qua2/src/themes/app.mat.styl",
+		"/C/_JON_TEMP_tmp/qua2/src/themes/app.ios.styl",
+		"/C/_JON_TEMP_tmp/qua2/src/main.js",
+		"/C/_JON_TEMP_tmp/qua2/src/index.html",
+		"/C/_JON_TEMP_tmp/qua2/src/components/views/view-panels - Copy.vue",
+		"/C/_JON_TEMP_tmp/qua2/src/components/layouts/layout-main.vue",
+		"/C/_JON_TEMP_tmp/qua2/src/components/index.vue",
+		"/C/_JON_TEMP_tmp/qua2/src/App.vue",
+		"/C/_JON_TEMP_tmp/qua2/package.json",
+		"/C/_JON_TEMP_tmp/qua2/node_modules/quasar-framework/README.md",
+		"/C/_JON_TEMP_tmp/qua2/node_modules/quasar-framework/package.json",
+		"/C/_JON_TEMP_tmp/qua2/grid.vue",
+		"/C/_JON_TEMP_tmp/qua2/grid-data.json",
+		"/C/_JON_TEMP_tmp/qua2/build/webpack.base.conf.js",
+		"/C/_JON_TEMP_tmp/qua2/.gitattributes",
+		"/C/_JON_TEMP_tmp/qua2/src/components/custom/j-collection-usingRubxaSortable.vue",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/components/action-sheet/action-sheet.ios.styl",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/components/action-sheet/action-sheet.mat.styl",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/components/action-sheet/ActionSheet.vue",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/components/dialog/Dialog.vue",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/components/loading/loading.ios.styl",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/components/loading/loading.mat.styl",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/components/loading/Loading.vue",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/components/toast/toast.ios.styl",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/components/toast/toast.mat.styl",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/components/toast/Toast.vue",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/css-components/card/card.ios.styl",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/css-components/card/card.mat.styl",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/css-components/html-table/html-table.ios.styl",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/css-components/html-table/html-table.mat.styl",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/css-components/list/list.ios.styl",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/css-components/list/list.mat.styl",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/themes/core/normalize.styl",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/themes/core/touch.styl",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/themes/core/visibility.styl",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/vue-components/checkbox/checkbox.ios.styl",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/vue-components/checkbox/checkbox.mat.styl",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/vue-components/checkbox/Checkbox.vue",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/vue-components/chips/chips.ios.styl",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/vue-components/chips/chips.mat.styl",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/vue-components/chips/Chips.vue",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/vue-components/collapsible/collapsible.ios.styl",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/vue-components/collapsible/collapsible.mat.styl",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/vue-components/collapsible/Collapsible.vue",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/vue-components/context-menu/ContextMenuDesktop.vue",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/vue-components/context-menu/ContextMenuMobile.vue",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/vue-components/datetime/datetime.ios.styl",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/vue-components/datetime/datetime.mat.styl",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/vue-components/datetime/Datetime.vue",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/vue-components/datetime/InlineDatetimeIOS.vue",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/vue-components/datetime/InlineDatetimeMat.vue",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/vue-components/drawer/Drawer.vue",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/vue-components/fab/fab.ios.styl",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/vue-components/fab/fab.mat.styl",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/vue-components/fab/Fab.vue",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/vue-components/gallery/gallery.ios.styl",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/vue-components/gallery/gallery.mat.styl",
+		"/C/_JON_TEMP_tmp/quasar-framework/src/vue-components/gallery/Gallery.vue"
+	],
+	"find":
+	{
+		"height": 43.0
+	},
+	"find_in_files":
+	{
+		"height": 117.0,
+		"where_history":
+		[
+			"C:\\_JON_TEMP_tmp\\mauve\\src",
+			"C:\\_JON_TEMP_tmp\\qaz\\src",
+			"C:\\_JON_TEMP_tmp\\mauve\\src",
+			"C:\\_JON_TEMP_tmp\\GitHubRepos\\quasar\\src",
+			"C:\\_JON_TEMP_tmp\\GitHubRepos\\quasar\\src\\themes\\core",
+			"C:\\_JON_TEMP_tmp\\GitHubRepos\\quasar\\src\\themes",
+			"C:\\_JON_TEMP_tmp\\GitHubRepos\\quasar\\src\\themes\\core",
+			"C:\\_JON_TEMP_tmp\\GitHubRepos\\quasar\\src\\themes",
+			"C:\\_JON_TEMP_tmp\\GitHubRepos\\quasar\\src",
+			"C:\\_JON_TEMP_tmp\\GitHubRepos\\quasar\\src\\themes",
+			"C:\\_JON_TEMP_tmp\\GitHubRepos\\quasar\\src",
+			"C:\\_JON_TEMP_tmp\\GitHubRepos\\quasar\\node_modules",
+			"C:\\_JON_TEMP_tmp\\GitHubRepos\\quasar",
+			"C:\\_JON_TEMP_tmp\\GitHubRepos\\quasar\\dev\\components",
+			"C:\\_JON_TEMP_tmp\\qusar\\src",
+			"C:\\_JON_TEMP_tmp\\mauve\\src",
+			"C:\\_JON_TEMP_tmp\\qua2\\src",
+			"C:\\_JON_TEMP_tmp\\qua2\\src\\components",
+			"C:\\_JON_TEMP_tmp\\qua2\\src",
+			"C:\\_JON_TEMP_tmp\\qua2",
+			"C:\\_JON_TEMP_tmp\\quasar-framework\\src",
+			"C:\\_JON_TEMP_tmp\\quasar-framework\\",
+			"C:\\_JON_TEMP_tmp\\quasar-framework\\src",
+			"C:\\_JON_TEMP_tmp\\quasar-framework",
+			"C:\\_JON_TEMP_tmp\\quasar-framework\\src",
+			"C:\\_JON_TEMP_tmp\\quasar-framework\\dev",
+			"C:\\_JON_TEMP_tmp\\quasar-framework\\src",
+			"C:\\_JON_TEMP_tmp\\quasar-framework\\",
+			"C:\\_JON_TEMP_tmp\\quasar-framework\\v1\\node_modules\\quasar-framework",
+			"C:\\_JON_TEMP_tmp\\quasar-framework",
+			"C:\\_JON_TEMP_tmp\\qua2\\src",
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"MoeObjects",
+			"sortable",
+			"rubaxa",
+			"dest",
+			"uint8array",
+			".src",
+			"extend",
+			"model",
+			"store",
+			"sortable",
+			"j-collection",
+			"store",
+			"state",
+			"building",
+			"debugState",
+			"__properties",
+			"vr_classPanelExpandArrow",
+			"vr_stylePanel",
+			"vr_classPanelExpanded",
+			"float",
+			"fieldTarget",
+			"date",
+			"console.log",
+			"__onActivate",
+			".field-disabled",
+			"field.field-disabled",
+			"underline",
+			"border-bottom",
+			"border-bottom 0",
+			"ield > .field-target > .field-input > input",
+			"form-active-color",
+			"label-center",
+			"__initInputState",
+			"__updateState_counter",
+			"currentChars",
+			" .field-target > .field-input",
+			"__updateState_counter",
+			"__updateState_value",
+			"__initInputState",
+			"try",
+			"__initState",
+			"\n          this.__updateState_value()",
+			"__onValidate",
+			"updateState_v",
+			"__updateState_value",
+			"__updateState_validity()",
+			"newValue",
+			"{\n",
+			"__updateState_validity",
+			"myValidate",
+			"__onValidate",
+			" this.$emit('fieldEvent'",
+			"myTarget",
+			"icon-before",
+			"__updateState_counter",
+			"myval",
+			"__updateState_value",
+			"this.input.checkValidity",
+			"}\n",
+			"hasValue",
+			"has-error",
+			"                \n",
+			"gister a New Playe",
+			"egister a New Pla",
+			"Lo",
+			"Lo'",
+			"Lo\"",
+			"Lo",
+			"]+\"",
+			"warning",
+			"success",
+			"succ",
+			"$success",
+			"$valid",
+			"layout",
+			"inset",
+			"$",
+			"fieldStates[i]",
+			"!important",
+			"field-layout",
+			"layout",
+			"myLayout",
+			".layout",
+			"field-layout",
+			"dense-h",
+			"dense-hor",
+			"inset",
+			"txt_InlineLabel",
+			"3px",
+			"playerNameValidIcon",
+			"field-icon",
+			"> ",
+			".field-icon",
+			"player",
+			"targeted",
+			"fieldEvent",
+			"watch",
+			"field-icon",
+			"field-icon-2",
+			"field-icon-1",
+			"isSingleInput",
+			"hasTarget",
+			"target",
+			"canVali",
+			"$item-primary-secondary-color",
+			"isInline",
+			"visibleEnsured",
+			"isInline",
+			"playerNameValidIcon",
+			"userName",
+			"myExampleEmail",
+			"debugg",
+			"__updateState_validity",
+			"Touched",
+			"underline",
+			"css_FieldInput",
+			"fieldEvent",
+			"numChildFields",
+			"console.log",
+			"console.log\t",
+			"nested",
+			"for",
+			"__updateState_counter",
+			"__updateState_validity",
+			"hasInvalid",
+			"txt_ValidateMsg",
+			".swoosh",
+			"css_Field_Input"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"class_PanelExpandArrow",
+			"style_Panel",
+			"class_Panel",
+			"__initState",
+			"__initInputState",
+			"__onValidate()",
+			"",
+			"state",
+			"field-label",
+			"myLabelLayout",
+			".labelLayout",
+			".label-layout",
+			"field-label-layout",
+			"field-icon",
+			"isTargeted",
+			".underline",
+			"css_FieldInput",
+			"no-padding",
+			"",
+			"tab-layout",
+			"A helpful hint",
+			"q-field",
+			"",
+			"clean-field",
+			"hint: 'This is some info'",
+			"draw_TargetOnly",
+			"pseudo-item",
+			"field-",
+			"labelWidth",
+			"style_InlineLabel",
+			"css_fieldTarget",
+			"style_FieldTarget",
+			"css_ItemContent",
+			"field-",
+			"myItem",
+			"field-label",
+			"field-target",
+			"tab",
+			"myMaxlength",
+			"options.grid_option",
+			"__updateState_validity",
+			"')",
+			"options.field_options.includes('grow')?true:false",
+			"options.field_options.grow",
+			":grow=\"options.grow\"",
+			"?true:false",
+			"options.field_options",
+			"options.",
+			"v-model=\"models.",
+			"ddl_suspects",
+			"",
+			":dense=\"options.dense\"\n              :width=\"options.width\"\n              :align=\"options.align\"\n              :label-width=\"options.labelWidth\"\n              :label-align=\"options.labelAlign\"",
+			"myCounter",
+			"'edit':''",
+			"options.dense",
+			" ",
+			"width-1of2 sm-width-1of1",
+			"swoosh",
+			"myLabel",
+			"__label",
+			"label.qf-float-label",
+			"q-numeric",
+			"q-range",
+			"<q-range ",
+			"q-chips",
+			"q-float-label",
+			"qf-",
+			"& i",
+			"& label",
+			"label",
+			"",
+			"qf",
+			"draw_Float",
+			"draw_Label",
+			" float-layout=\"",
+			" float-label=\"",
+			"floatLayout",
+			".q-field-layout-placeholder",
+			".q-field-layout-inplace",
+			".q-field-inner",
+			"q-field-inner",
+			"q-field",
+			"q-fld",
+			"q-field-",
+			".q-field-layout-",
+			".q-field-",
+			"q-field-",
+			".q-field",
+			".q-float-label",
+			"q-floating-label",
+			"layout",
+			"dense",
+			"label-active",
+			"label-inactive",
+			"hasReadOnly",
+			"j-panel-titlebar",
+			"format-tools",
+			"vr_stylePanel",
+			".state.",
+			"this.state.",
+			"quasar-framework",
+			"q-",
+			"quasar-framework",
+			"q-",
+			"quasar-framework",
+			"q-",
+			"quasar-framework",
+			"q-",
+			"vr_showAction_FilterSelected",
+			"vr_checkedHeadingCheckbox",
+			"q-grid",
+			"s.",
+			"vr_",
+			"r_",
+			"if_",
+			"member_level",
+			"state.selectedRows",
+			"selectedRows",
+			"dv",
+			"state",
+			"numSelectedRows",
+			"resolveValue",
+			"actions",
+			"",
+			"state",
+			"searchQuery",
+			"__data",
+			"_data"
+		],
+		"reverse": false,
+		"show_context": false,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"folders":
+	[
+		{
+			"path": "C:\\_JON_TEMP_tmp\\mauve"
+		}
+	],
+	"groups":
+	[
+		{
+			"selected": 5,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "/C/_JON_TEMP_tmp/mauve/src/moe/moe.editor.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 878,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								522,
+								522
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "/C/_JON_TEMP_tmp/mauve/src/store/store.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3223,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2822,
+								2822
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2002.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "/C/_JON_TEMP_tmp/mauve/src/main.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 871,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								312,
+								312
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "/C/_JON_TEMP_tmp/mauve/src/moe/moe.store.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2749,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1122,
+								1122
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 858.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "/C/_JON_TEMP_tmp/mauve/src/components/views/view-mauve.vue",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4735,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3648,
+								3648
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Vuejs Complete Package/vue.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 700.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "j-panel.vue",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 11848,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								6767,
+								6775
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Vuejs Complete Package/vue.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 5148.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "j-component.vue",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1499,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								623,
+								623
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Vuejs Complete Package/vue.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 9,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "j-collection.vue",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 7462,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1692,
+								1692
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Vuejs Complete Package/vue.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1430.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "j-item.vue",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4475,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								706,
+								706
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Vuejs Complete Package/vue.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 88.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "j-canvas.vue",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1761,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								408,
+								408
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Vuejs Complete Package/vue.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 28.0
+	},
+	"input":
+	{
+		"height": 40.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.unsaved_changes":
+	{
+		"height": 142.0
+	},
+	"pinned_build_system": "",
+	"project": "",
+	"replace":
+	{
+		"height": 52.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"package",
+				"package.json"
+			],
+			[
+				"webp",
+				"build\\webpack.base.conf.js"
+			],
+			[
+				"moe.edit",
+				"src\\moe\\moe.editor.js"
+			],
+			[
+				"quasar/src/util",
+				"node_modules\\quasar-framework\\src\\utils.js"
+			],
+			[
+				"utils",
+				"build\\utils.js"
+			],
+			[
+				"moe.store",
+				"src\\moe\\moe.store.js"
+			],
+			[
+				"j-item",
+				"src\\components\\custom\\j-item.vue"
+			],
+			[
+				"view-",
+				"src\\components\\views\\view-mauve.vue"
+			],
+			[
+				"field",
+				"src\\vue-components\\field\\Field.vue"
+			],
+			[
+				"field.",
+				"dev\\components\\form\\field.vue"
+			],
+			[
+				"store.s",
+				"src\\moe\\moe.store.js"
+			],
+			[
+				"rubaxa",
+				"src\\components\\custom\\j-collection-usingRubxaSortable.vue"
+			],
+			[
+				"j-pan",
+				"src\\components\\custom\\j-panel.vue"
+			],
+			[
+				"editor.vu",
+				"src\\moe\\editor.vue.js"
+			],
+			[
+				"j-coll",
+				"src\\components\\custom\\j-collection-usingRubxaSortable.vue"
+			],
+			[
+				"j-canv",
+				"src\\components\\custom\\j-canvas.vue"
+			],
+			[
+				"view-ma",
+				"src\\components\\views\\view-mauve.vue"
+			],
+			[
+				"moe.obj",
+				"src\\moe\\objects\\moe.object.bitmap.js"
+			],
+			[
+				"install",
+				"src\\vue-install.js"
+			],
+			[
+				"fiel",
+				"dev\\components\\form\\field.vue"
+			],
+			[
+				"fieldtar",
+				"src\\vue-components\\field\\FieldTarget.vue"
+			],
+			[
+				"instal",
+				"src\\vue-install.js"
+			],
+			[
+				"float-",
+				"dev\\components\\form\\float-label.vue"
+			],
+			[
+				"field3",
+				"src\\vue-components\\field\\Field3.vue"
+			],
+			[
+				"field2",
+				"src\\vue-components\\field\\Field2.vue"
+			],
+			[
+				"createcomponent",
+				"node_modules\\vue\\src\\core\\vdom\\create-component.js"
+			],
+			[
+				"createelement",
+				"node_modules\\vue\\src\\core\\vdom\\create-element.js"
+			],
+			[
+				"flex.",
+				"src\\themes\\core\\flex.styl"
+			],
+			[
+				"floatl",
+				"src\\vue-components\\float-label\\FloatLabel.vue"
+			],
+			[
+				"list.ma",
+				"src\\css-components\\list\\list.mat.styl"
+			],
+			[
+				"floatlabel",
+				"src\\vue-components\\float-label\\FloatLabel.vue"
+			],
+			[
+				"float",
+				"src\\vue-components\\float-label\\FloatLabel.vue"
+			],
+			[
+				"check",
+				"src\\vue-components\\checkbox\\Checkbox.vue"
+			],
+			[
+				"chec",
+				"dev\\components\\form\\checkbox.vue"
+			],
+			[
+				"textfield.m",
+				"src\\css-components\\textfield\\textfield.mat.styl"
+			],
+			[
+				"color",
+				"node_modules\\coa\\lib\\color.js"
+			],
+			[
+				"theme",
+				"src\\themes\\quasar.core.variables.styl"
+			],
+			[
+				"flex",
+				"src\\themes\\core\\flex.styl"
+			],
+			[
+				"core/",
+				"src\\themes\\core\\form.variables.styl"
+			],
+			[
+				"texta",
+				"dev\\components\\form\\textarea.vue"
+			],
+			[
+				"text",
+				"src\\css-components\\textfield\\textfield.mat.styl"
+			],
+			[
+				"textfie",
+				"src\\css-components\\textfield\\textfield.mat.styl"
+			],
+			[
+				"/core/colors",
+				"src\\themes\\core\\colors.variables.styl"
+			],
+			[
+				"floatlab",
+				"src\\vue-components\\float-label\\FloatLabel.vue"
+			],
+			[
+				"float/",
+				"src\\vue-components\\float-label\\FloatLabel.vue"
+			],
+			[
+				"features/events",
+				"src\\features\\events.js"
+			],
+			[
+				"install.",
+				"src\\vue-install.js"
+			],
+			[
+				"floa",
+				"src\\vue-components\\float-label\\FloatLabel.vue"
+			],
+			[
+				"vue-in",
+				"src\\vue-install.js"
+			],
+			[
+				"153",
+				"node_modules\\readable-stream\\doc\\wg-meetings\\2015-01-30.md"
+			],
+			[
+				"quasar.mat.",
+				"node_modules\\quasar-framework\\dist\\quasar.mat.styl"
+			],
+			[
+				"main",
+				"src\\main.js"
+			],
+			[
+				"srccolle",
+				"src\\components\\custom\\j-collection.vue"
+			],
+			[
+				"pagin",
+				"src\\vue-components\\pagination\\Pagination.vue"
+			],
+			[
+				"",
+				"src\\vue-components\\search\\Search.vue"
+			],
+			[
+				"quasarinstall",
+				"v1\\node_modules\\quasar-framework\\src\\install.js"
+			],
+			[
+				"style",
+				"node_modules\\colors\\lib\\styles.js"
+			],
+			[
+				"checkbox.",
+				"src\\vue-components\\checkbox\\Checkbox.vue"
+			],
+			[
+				"grid",
+				"dev\\components\\form\\grid.vue"
+			],
+			[
+				"src/",
+				"src\\vue-install.js"
+			],
+			[
+				"pack",
+				"package.json"
+			],
+			[
+				"core.variables",
+				"src\\themes\\quasar.core.variables.styl"
+			],
+			[
+				"vue-instal",
+				"src\\vue-install.js"
+			],
+			[
+				"vue",
+				"src\\vue-install.js"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 306.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

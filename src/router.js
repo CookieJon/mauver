@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
+/* eslint-disable */
 Vue.use(VueRouter)
 
 function load (component) {
@@ -22,7 +23,8 @@ export default new VueRouter({
    */
 
   routes: [
-    { path: '/', component: load('Hello') },
+    // { path: '/', component: load('Hello') },
+    { path: '/', component: load('editor') },
 
     // Always leave this last one
     { path: '*', component: load('Error404') } // Not found

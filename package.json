@@ -1,8 +1,8 @@
 {
   "name": "quasar-app",
   "version": "0.0.1",
-  "description": "A Quasar App",
-  "author": "Your Name",
+  "description": "The Color Purpler",
+  "author": "Jon",
   "scripts": {
     "clean": "node build/script.clean.js",
     "dev": "node build/script.dev.js",
@@ -11,8 +11,14 @@
   },
   "dependencies": {
     "babel-runtime": "^6.0.0",
+    "es6-tween": "^5.0.5",
+    "image-q": "^1.1.1",
+    "jquery": "^3.2.1",
+    "jquery-ui": "^1.12.1",
+    "malihu-custom-scrollbar-plugin": "^3.1.5",
     "quasar-extras": "0.x",
     "quasar-framework": "git+https://git@github.com/quasarframework/quasar-edge.git",
+    "tween": "0.9.0",
     "vue": "~2.3.0",
     "vue-router": "^2.0.0"
   },

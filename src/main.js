@@ -13,9 +13,11 @@ require(`quasar/dist/quasar.${__THEME}.css`)
 import Vue from 'vue'
 import Quasar from 'quasar'
 import router from './router'
+import Store from './moe/moe.store.js'
 
 Vue.config.productionTip = false
 Vue.use(Quasar) // Install Quasar Framework
+Vue.use(Store)
 
 if (__THEME === 'mat') {
   require('quasar-extras/roboto-font')
