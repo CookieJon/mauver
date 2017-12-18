@@ -1,7 +1,9 @@
 
 <template>
+<div>
   <div v-touch-pan="touchPan" style="margin-top:50px;" ref="target" class="json"></div>
   {{ htmlEl }}
+</div>
 </template>
 
 <script>

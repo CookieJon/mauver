@@ -16,7 +16,7 @@
     <div id="first" class="container" v-dragula="colOne" service="effects">
       <div v-for="text in value">
         <span class="handle">+</span>
-        <span>{{text}}</text>
+        <span>{{text}}</span>
       </div>
     </div>
 
