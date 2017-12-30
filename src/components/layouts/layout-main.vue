@@ -25,10 +25,10 @@
 
      <!-- Navigation Tabs    -->
        <q-tabs slot="navigation" class="text-white">
-        <q-tab route="/view-mauve" icon="settings_system_daydream" exact>Mauve</q-tab>
-        <q-tab route="/view-panels" icon="mail" exact>Panels</q-tab>
-        <q-tab route="/view-sortable" icon="alarm" exact>Sortable</q-tab>
-        <q-tab route="/view-editor" icon="help" exact>Editor</q-tab>
+        <q-tab slot="title" route="/view-mauve" icon="settings_system_daydream" exact>Mauve</q-tab>
+        <q-tab slot="title" route="/view-panels" icon="mail" exact>Panels</q-tab>
+        <q-tab slot="title" route="/view-sortable" icon="alarm" exact>Sortable</q-tab>
+        <q-tab slot="title" route="/view-editor" icon="help" exact>Editor</q-tab>
       </q-tabs>
     <q-select
         type="radio"
@@ -38,13 +38,28 @@
       ></q-select>
 
 
+
    <!-- FABS -->
  <!--      <q-fab type="indigo" style="margin:40px 20px " icon="collections" direction="right" class="fixed-top-left">
         <q-small-fab class="white" @click="this.openModal()">mail</q-small-fab>
         <q-small-fab class="white" @click="toast('alarm')">alarm</q-small-fab>
       </q-fab> -->
 
-
+<!-- Tabs -->
+<q-tabs>
+  <q-route-tab
+    icon="mail"
+    to="/mails"
+    exact
+    slot="title"    
+  />
+  <q-route-tab
+    icon="alarm"
+    to="/alarms"
+    exact
+    slot="title"
+  />
+</q-tabs>
       <!-- <div class="layout-view no-scroll">keep-alive>-->
       <keep-alive>
         <router-view> </router-view>
@@ -54,10 +69,12 @@
 </template>
 
 <script>
-//  import { Modal } from 'quasar'
+  import { QLayout, QTabs, QSelect } from 'quasar'
 //  import modalTemplate from '../modal_layout.html'
 //  var modal
   export default {
+    name: 'layout-main',
+    components: { QLayout, QTabs, QSelect },
     data () {
       return {
         // 'selectedBg': '/statics/img/resource/bg/tron/tron7.jpg',

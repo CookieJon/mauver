@@ -22,6 +22,7 @@
 
       <j-item
         v-for='(i, item) in value'
+       :key='item.id'
         :item='item'
         @jon="onJon">
       </j-item>
@@ -29,6 +30,7 @@
       <j-item
         v-for='(i, item) in value'
         :item='item'
+        :key='item.id'
         @jon="onJon">
       </j-item>
 

@@ -16,8 +16,9 @@
     "jquery": "^3.2.1",
     "jquery-ui": "^1.12.1",
     "malihu-custom-scrollbar-plugin": "^3.1.5",
+    "number-crunch": "^1.2.1",
     "pug": "^2.0.0-rc.4",
-    "quasar-extras": "0.x",
+    "quasar-extras": "^0.0.7",
     "quasar-framework": "git+https://git@github.com/quasarframework/quasar-edge.git",
     "vue": "~2.3.0",
     "vue-router": "^2.0.0"

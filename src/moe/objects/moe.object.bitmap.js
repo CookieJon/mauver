@@ -10,17 +10,18 @@
 export default Bitmap
 
 var iq = require('image-q')
-var ColorUtils = require('../../moe/utils/moe.utils.color.js')
+var crunch = require("number-crunch");
+
+import ColorUtils from '../../moe/utils/moe.utils.color.js'
 
 import { Utils } from 'quasar'
+let x = [10, 123, 21, 127];
 
-console.log(ColorUtils)
 
 function Bitmap (options) {
   options = Object.assign({
     // defaults go here
   }, options)
-
   this.options = options
 
   this._type = 'Bitmap'
@@ -33,12 +34,12 @@ function Bitmap (options) {
   this.height = null // x   256
   this.length = null // = 65535
 
-  this.pixels_key = null // Original pixels
-  this.palette_key = null // Original palette
+  this.pixels_key = [] // Original pixels
+  this.palette_key = [] // Original palette
   // this.imageData_key = null // context.getImageData(0,0,this.width, this.height).data
 
-  this.pixels = null // Uint8Array[.length]   Output/used pixels ?>??  needed?
-  this.palette = null // Uint8Array[256]     Output/used palette
+  this.pixels = [] // Uint8Array[.length]   Output/used pixels ?>??  needed?
+  this.palette = [] // Uint8Array[256]     Output/used palette
 
   // this.image = null // for loading image and copying to canvas
   // this.canvas = document.createElement('canvas') // for generating imageData (only available w. canvas!)
@@ -57,6 +58,14 @@ function Bitmap (options) {
 Bitmap.prototype = {
 
   constructor: Bitmap,
+
+  // 
+  add (v) {
+    let y = [4, 211, 176, 200];
+    this.pixels_key = crunch.add(this.pixels_key, v);
+    console.log(x)
+
+  },
 
   init (options) {
 
@@ -86,7 +95,7 @@ Bitmap.prototype = {
       }
     }
 
-    // Create from src
+    // Create from http src
     //
     else if (options.src) {
       // Any old image file from http://
@@ -107,7 +116,6 @@ Bitmap.prototype = {
 
   normalisePalette (img) {
 
-
     if (1 == 1) {
       // * scale img to 256x256 via canvas
       let canvas = document.createElement('canvas')
@@ -125,9 +133,11 @@ Bitmap.prototype = {
       colorFrom = 0
       colorTo = 255
       var materialColors = ColorUtils.getMaterialColors(colorFrom, colorTo)
-console.log('material colors used:', materialColors)
+      this.palette_key = materialColors
+      console.log('material colors used:', materialColors)
       // * iq.palette <= material colors
       var iqPalette = new iq.utils.Palette()
+     
       for (var j = 0, l = materialColors.length; j < l; j++) {
         var color = materialColors[j]
         iqPalette.add(iq.utils.Point.createByRGBA(color.r, color.g, color.b, color.a))
@@ -144,6 +154,7 @@ console.log('material colors used:', materialColors)
       var outPointContainer = iqImage.quantize(inPointContainer, iqPalette)
       var uint8array = outPointContainer.toUint8Array()
       console.log(uint8array)
+      
       var imageData = canvas.getContext('2d').getImageData(0, 0, 256, 256)
       // Utils.extend(true, this.imageData, imageData)
       this.imageData = new ImageData(256, 256)
@@ -154,10 +165,24 @@ console.log('material colors used:', materialColors)
       // tags
 
       // draw palette
-      
       var paletteCanvas = ColorUtils.drawPixels(iqPalette.getPointContainer(), 16, 32)
       paletteCanvas.className = 'palette'
-      this.$el.appendChild(paletteCanvas)
+      //this.$el.appendChild(paletteCanvas)
+
+      // Create pixels array from imageData
+      this.pixels_key = []
+      //this.palette_key.forEach(c=>console.log(c.r + ' ' + c.g + ' ' + c.b))
+      for (var i = 0; i < this.imageData.data.length; i+=4) {
+        var index = this.palette_key.findIndex(c=>
+          {
+            return c.r === this.imageData.data[i] &&
+            c.g === this.imageData.data[i+1] &&
+            c.b === this.imageData.data[i+2]
+          })
+        this.pixels_key.push(index)
+        this.pixels.push(index)
+      }
+      console.log("pixels_key", this.pixels_key)
 
     } else {
       // no transform palette
@@ -228,20 +253,20 @@ console.log('material colors used:', materialColors)
     return this
   },
   //this function is called when the input loads an image
-  renderImage (file) {
-    var reader = new FileReader();
-    reader.onload = function(event){
-      the_url = event.target.result
-      //of course using a template library like handlebars.js is a better solution than just inserting a string
-      $('#preview').html("<img src='"+the_url+"' />")
-      $('#name').html(file.name)
-      $('#size').html(humanFileSize(file.size, "MB"))
-      $('#type').html(file.type)
-    }
+  // renderImage (file) {
+  //   var reader = new FileReader();
+  //   reader.onload = function(event){
+  //     the_url = event.target.result
+  //     //of course using a template library like handlebars.js is a better solution than just inserting a string
+  //     $('#preview').html("<img src='"+the_url+"' />")
+  //     $('#name').html(file.name)
+  //     $('#size').html(humanFileSize(file.size, "MB"))
+  //     $('#type').html(file.type)
+  //   }
 
-    //when the file is read it triggers the onload event above.
-    reader.readAsDataURL(file);
-  },
+  //   //when the file is read it triggers the onload event above.
+  //   reader.readAsDataURL(file);
+  // },
   // fromFileName (filename, callback) {
   fromFileName (filename, callback) {
     // Load bitmap programatically
@@ -268,23 +293,22 @@ console.log('material colors used:', materialColors)
     this.generateImageData(this.pixels, this.palette, this.imageData)
   },
 
-  generateImageData (pixels, palette, imageData) {
+  generateImageData (pixels) {
     // quick method just for the key image with no mapping etc.
     //
-    var data = imageData.data
+    var data = this.imageData.data
 
     var mapToIndex = 0
 
     for (var i = 0; i < 65535; i++) {
       var theColor = this.palette_key[pixels[i]]
-
       data[mapToIndex++] = theColor.r
       data[mapToIndex++] = theColor.g
       data[mapToIndex++] = theColor.b
       data[mapToIndex++] = 255
     }
 
-    return imageData
+    return this.imageData
   },
 
   // Converts image to canvas; returns new canvas element

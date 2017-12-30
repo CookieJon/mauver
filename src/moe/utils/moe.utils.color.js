@@ -4,7 +4,7 @@
  * Released under the MIT License.
  * https://github.com/Alex-fun/vue-drag-and-drop-list#readme
  */
-'use strict'
+// 'use strict'
 
 import 'image-q'
 

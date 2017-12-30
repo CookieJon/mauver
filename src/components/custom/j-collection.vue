@@ -4,13 +4,14 @@
       ref="container"
       sortable="options.sortable"
       @sort='onArrange'
-      :class="this.class"
+      :class="this.myClass"
       class="frame upload-zone"
     >
 
     <j-item
       v-for='item, i in value'
-      @click='onClickItem(i, $event)'
+      :key='item.id'
+      @click='onClickItem(i, $event)' 
       :value='value[i]'
       xvalue='$state.repo[item.repo][item.key]||null'>
     </j-item>
@@ -32,7 +33,7 @@
   // var Bitmap = require('../../moe/moe.bitmap.js')
   var jItem = require('components/custom/j-item')
   var jDebug = require('components/custom/j-debug')
-  import { Utils } from 'quasar'
+  import { extend } from 'quasar'
 //  import Sortable from 'sortablejs'
 
   export default {
@@ -44,14 +45,14 @@
       value: {
         type: [Array, Object]
       },
-      class: {
+      myClass: {
         type: String,
         default: 'frame-type-grid'
       }
     },
     data () {
       return {
-        test: Utils.extend({}, this.value),
+        test: extend({}, this.value),
         myValue: this.value,
         options: {
           sortable: {
@@ -70,11 +71,11 @@
     },
     mounted () {
       // var me = this
-      Sortable.create(this.$refs.container)
+      // Sortable.create(this.$refs.container)
     },
     methods: {
       onArrange (e) {
-        let tmp = Utils.extend({}, {val: this.value}).val
+        let tmp = extend({}, {val: this.value}).val
         tmp.splice(e.newIndex, 0, tmp.splice(e.oldIndex, 1)[0])
         this.$emit('input', tmp)
 

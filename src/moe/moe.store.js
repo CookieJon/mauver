@@ -94,8 +94,8 @@ const actions = {
     var testobj = { test: 'pass' }
    //  state.repo.bitmaps[id] = bitmap
    // state.repo.bitmaps[id] = bitmap
-    Vue.set(state.repo.bitmaps, id, bitmap)
     bitmap.init({src, id})
+    Vue.set(state.repo.bitmaps, id, bitmap)
     // 
     let ref = new Ref()
     // state.bitmaps.push(ref)

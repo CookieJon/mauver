@@ -1,13 +1,13 @@
 
 <template>
-    <!-- item is just "Bitmap" at the moment... make generic later -->
-    <div class='frame' @click="onClick($event)">
+  <!-- item is just "Bitmap" at the moment... make generic later -->
+  <div class='frame' @click="onClick($event)">
     <j-canvas ref="jCanvas" :width='256' :height='256' :imageData='myImageData'></j-canvas>
-   <!-- <j-canvas ref="jCanvas" :width='256' :height='256' :imageData='myImageData'></j-canvas>-->
+    <!-- <j-canvas ref="jCanvas" :width='256' :height='256' :imageData='myImageData'></j-canvas>-->
     <!--   <j-debug :value="value.imageData"></j-debug> -->
-     <label>Type: <input type="text" v-model="value._type" /></label>
-      <label>Title: <input type="text" v-model="value.title" /></label> 
-    </div>
+    <label>Type: <input type="text" v-model="value._type" /></label>
+    <label>Title: <input type="text" v-model="value.title" /></label> 
+  </div>
 </template>
 
 <script>
@@ -26,8 +26,6 @@
     },
     computed: {
       myImageData () {
-        console.log('computed myImageData')
-        console.log(this.value)
         return this.value ? this.value.imageData : null
       }
     },

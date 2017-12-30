@@ -2,7 +2,7 @@ export default
 
 <script>
   /* eslint-disable */
-  import { Utils } from 'quasar'
+  import { extend } from 'quasar'
 
   var $ = require('jquery')
   require('malihu-custom-scrollbar-plugin')
@@ -58,13 +58,14 @@ export default
           },
           attrs: {
             'draggable': true
-          },
-          directives: [
-            {
-              name: 'touch-pan',
-              value: this.touchPan
-            }
-          ]
+          }
+          //,
+          // directives: [
+          //   {
+          //     name: 'touch-pan',
+          //     value: this.touchPan
+          //   }
+          // ]
         },
         // ul > li[...]
         Object.keys(this.value).map(k => {

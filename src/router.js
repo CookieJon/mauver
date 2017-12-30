@@ -25,34 +25,34 @@ export default new VueRouter({
   routes: [
 
     // Default
-    // {
-    //   path: '/main',
-    //   component: load('layouts/layout-main'),
-    //   children: [
-    //     {
-    //       path: '/view-mauve',
-    //       component: load('views/view-mauve')
-    //     },
-    //     {
-    //       path: '/view-vip',
-    //       component: load('views/view-vip')
-    //     },
-    //     {
-    //       path: '/view-panels',
-    //       component: load('views/view-panels')
-    //     },
-    //     {
-    //       path: '/view-sortable',
-    //       component: load('views/view-sortable')
-    //     },
-    //     {
-    //       path: '/view-editor',
-    //       component: load('views/view-editor')
-    //     }
-    //   ]
-    // },
+    {
+      path: '/main',
+      component: load('layouts/layout-mauver'),
+      children: [
+        {
+          path: '/view-mauve',
+          component: load('views/view-mauve')
+        },
+        {
+          path: '/view-vip',
+          component: load('views/view-vip')
+        },
+        {
+          path: '/view-panels',
+          component: load('views/view-panels')
+        },
+        {
+          path: '/view-sortable',
+          component: load('views/view-sortable')
+        },
+        {
+          path: '/view-editor',
+          component: load('views/view-editor')
+        }
+      ]
+    },
 
-    { path: '/', component: load('views/view-mauve') },
+    // { path: '/', component: load('views/view-mauve') },
     // { path: '/', component: load('Hello') },
     // { path: '/', component: load('editor') },
     // { path: '/', component: load('layouts/layout-main') },

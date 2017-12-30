@@ -1,6 +1,6 @@
   <template>
   <div
-    class="q-range non-selectable"
+    class="q-slider non-selectable"
     :class="{disabled: disable}"
     @mousedown.prevent="__setActive"
     @touchstart.prevent="__setActive"
@@ -8,35 +8,35 @@
     @touchmove.prevent="__update"
   > 
   <div>
-    <div ref="handle" class="q-range-handle-container">
-      <div class="q-range-track"></div>
+    <div ref="handle" class="q-slider-handle-container">
+      <div class="q-slider-track"></div>
       <div 
         v-if="markers"
-        class="q-range-mark"
+        class="q-slider-mark"
         v-for="n in myRange"
         :key="n"
         :style="{left: n.percent * 100 + '%'}">
-        <div class="q-range-value">
+        <div class="q-slider-value">
           {{ n.value  }}
         </div>  
       </div>
       <div
-        class="q-range-track active-track"
+        class="q-slider-track active-track"
         :style="style_ActiveTrack"
         :class="{'no-transition': dragging, 'handle-at-minimum': value === min}"
       ></div>
       <!--div
-        class="q-range-track value-track"
+        class="q-slider-track value-track"
         :style="style_ValueTrack"
         :class="{'no-transition': dragging, 'handle-at-minimum': value === min}"
       ></div-->      
       <div
-        class="q-range-handle"
+        class="q-slider-handle"
         :style="{left: dragPercent * 100 +'%'}"
         :class="{dragging: dragging, 'handle-at-minimum': value === min}"
       >
         <div
-          class="q-range-label"
+          class="q-slider-label"
           :class="{'label-always': labelAlways}"
           v-if="label || labelAlways"
         >{{ dragPercent }}</div>
@@ -52,12 +52,13 @@
 <script>
 /* eslint-disable */
 // import Utils from '../../utils'
-import { Utils } from 'quasar'
+import { event } from 'quasar'
 import { Platform } from 'quasar'
-const TWEEN = require('es6-tween')
-
+import TWEEN from 'es6-tween'
+const { Tween, Easing, Interpolation, autoPlay }  = require('es6-tween');
+autoPlay(true)
 // const { Tween, Easing, Interpolation, autoPlay } = require('es6-tween');
-//import { Easing, Interpolation, Tween, autoPlay } from 'es6-tween';
+// import { Easing, Interpolation, Tween, autoPlay } from 'es6-tween';
 
 export default {
   props: {
@@ -89,7 +90,6 @@ export default {
       max: 10,
       currentSegmentMin: { percent: 1, value: null },
       currentSegmentMax: { percent: 0, value: null },
-      myRange: null,
       myRestPercent: parseInt(this.rest,10)/100,
       dragPercent: 0,
       segmentPercent: 0,
@@ -146,40 +146,6 @@ export default {
     dragPercent () {
 
     },
-    myValue (newValue, oldValue) {
-      var vm = this
-      var animationFrame
-      function animate (time) {
-        TWEEN.update(time)
-        animationFrame = requestAnimationFrame(animate)
-      }
-      
-      new TWEEN.Tween({ tweeningNumber: oldValue })
-        .easing(TWEEN.Easing.Quadratic.Out)
-        .to({ tweeningNumber: newValue }, 5500)
-        .on('update', (x) => {
-          this.animatedNumber = x.tweeningNumber
-        })
-        .on('complete', () => {
-          cancelAnimationFrame(animationFrame)  
-        })
-        .start()
-      animationFrame = requestAnimationFrame(animate)
-    },    
-    min (value) {
-      if (this.value < value) {
-        this.value = value
-        return
-      }
-      this.$nextTick(this.__validateProps)
-    },
-    max (value) {
-      if (this.value > value) {
-        this.value = value
-        return
-      }
-      this.$nextTick(this.__validateProps)
-    },
     step () {
       this.$nextTick(this.__validateProps)
     }
@@ -211,25 +177,23 @@ export default {
     //           yield;
     //       }
     //   },
-    __setActive (event) {
+    __setActive (e) {
       if (this.disable) {
         return
       }
     
       let container = this.$refs.handle
 
-
       this.dragging = {
         left: container.getBoundingClientRect().left,
         width: container.offsetWidth
       }
-      this.__update(event)
+      this.$emit('start')
+      this.__update(e)
     },
     between (v, min, max) {
       return Math.min(Math.max(v, min), max)
     },
-
-    
     __updateUsingDragPercent ( dragPercent ) {
       // dragPercent: 0...1
       // If dragPercent out of segment's percent range, set new segment & ranges
@@ -238,7 +202,7 @@ export default {
         let i = this.myRange.findIndex(v => {
           return v.percent > dragPercent
         })
-        console.log("change" + i)
+        //console.log("change" + i)
         this.currentSegmentMin = this.myRange[i-1]
         this.currentSegmentMax = this.myRange[i]
         // this.currentSegmentPercentRange = this.currentSegmentMax.percent - this.currentSegmentMin.percent
@@ -254,6 +218,7 @@ export default {
       this.dragPercent = dragPercent 
       this.segmentPercent = segmentPercent
       this.myValue = value
+      this.$emit('input', Math.floor(this.myValue))
       // this.currentPercentage = percentage
       // this.$emit('input', this.between(value - modulo + (Math.abs(modulo) >= this.step / 2 ? (modulo < 0 ? -1 : 1) * this.step : 0), this.currentSegmentMin.value, this.currentSegmentMax.value))
 
@@ -261,19 +226,21 @@ export default {
     __updateUsingValue ( value ) {
 
     },
-    __update (event) {
+    __update (e) {
       if (!this.dragging) {
         return
       }
       // Get drag percent of entire control (0 < 1)
-      this.__updateUsingDragPercent( this.between((Utils.event.position(event).left - this.dragging.left) / this.dragging.width, 0, 1) )
-      this.$emit('input', this.myValue) // this.between(value, this.min, this.max))
+      this.__updateUsingDragPercent( this.between((event.position(e).left - this.dragging.left) / this.dragging.width, 0, 1) )
+      this.$emit('drag')
+      // this.$emit('input', this.animatedNumber)
+      //this.$emit('input', this.myValue) // this.between(value, this.min, this.max))
     },
     __end () {
       this.dragging = false
       this.__updateUsingDragPercent(this.myRestPercent)
       this.currentPercentage = (this.value - this.min) / (this.max - this.min)
-      this.$emit('input', this.myValue)
+      this.$emit('stop')
     },
     __validateProps () {
       if (this.min >= this.max) {
@@ -314,152 +281,110 @@ $white     ?= #fff
 $light     ?= #f4f4f4
 $dark      ?= #333
 $faded     ?= #777
-$range-height              ?= 36px
-$range-color               ?= $grey-4
-$range-active-color        ?= $form-active-color
 
-$range-track-height        ?= 2px
-$range-mark-height         ?= 10px
+$slider-height              = 28px
+$slider-track-height        = 2px
+$slider-mark-height         = 10px
+$slider-handle-size         = 12px
+$slider-label-transform     = translateX(-50%) translateY(-139%) scale(1)
 
-$range-handle-size         ?= 20px
-$range-handle-radius       ?= 50%
+.q-slider-track, .q-slider-mark
+  opacity .4
+  background currentColor
 
-
-
-.q-range-track
+.q-slider-track
   position absolute
   top 50%
   left 0
   transform translateY(-50%)
-  height $range-track-height
+  height $slider-track-height
   width 100%
-  background $range-color
   &:not(.dragging)
     transition all .3s ease
   &.active-track
-    background $range-active-color
-  &.value-track
-    background white
-    height $range-track-height * 3
+    opacity 1
   &.track-draggable.dragging
-    height ($range-track-height * 2)
+    height ($slider-track-height * 2)
     transition height .3s ease
   &.handle-at-minimum
     background transparent
-  &.handle-at-maximum
-    background solid
 
-.q-range-mark
+.q-slider-mark
   position absolute
   top 50%
-  height $range-mark-height
+  height $slider-mark-height
   width 2px
-  background $range-color
   transform translateX(-50%) translateY(-50%)
 
-  .q-range-value
-    margin-top 14px
-    font-size 10px
-    margin-left -2px
-
-.q-range-handle-container
+.q-slider-handle-container
   position relative
   height 100%
-  margin-left ($range-handle-size / 2)
-  margin-right ($range-handle-size / 2)
+  margin-left ($slider-handle-size / 2)
+  margin-right ($slider-handle-size / 2)
 
-.q-range-label
-  position relative
-  top - $range-handle-size * .75
-  left -25%
-  padding 8px 0
+.q-slider-label
+  top 0
+  left ($slider-handle-size / 2)
   opacity 0
-  text-align center
-  transform translateY(0) scale(.1)
-  transition all .3s ease
-  width (1.5 * $range-handle-size)
-  height (1.5 * $range-handle-size)
-  font-size ($range-handle-size / 2)
-  line-height ($range-handle-size / 3)
-  color white
-  &:before
-    content ''
-    z-index -1
-    position absolute
-    top (- $range-handle-size * .25)
-    left 0
-    width (1.5 * $range-handle-size)
-    height (1.5 * $range-handle-size)
-    background $range-active-color
-    border-radius 50% 50% 50% 0
-    transform rotate(-45deg)
+  transform translateX(-50%) translateY(0) scale(0)
+  transition all .2s
+  padding 5px 9px
   &.label-always
     opacity 1
-    transform translateY(-50%) scale(1)
+    transform $slider-label-transform
 
-.q-range-handle.undraggable>.q-range-label
-  top (- $range-handle-size - ($range-handle-size * .75))
-
-.q-range-handle
+.q-slider-handle
   position absolute
   top 50%
-  transform translate3d(-50%, -50%, 0) scale(.67)
+  transform translate3d(-50%, -50%, 0)
   transform-origin center
   transition all .3s ease
-  width $range-handle-size
-  height $range-handle-size
-  border-radius $range-handle-radius
-  box-sizing content-box
+  width $slider-handle-size
+  height $slider-handle-size
   &.dragging
-    transform translate3d(-50%, -50%, 0) scale(1)
+    transform translate3d(-50%, -50%, 0) scale(1.3)
     transition opacity .3s ease, transform .3s ease
-    .q-range-label
+    .q-slider-label
       opacity 1
-      transform translateY(-50%) scale(1)
-  &:not(.undraggable)
-    background $range-active-color
-    &.handle-at-minimum
-      background white
-      border 2px solid $range-color
-      .q-range-label
-        color black
-        &:before
-          background $range-color
-  &.undraggable
-    background transparent
-    &.handle-at-minimum
-      .q-range-label
-        color black
-        &:before
-          background $range-color
-    &:before
+      transform $slider-label-transform
+  background currentColor
+  &.handle-at-minimum
+    background white
+    &:after
       content ''
-      display block
-      width 0
-      height 0
-      border-top ($range-handle-size / 2) solid transparent
-      border-bottom ($range-handle-size / 2) solid transparent
+      position absolute
+      top 0
+      right 0
+      bottom 0
+      left 0
+      background transparent
+      border-radius inherit
+      border 2px solid currentColor
 
-.q-range-handle-min.undraggable:before
-  border-left $range-handle-size solid $range-active-color
-  margin-left ($range-handle-size * .35)
-.q-range-handle-min.handle-at-minimum.undraggable:before
-  border-left-color $range-color
+.q-slider-ring
+  position absolute
+  top -50%
+  left -50%
+  width 200%
+  height 200%
+  border-radius inherit
+  pointer-events none
+  opacity 0
+  transform scale(0)
+  transition all .2s ease-in
+  background currentColor
 
-.q-range-handle-max.undraggable:before
-  border-right $range-handle-size solid $range-active-color
-  margin-left ($range-handle-size * -.35)
+.q-slider:not(.disabled):not(.readonly)
+  &:focus, &:hover
+    .q-slider-ring
+      opacity .4
+      transform scale(1)
 
-.q-range
-  height $range-height
-  width 100%
-  cursor pointer
+.q-slider.disabled
+  .q-slider-handle
+    border 2px solid white
+  .q-slider-handle.handle-at-minimum
+    background currentColor
 
 
-  &.has-error
-    .q-range-track
-      background alpha($color, 50%)
-    .q-range-track.active-track,
-    .q-range-handle:not(.handle-at-minimum)
-      background $has-error
 </style>

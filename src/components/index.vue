@@ -46,7 +46,7 @@ v
 var moveForce = 30
 var rotateForce = 40
 
-import { Utils } from 'quasar'
+import { dom } from 'quasar'
 
 export default {
   data () {
@@ -70,9 +70,9 @@ export default {
     }
   },
   methods: {
-    move (event) {
-      const {width, height} = Utils.dom.viewport()
-      const {top, left} = Utils.event.position(event)
+    move (e) {
+      const {width, height} = dom.viewport()
+      const {top, left} = event.position(e)
       const halfH = height / 2
       const halfW = width / 2
 

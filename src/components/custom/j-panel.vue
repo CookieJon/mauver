@@ -7,6 +7,7 @@
     :class='class_Panel'
     :style='style_Panel'
   >
+  <!--  "quasar-framework": "git+https://git@github.com/quasarframework/quasar-edge.git", -->
 
 
     <!-- > J-PANEL-HEADER -->
@@ -15,39 +16,43 @@
       @dblclick='toggle_ExpandCollapse()'
       ref="header"
     >
-
       <!-- > HEADER > j-PANEL-TITLEBAR -->
       <div class='j-panel-tools j-panel-titlebar'>
 
         <!--  J-PANEL-TOOL: Panel icon -->
-        <i>{{ icon }}</i>
+<!--
+  or if you prefer the non self-closing tag version
+  which allows to add a QPopover or QTooltip:
+-->
+<q-icon :name="icon">
+  <q-tooltip>Some tooltip</q-tooltip>
+</q-icon>
 
         <!--  J-PANEL-TOOL: Panel title -->
         <span class="title">{{ title }}</span>
 
         <!--  J-PANEL-TOOL: Toggle Expand Panel -->
-        <button ref="target1" >
-          <i class="panelExpandArrow" :class="class_PanelExpandArrow">expand_more</i> <!-- or: "keyboard_arrow_down" -->
-        </button>
+        <q-btn :icon="class_PanelExpandArrow" ref="target1" flat round small />
+
 
         <!--  J-PANEL-TOOL: Action Menu -->
-        <button ref="target2" class="primary">
-          <i>more_vert</i>
+        <q-btn ref="target2" class="primary" flat small>
+          <q-icon name="menu" />
           <q-popover ref="popover" anchor-ref="target2"
             :anchor-origin="{vertical: 'bottom', horizontal: 'right'}"
             :target-origin="{vertical: 'top', horizontal: 'right'}" >
             <div class="list item-delimiter" >
               <label class="item item-link">
-                <div class="item-primary"><i>select_all</i></div>
+                <div class="item-primary"><q-icon name="select_all"></q-icon></div>
                 <div class="item-content">Select All Items</div>
               </label>
               <label class="item item-link" >
-                <div class="item-primary"><i>clear</i></div>
+                <div class="item-primary"><q-icon name="clear"></q-icon></div>
                 <div class="item-content">Clear Item Selection</div>
               </label>
             </div>
           </q-popover>
-        </button>
+        </q-btn>
 
       </div>
 
@@ -64,7 +69,6 @@
     <div
       class='j-panel-content'
       ref="content"
-      :style="vr_panelStyle"
     >
       <div
         class='j-panel-content-inner scroll'
@@ -72,6 +76,7 @@
       >
 
    <!--    <pre>{{ state }}</pre> -->
+
 
         <!-- user content -->
         <slot name="content"></slot>
@@ -94,9 +99,11 @@
 
 <script>
   /* eslint-disable */
-  import { Utils } from 'quasar'
+  // import { Utils } from 'quasar'
+import { extend, QBtn, QIcon, QPopover, QTooltip } from 'quasar'
 
-  var _static = require('./j-panel-static.js')
+  
+ var _static = require('./j-panel-static.js')
   // import '../../store/actions'
 
   var $ = require('jquery')
@@ -113,6 +120,8 @@
 
   // require('jquery-ui-touch-punch')
   export default {
+    name: 'j-panel',
+    components: {QBtn, QIcon, QPopover, QTooltip},
     props: {
       value: { default () { return {prop1: 'one', prop2: 'two'} } },
       title: { type: String },
@@ -166,7 +175,7 @@
       },
       class_PanelExpandArrow () {
         var s = this.state
-        return {'rotate-180': !s.expanded}
+        return s.expanded?'arrow_drop_down':'arrow_drop_up'
       },
       class_Panel () {
         var s = this.state
