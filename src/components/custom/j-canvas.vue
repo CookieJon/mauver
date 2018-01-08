@@ -13,12 +13,12 @@ export default {
   name: 'j-canvas',
   props: {
     width: {  // display width
-      type: Number,
-      default: 256
+      type: String,
+      default: '100%'
     },
     height: { // display height
-      type: Number,
-      default: 256
+      type: String,
+      default: '100%'
     },
     pixelWidth: { // canvas pixels
       type: Number,

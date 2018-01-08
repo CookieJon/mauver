@@ -7,30 +7,24 @@ div
   //-   j-object(v-model='$state')
   //-   j-object(v-model='$state.imgUrls')
 
-  // DEBUG
-  j-panel(icon='business', title='Debug', :width='350', :height='720', :x='10', :y='10')
+  // ACTIVE ARTWORK SLIDER
+  j-panel(icon='business', :title='$state.activeArtwork ? $state.activeArtwork.id : "none"', :width='600', :height='680', :x='20', :y='10')
     div.j-tray.area.panel-item-grow(slot='content')
-      j-object(v-model='$state')
-
-  // SLIDER
-  j-panel(icon='business', title='Slider', :width='600', :height='350', :x='380', :y='10')
-    div.j-tray.area.panel-item-grow(slot='content')
-      j-slider
-
+      j-slider(v-model='$state.activeArtwork')
+      
   // BITMAPS
-  j-panel(icon='business', title='Bitmaps', :width='370', :height='420', :x='380', :y='370')
+  j-panel(icon='business', title='Bitmaps', :width='370', :height='200', :x='600', :y='10')
     div.j-panel-toolbar.text-black(slot='toolbar', style='padding:4px;')
       q-btn(round,primary,small,icon='business',@click='$actions.addBitmap()')
     div.j-tray.area.panel-item-grow(slot='content')
       j-collection.frame-type-grid(v-model='$state.bitmaps', @clickItem='b => {$actions.setActiveBitmap(b)}')
-
-  //- // ART
-  //- j-panel(icon='business', title='ART', :width='420', :height='420', :x='640', :y='10')
-  //-   div.j-panel-toolbar.text-black(slot='toolbar', style='padding:4px;')
-  //-     q-btn(round,primary,small,icon='add',@click='$actions.addArtwork()')
-  //-   div.j-tray.area.panel-item-grow(slot='content')
-  //-     j-collection.frame-type-grid(v-model='$state.bitmaps', @clickItem='b => {$actions.setActiveBitmap(b)}')
-
+  
+  // ARTWORKS
+  j-panel(icon='business', title='Artworks', :width='370', :height='200', :x='600', :y='210')
+    div.j-panel-toolbar.text-black(slot='toolbar', style='padding:4px;')
+      q-btn(round,primary,small,icon='business',@click='$actions.addArtwork()')
+    div.j-tray.area.panel-item-grow(slot='content')
+      j-collection.frame-type-grid(v-model='$state.artworks', @clickItem='b => {$actions.setActiveArtwork(b)}')
 
   //- j-panel(:key='item.id', v-for='item in $state.workbench.editors', title='EDIT:', :width='420', :height='420', :x='640', :y='10')
   //-   div.j-panel-toolbar.text-black(slot='toolbar', style='padding:4px;')
@@ -38,13 +32,13 @@ div
   //-   div.j-tray.area.panel-item-grow(slot='content')
   //-     j-collection.frame-type-grid(v-model='$state.bitmaps', @clickItem='b => {$actions.setActiveBitmap(b)}')
 
-  // ART DETAILS
-  j-panel(icon='business', title='ART', :width='520', :height='520', :x='640', :y='10')
-    div.j-tray.area.panel-item-grow(slot='content')
-      j-canvas.frame-type-grid(:image-data=' this.$state.activeBitmap ? this.$state.activeBitmap.imageData : null')
+  //- // ART DETAILS
+  //- j-panel(icon='business', title='ART', :width='520', :height='520', :x='640', :y='10')
+  //-   div.j-tray.area.panel-item-grow(slot='content')
+  //-     j-canvas.frame-type-grid(:image-data=' this.$state.activeBitmap ? this.$state.activeBitmap.imageData : null')
 
   // PREVIEW
-  j-panel(icon='business', title='Preview', :width='320', :height='420', :x='340', :y='550')
+  j-panel(icon='business', :title='$state.activeBitmap ? $state.activeBitmap.id : "none"', :width='370', :height='370', :x='600', :y='400')
     div.j-tray.area.panel-item-grow(slot='content')
       | ss {{ $state.activeBitmap ? $state.activeBitmap.id : 'none'}}
       j-canvas.frame-type-grid(:image-data=' this.$state.activeBitmap ? this.$state.activeBitmap.imageData : null')

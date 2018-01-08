@@ -10,13 +10,11 @@
 export default Bitmap
 
 var iq = require('image-q')
-var crunch = require("number-crunch");
 
 import ColorUtils from '../../moe/utils/moe.utils.color.js'
 
 import { Utils } from 'quasar'
 let x = [10, 123, 21, 127];
-
 
 function Bitmap (options) {
   options = Object.assign({
@@ -34,6 +32,7 @@ function Bitmap (options) {
   this.height = null // x   256
   this.length = null // = 65535
 
+  
   this.pixels_key = [] // Original pixels
   this.palette_key = [] // Original palette
   // this.imageData_key = null // context.getImageData(0,0,this.width, this.height).data
@@ -58,14 +57,6 @@ function Bitmap (options) {
 Bitmap.prototype = {
 
   constructor: Bitmap,
-
-  // 
-  add (v) {
-    let y = [4, 211, 176, 200];
-    this.pixels_key = crunch.add(this.pixels_key, v);
-    console.log(x)
-
-  },
 
   init (options) {
 
@@ -103,10 +94,12 @@ Bitmap.prototype = {
       let img = document.createElement('img')
       img.onload = () => {
         self.title = 'Welcome Aboard'
-        setTimeout(function() {
-          self.normalisePalette(img)
-          // self.image = img
-        }, 1);
+        self.normalisePalette(img)
+        console.log("DONE!")
+        // setTimeout(function() {
+        //   self.normalisePalette(img)
+        //   // self.image = img
+        // }, 1);
 
       }
       img.src = options.src
@@ -131,7 +124,7 @@ Bitmap.prototype = {
       var colorFrom = parseInt(Math.random() * 150)
       var colorTo = parseInt(Math.random() * 150) + 151
       colorFrom = 0
-      colorTo = 255
+      colorTo = 256
       var materialColors = ColorUtils.getMaterialColors(colorFrom, colorTo)
       this.palette_key = materialColors
       console.log('material colors used:', materialColors)
@@ -172,16 +165,28 @@ Bitmap.prototype = {
       // Create pixels array from imageData
       this.pixels_key = []
       //this.palette_key.forEach(c=>console.log(c.r + ' ' + c.g + ' ' + c.b))
-      for (var i = 0; i < this.imageData.data.length; i+=4) {
-        var index = this.palette_key.findIndex(c=>
-          {
-            return c.r === this.imageData.data[i] &&
-            c.g === this.imageData.data[i+1] &&
-            c.b === this.imageData.data[i+2]
-          })
-        this.pixels_key.push(index)
-        this.pixels.push(index)
-      }
+
+      this.palette_key.forEach((c,cindex)=>{
+        for(var i=0; i< this.imageData.data.length; i+=4) {
+          if (c.r === this.imageData.data[i] &&
+              c.g === this.imageData.data[i+1] &&
+              c.b === this.imageData.data[i+2])
+          this.pixels_key[i/4]=cindex
+        }
+
+      })
+      this.pixels = this.pixels_key.slice()
+
+      // for (var i = 0; i < this.imageData.data.length; i+=4) {
+      //   var index = this.palette_key.findIndex(c=>
+      //     {
+      //       return c.r === this.imageData.data[i] &&
+      //       c.g === this.imageData.data[i+1] &&
+      //       c.b === this.imageData.data[i+2]
+      //     })
+      //   this.pixels_key.push(index)
+      //   this.pixels.push(index)
+      // }
       console.log("pixels_key", this.pixels_key)
 
     } else {
@@ -291,6 +296,10 @@ Bitmap.prototype = {
   //
   render () {
     this.generateImageData(this.pixels, this.palette, this.imageData)
+  },
+
+  getImageData() {
+    return this.imageData
   },
 
   generateImageData (pixels) {

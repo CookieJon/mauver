@@ -14,12 +14,13 @@ import Vue from 'vue'
 import Quasar from 'quasar'
 import router from './router'
 import Store from './moe/moe.store.js'
+// import Sortable from 'sortablejs'
 
 Vue.config.productionTip = false
 
 Vue.use(Quasar) // Install Quasar Framework
-
 Vue.use(Store)
+// Vue.use(Sortable)
 
 if (__THEME === 'mat') {
   require('quasar-extras/roboto-font')

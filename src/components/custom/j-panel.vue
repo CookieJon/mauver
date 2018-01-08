@@ -85,7 +85,7 @@
     </div>
 
     <!-- j-panel-footer -->
-    <div class='j-panel-footer' ref="footer">
+    <div class='j-panel-footer hidden' ref="footer">
 
       <!-- user toolbars -->
       <slot name="footer"></slot>
@@ -107,7 +107,7 @@ import { extend, QBtn, QIcon, QPopover, QTooltip } from 'quasar'
   // import '../../store/actions'
 
   var $ = require('jquery')
-  require('malihu-custom-scrollbar-plugin')
+  // require('malihu-custom-scrollbar-plugin')
   require('jquery-mousewheel')
   require('jquery-ui/draggable')
   require('jquery-ui/resizable')
@@ -225,12 +225,12 @@ import { extend, QBtn, QIcon, QPopover, QTooltip } from 'quasar'
       // Scrollable
       //
       // $(vm.$refs.contentInner)
-      $el
-        .find('.scroll')
-        .wrapInner('<div></div>')
-        .mCustomScrollbar({
-          theme: 'dark'
-        })
+      // $el
+      //   .find('.scroll')
+      //   .wrapInner('<div></div>')
+      //   .mCustomScrollbar({
+      //     theme: 'dark'
+      //   })
 
       // Resizable
       //
@@ -461,8 +461,10 @@ import { extend, QBtn, QIcon, QPopover, QTooltip } from 'quasar'
     xperspective 100px
     xtransform translateX( -100px )
     z-index 9
-    xbackground-color rgba(255, 255, 255, 0.1)
-    background-color rgba(0, 0, 0, 0.2)
+    background-color rgba(255, 255, 255, 0.1)
+    xbackground-color rgba(0, 0, 0, 0.2)
+    background-color rgba(85, 85, 85, .6)
+    
 
   .j-panel-content-inner
     xborder 2px dotted yellow

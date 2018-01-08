@@ -1,45 +1,38 @@
 <template>
-  <div>
     <div
       ref="container"
-      sortable="options.sortable"
-      @sort='onArrange'
-      :class="this.myClass"
-      class="frame upload-zone"
+      @sort='onSort'
+      @add='onAdd'
+      @clone='onClone'
+      @update='onUpdate'
+      @choose='onChoose'
+      @remove='onRemove'
+      :class='this.myClass'
+      class='frame'
     >
-
-    <j-item
-      v-for='item, i in value'
-      :key='item.id'
-      @click='onClickItem(i, $event)' 
-      :value='value[i]'
-      xvalue='$state.repo[item.repo][item.key]||null'>
-    </j-item>
+      <j-item
+        v-for='item, i in value'
+        :key='item.id'
+        @click='onClickItem(i, $event)' 
+        :value='value[i]'
+        xvalue='$state.repo[item.repo][item.key]||null'>
+      </j-item>
     
     </div>
-  </div>
 </template>
-<!--
-
-    <div  v-for='item in value'>
-      {{ item.repo + ' ' + item.key }}
-    </div>
-      @dragenter.stop.prevent="onDragEnter"
-      @dragover.stop.prevent="onDragOver"
-      @drop.stop.prevent="onDrop"
-      -->
 <script>
 /* eslint-disable */
   // var Bitmap = require('../../moe/moe.bitmap.js')
   var jItem = require('components/custom/j-item')
   var jDebug = require('components/custom/j-debug')
   import { extend } from 'quasar'
-//  import Sortable from 'sortablejs'
-
+  import Sortable from 'sortablejs'
+  import draggable from 'vuedraggable'
+ 
   export default {
     name: 'j-collection-rubaxax',
     components: {
-      jItem, jDebug
+      jItem, jDebug, draggable
     },
     props: {
       value: {
@@ -53,7 +46,7 @@
     data () {
       return {
         test: extend({}, this.value),
-        myValue: this.value,
+        //myValue:  extend({}, this.value),
         options: {
           sortable: {
             animation: 550,
@@ -70,15 +63,58 @@
       //  collection:
     },
     mounted () {
-      // var me = this
-      // Sortable.create(this.$refs.container)
+      var me = this
+      Sortable.create(this.$refs.container,
+        { 
+          group: {
+            name: "omni", 
+            pull: 'clone', 
+            revertClone: true 
+          },
+          animation: 100
+        })
     },
     methods: {
-      onArrange (e) {
+
+      // Called by any change to the list (add / update / remove)
+      onSort: function (/**Event*/e) {
+        // same properties as onEnd
+        console.log('onSort',e)
+      },
+      
+      // sortablejs events.. 
+      // Element is dropped into the list from another list
+      onAdd: function (/**Event*/e) {
+        console.log('onAdd',e)
+        this.$emit("add", e)
+        // same properties as onEnd
+      },
+
+      // Changed sorting within list
+      // onUpdate: function (/**Event*/e) {
+      //   // same properties as onEnd
+      //   // this.$emit("add", this.value[index])
+      // },
+
+      // Element is removed from the list into another list
+      onRemove: function (/**Event*/e) {
+        // same properties as onEnd
+        console.log('onRemove',e)
+        this.$emit("add", e)
+      },      
+      // Called when creating a clone of element
+      onClone: function (/**Event*/e) {
+        var origEl = e.item;
+        var cloneEl = e.clone;
+        this.$emit("clone", e)
+        console.log('onClone',e)
+      },
+      onUpdate (e) {
         let tmp = extend({}, {val: this.value}).val
+        // ^-Magic!!  ///let tmp = extend({}, this.value)
         tmp.splice(e.newIndex, 0, tmp.splice(e.oldIndex, 1)[0])
         this.$emit('input', tmp)
-
+        console.log('input.--update',e)
         // this.$emit('arrange', {
         //   obj: this.item,
         //   fromIndex: e.oldIndex,
@@ -86,35 +122,14 @@
         // })
         // console.log(e)
       },
+    // Element is chosen
+      onChoose: function (/**Event*/e) {
+        this.$emit("choose", e.oldIndex)// element index within parent
+      },      
       onClickItem (index, e) {
         this.$emit("clickItem", this.value[index])
       },
-      // onDragEnter (e) {
-      //   e.stopPropagation()
-      //   e.preventDefault()
-      // },
-      // onDragOver (e) {
-      //   e.stopPropagation()
-      //   <e class="preventDefault"></e>
-      // },
-      // onDrop (e) {
-      //   console.log('onDrop:', e, e.dataTransfer.files)
-      //   e.preventDefault()
-      //   var files = e.dataTransfer.files
-      //   for (var i = 0, l = files.length; i < l; i++) {
-      //     var file = files[i]
-      //     if (!file.type.match(/image.*/)) {
-      //       console.log('File ', i, 'not an image. Won\'t create bitmap.')
-      //     }
-      //     else {
-      //       // this.loadImage(file)
-      //       console.log('File type = ', file.type)
-      //       this.$store.dispatch('addBitmap', {file})
-      //     }
-      //   }
-      //   // $vm.$refs.fileinput.files = files // this code line fires your 'fileCloadImagehanged' function (imageLoader change event)
-      // },
-
+    
     }
   }
 </script>
@@ -127,17 +142,21 @@
 /* frame-type-grid */
 .frame.frame-type-grid
   padding 5px
-  xbackground-color #f0f0f0
+  background-color #f0f0f0
+  min-height 45px
+  width 100%
 
 .frame.frame-type-grid > .frame
-  width calc(33% - 6px)
-  max-width 240px
+  width calc(15% - 6px)
+  width 64px
+  xmax-width 240px
   margin 3px
   height auto
   position relative
   float left
   min-height 48px
-  border-left 4px solid #2196F3
+  border 2px solid #333
+  //border-left 4px solid #2196F3
   box-shadow 0 3px 6px 3px rgba(1,1,1,0.4)
   background-color rgba(255, 255, 255, 0.5)
   box-shadow 4px 4px 2px rgba(0, 0, 0, 0.3)
@@ -197,13 +216,13 @@
 
 .item-label
   position absolute
-  height 30%
+  height 16px
   padding 2px
-  margin-top -30%
+  bottom 0
   width 100%
   color white
-  font-size .8rem
-  background-color  rgba(0, 0, 0, .35)
+  font-size .6rem
+  background-color  rgba(0, 0, 0, .47)
   z-index 12
 
 .frame.frame-type-list > .frame > .item-label
@@ -229,7 +248,7 @@
   xposition:relative;
   xoverflow:hidden;
   xwidth:100%;
-  xheight:300px;
+  height:100%;
   xbackground:transparent;
   border:4px dashed #333;
   cursor:pointer;

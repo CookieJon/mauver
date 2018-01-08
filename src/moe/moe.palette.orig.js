@@ -109,12 +109,9 @@ function PaletteManager() {
 
     for (var group in materialDefs) {
         for (var member in materialDefs[group]) {
-
             var hex = materialDefs[group][member];
             var color = constructColorFromHex(hex);
-
             materialColors.push(color);
-
         }
     }
     // console.table(materialColors);
@@ -560,7 +557,6 @@ function PaletteManager() {
     function sortColorsByHue(colors) {
         return colors.sort(function (a, b) {
             return (a.hue != b.hue) ? a.hue - b.hue : a.chroma - b.chroma;
-
         });
     };
 

@@ -104,7 +104,7 @@ export default
               if (v.length === 0) {
                 li.data.attrs.class = 'array empty'
                 a.data.attrs.dataValue = v
-              } else if (v.length > 10) {
+              } else if (v.length > 0) {
                 li.data.attrs.class = 'array limited'
                 a.data.attrs.dataValue = '['+v.length + 'items]'
               } else {

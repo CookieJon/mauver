@@ -17,12 +17,24 @@ function Artwork (options) {
   this.options = Artwork
 
   this._type = 'Artwork'
+  this.id = null
+  this.imageData = null // for the icon
+
   this.title = 'Untitled'
 
-  this.palette = null
   this.filters = []
+  this.palette = null
+  this.bitmap = null
+
+
 
 }
+
+Artwork.setBitmap = function (oBitmap) {
+  this.bitmap = oBitmap
+  console.log("set")
+}
+
 
 Artwork.prototype = {
 
@@ -30,11 +42,22 @@ Artwork.prototype = {
 
   init (options) {
 
+    this.id = 'A'+ parseInt(Math.random()* 10000)
+
     this.options = options
 
     var self = this
 
+
+
+  },
+
+  render() {
+
+    this.imageData = this.filters[i].render()
+
   }
 
 }
+
 

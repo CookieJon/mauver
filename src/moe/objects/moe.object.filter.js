@@ -20,6 +20,7 @@ function Filter (options) {
   this.title = 'Untitled'
 
   this.bitmap = null
+  this.filterType = null
 
 }
 
@@ -35,6 +36,10 @@ Filter.prototype = {
 
   },
 
+  execute (input) {
+    //
+
+  }
 
 
 }

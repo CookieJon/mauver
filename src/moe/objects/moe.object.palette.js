@@ -4,13 +4,20 @@
  * Released under the MIT License.
  * https://github.com/CookieJon
  */
+/* eslint-disable */
 
 export default Palette
 
+import ColorUtils from '../../moe/utils/moe.utils.color.js'
+
 function Palette () {
   this._type = 'Bitmap'
-
   this.title = 'Untitled'
+
+  this.colors = []  // 256 array of {r: g: b: } 
+ 
+  this.imageData = null
+
 }
 
 Palette.prototype = {
@@ -18,7 +25,9 @@ Palette.prototype = {
   constructor: Palette,
 
   init: () => {
-    // this.imageData = new ImageData(this.width, this.height)
-  }
+    // default to Material Color palette
+    this.title = "Default Palette"
+    this.colors = this.generatePaletteColors('default');
+  },
 
 }

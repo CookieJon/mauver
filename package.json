@@ -20,8 +20,10 @@
     "pug": "^2.0.0-rc.4",
     "quasar-extras": "^0.0.7",
     "quasar-framework": "git+https://git@github.com/quasarframework/quasar-edge.git",
+    "sortablejs": "^1.7.0",
     "vue": "~2.3.0",
-    "vue-router": "^2.0.0"
+    "vue-router": "^2.0.0",
+    "vuedraggable": "^2.16.0"
   },
   "devDependencies": {
     "autoprefixer": "^6.4.0",

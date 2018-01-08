@@ -2,9 +2,8 @@
   <q-layout
     ref="layout"
     view="lHh Lpr fff"
-    :left-class="{'bg-grey-2': true}"
+    :left-class="{'bg-glass': true}"
     :style="bgStyle">
-
       
     <q-toolbar slot="header">
       <q-btn
@@ -52,26 +51,12 @@
         instead of <q-item> for 
         internal vue-router navigation
       -->
+      <div class='j-tray.area.panel-item-grow' slot='content'>
+        <j-object :value='$state'></j-object>
+      </div>      
+      <!-- <j-panel icon='business' title='debug'>
 
-      <q-list no-border link inset-delimiter>
-        <q-list-header>Essential Links</q-list-header>
-        <q-item @click="launch('http://quasar-framework.org')">
-          <q-item-side icon="school" />
-          <q-item-main label="Docs" sublabel="quasar-framework.org" />
-        </q-item>
-        <q-item @click="launch('http://forum.quasar-framework.org')">
-          <q-item-side icon="record_voice_over" />
-          <q-item-main label="Forum" sublabel="forum.quasar-framework.org" />
-        </q-item>
-        <q-item @click="launch('https://gitter.im/quasarframework/Lobby')">
-          <q-item-side icon="chat" />
-          <q-item-main label="Gitter Channel" sublabel="Quasar Lobby" />
-        </q-item>
-        <q-item @click="launch('https://twitter.com/quasarframework')">
-          <q-item-side icon="rss feed" />
-          <q-item-main label="Twitter" sublabel="@quasarframework" />
-        </q-item>
-      </q-list>
+      </j-panel> -->
     </div>
 
     <!--
@@ -112,6 +97,7 @@ import {
   QRouteTab
 } from 'quasar'
 
+var jObject = require('components/custom/j-object')
 const
   { viewport } = dom, 
   { position } = event,
@@ -133,6 +119,7 @@ const
 export default {
   name: 'index',
   components: {
+    jObject,
     QLayout,
     QToolbar,
     QToolbarTitle,
@@ -302,7 +289,7 @@ export default {
   .layout-view
     scroll none
   .bg-glass
-    background rgba(30, 30, 30, .3)
+    background rgba(0, 0, 0, .6)
 
   .layout-header
     z-index 11 !important

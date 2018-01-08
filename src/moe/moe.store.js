@@ -47,8 +47,10 @@ let state = {
   test: 'Hi Jon',
   bitmaps: [],
   artworks: [],
+  palettes: [],
   filters: [],
   activeBitmap: {},
+  activeArtwork: {},
   notes: [],
   imgUrls: [
     '/statics/img/resource/bg/more1.png',
@@ -80,6 +82,11 @@ const actions = {
     return obj
   },
 
+  artwork_AddFilter (oArtwork, oFilter) {
+    oArtwork.bitmap = oFilter
+    console.log('artwork_AddFilter')
+  },
+
   addBitmap (payload) {
     // @payload: {
     //   bitmap:     // <- create from template bitmap
@@ -90,7 +97,7 @@ const actions = {
     // }
     var bitmap = new MoeObjects.Bitmap()
     var src = state.imgUrls[Math.floor(Math.random() * state.imgUrls.length)]
-    var id = 'bitmap_000' + uid++
+    var id = 'bit_000' + uid++
     var testobj = { test: 'pass' }
    //  state.repo.bitmaps[id] = bitmap
    // state.repo.bitmaps[id] = bitmap
@@ -110,12 +117,16 @@ const actions = {
 
   addArtwork (payload) {
     var artwork = new MoeObjects.Artwork()
-    artwork.init({})
+    var id = 'art_000' + uid++
+    artwork.init({id})
+   /// Vue.set(state.repo.artworks, id, artwork)
+    state.artworks.push(artwork)
    // state.artworks.push(new Ref())
   },
 
-  setActiveArtwork (bitmap) {
-    state.ActiveArtwork = bitmap
+  setActiveArtwork (artwork) {
+    state.activeArtwork = artwork
+    console.log('Active artwork', artwork)
   },
 
   addFilter (payload) {
@@ -123,9 +134,10 @@ const actions = {
     filter.init({})
     state.filters.push(filter)
   },
+
   setActiveFilter (bitmap) {
-    state.ActiveFilter = bitmap
-  },
+    state.activeFilter = bitmap
+  }
 }
 
 //  --- Define Store mixin
@@ -165,6 +177,9 @@ Ref.prototype = {
 function install (Vue, options) {
   // if (install.installed) { return }
   // install.installed = true
+
+  // Prepare the store
+  //
 
   let moe = {
     vm: new Vue({
