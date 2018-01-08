@@ -26,11 +26,11 @@ export default new VueRouter({
 
     // Default
     {
-      path: '/main',
+      path: '/*',
       component: load('layouts/layout-mauver'),
       children: [
         {
-          path: '/view-mauve',
+          path: '/*',
           component: load('views/view-mauve')
         },
         {

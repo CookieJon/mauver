@@ -44,6 +44,72 @@ Bitmap.prototype = {
     // this.imageData = new ImageData(this.width, this.height)
   },
 
+  /*
+  BMP
+  --==FILE_HEADER: 14 bytes
+  0   2=19778 (BM) bfType	2	The characters "BM"
+  2   4=66614    bfSize	4	The size of the file in bytes
+  6   2=0        bfReserved1	2	Unused - must be zero
+  8   2=0        bfReserved2	2	Unused - must be zero
+  10  4=1078     bfOffBits	4	Offset to start of Pixel Data
+  --==IMAGE_HEADER: 40 bytes
+  14  =40       biSize	4	Header Size - Must be at least 40
+  18  =256      biWidth	4	Image width in pixels
+  22  =256      biHeight	4	Image height in pixels
+  26  =1        biPlanes	2	Must be 1
+  28  =8        biBitCount	2	Bits per pixel - 1, 4, 8, 16, 24, or 32
+  30  =0        biCompression	4	Compression type (0 = uncompressed)
+  34  =65536    biSizeImage	4	Image Size - may be zero for uncompressed images
+  38  =2834     biXPelsPerMeter	4	Preferred resolution in pixels per meter (18)
+  42  =2834     biYPelsPerMeter	4	Preferred resolution in pixels per meter (18)
+  46  =256      biClrUsed	4	Number Color Map entries that are actually used (256)
+  50  =256      biClrImportant	4	Number of significant colors
+  --==COLOR_TABLE:
+  54  =256*[BGR0]
+  --== PIXEL_DATA:
+  1078 =65536*1vt
+  */
+
+  toArrayBuffer: function toArrayBuffer() {
+    var buffer = new ArrayBuffer(66614)
+    var dataView = new DataView(buffer)
+    // File Header
+    dataView.setUint16(0, 19778) // BM
+    dataView.setUint32(2, 66614) // size of file
+    dataView.setUint8(6, 0)
+    dataView.setUint8(8, 0)
+    dataView.setUint32(10, 1078) // Offset to pixeldata
+    // Image Header
+    dataView.setUint32(14, 40)
+    dataView.setUint32(18, 256)
+    dataView.setUint32(22, 256)
+    dataView.setUint8(26, 1)
+    dataView.setUint8(28, 8)
+    dataView.setUint32(30, 8)
+    dataView.setUint32(34, 65536)
+    dataView.setUint32(38, 2834)
+    dataView.setUint32(42, 2834)
+    dataView.setUint32(46, 256)
+    dataView.setUint32(50, 256)
+    // Palette
+    let offset = 54
+    for (i=0;i++<256;) {
+      let c = palette[i]
+      dataView.setUint8(offset, c.b)
+      dataView.setUint8(offset+1, c.b)
+      dataView.setUint8(offset+2, c.r)
+      offset += 4
+    }
+    // Pixels
+    offset = 1078
+    for (y = 256; y-- >= 0;) {
+      for (x = 0; x++ < 256;) {
+        dataView.setUint8(offset++, pixels[x + y * 256])
+      }
+    }
+
+  },
+
   fromArrayBuffer: function fromArrayBuffer (srcArrayBuffer) {
     // bitmap stream
     var dataview = new DataView(srcArrayBuffer)

@@ -3,8 +3,8 @@
 
     //- <!-- Notice the slot="overlay" -->
     q-card-title(slot='overlay')
-      p.small|VALUE {{value}}
-      p.small|VALUE {{myValue}}{{myValue.filters}}
+      //- p.small|VALUE {{value}}
+      //- p.small|VALUE {{myValue}}{{myValue.filters}}
       span(slot="subtitle")
 
     q-card-main
@@ -26,7 +26,7 @@
               'max': 10000
             }		
           ) 
-          p|x{{myValue.filters}}
+          //- p|x{{myValue.filters}}
           j-collection.frame-type-grid(v-model='jFilters', @add='onAddFilter')
           q-select.col(stack-label='Palette', dark, v-model='paletteDDL', :options='paletteOptions')
        
