@@ -70,7 +70,7 @@ Bitmap.prototype = {
   1078 =65536*1vt
   */
 
-  toArrayBuffer: function toArrayBuffer() {
+  toArrayBuffer: function toArrayBuffer(pixels, palette, filename) {
     var buffer = new ArrayBuffer(66614)
     var dataView = new DataView(buffer)
     // File Header
@@ -107,6 +107,20 @@ Bitmap.prototype = {
         dataView.setUint8(offset++, pixels[x + y * 256])
       }
     }
+
+    // Save File
+    var a = document.createElement("a");
+    document.body.appendChild(a);
+    a.style = "display: none";
+
+    let
+      blob = new Blob(data, {type: 'octet/stream'}),
+      url = window.URL.createObjectURL(blob)
+    
+      a.href = url
+      a.download = filename
+      a.click()
+      window.URL.createObjectURL(url)
 
   },
 

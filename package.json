@@ -16,6 +16,7 @@
     "jquery": "^3.2.1",
     "jquery-ui": "^1.12.1",
     "malihu-custom-scrollbar-plugin": "^3.1.5",
+    "normalizr": "^3.2.4",
     "number-crunch": "^1.2.1",
     "pug": "^2.0.0-rc.4",
     "quasar-extras": "^0.0.7",

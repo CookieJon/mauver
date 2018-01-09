@@ -51,7 +51,7 @@
       ref="fileinput"
       class="file-upload"
       name="userprofile_picture"
-      @change="loadImage"
+      @change.stop.prevent="doSelect"
     />
 
   </div>
@@ -60,7 +60,6 @@
 <script>
   var iq = require('image-q')
   console.log(iq)
-  var $vm
   export default {
     props: {
       'cssClass': {
@@ -76,13 +75,9 @@
         return ['upload-zone', this.cssClass]
       }
     },
-    created () {},
-    ready () {
-      $vm = this
-    },
     methods: {
       doContainerClick (e) {
-        $vm.$refs.fileinput.click()
+        this.$refs.fileinput.click()
       },
       doDragEnter (e) {
         e.stopPropagation()
@@ -93,17 +88,33 @@
         e.preventDefault()
       },
       doDrop (e) {
-        console.log(e)
-        e.preventDefault()
-        var files = e.dataTransfer.files
-        for (var i = 0, l = files.length; i < l; i++) {
-          // this.loadImage(files[i])
-        }
-        // $vm.$refs.fileinput.files = files // this code line fires your 'fileCloadImagehanged' function (imageLoader change event)
+        // User drag-dropped from file explorer to dropzone
+        console.log('onDrop:', e)
+        this.__addBitmaps(e.dataTransfer.files)
       },
+      doSelect (e) {
+        // User selected files from the fileupload
+        this.__addBitmaps(e.target.files)
+      },
+
+      __addBitmaps (files) {
+        // Add the dropped or selected files
+        for (let i = 0; i < files.length; i++) {
+          let file = files[i]
+          if (file.type.match(/image.*/)) {
+            this.$actions.addBitmap({file})
+          }
+          else {
+            alert('File not an image.')
+          }
+        }
+      },
+
       loadImage (src) {
         // Prevent any non-image file type from being read.
+        debugger
         if (!src.type.match(/image.*/)) {
+          alert(src.type)
           console.log('The dropped file is not an image: ', src.type)
           return
         }
@@ -113,28 +124,6 @@
           this.render(e.target.result)
         }.bind(this)
         reader.readAsDataURL(src)
-      },
-      render (src) {
-        var MAX_WIDTH = 256
-        var MAX_HEIGHT = 256
-        var image = new Image()
-        image.onload = function () {
-          var canvas = document.createElement('canvas') // document.getElementById('myCanvas')
-          if (image.height > MAX_HEIGHT) {
-            // image.width *= MAX_HEIGHT / image.height
-            image.width = MAX_WIDTH
-            image.height = MAX_HEIGHT
-          }
-          var ctx = canvas.getContext('2d')
-          ctx.clearRect(0, 0, canvas.width, canvas.height)
-          canvas.width = image.width
-          canvas.height = image.height
-          canvas.style.width = '80px'
-          canvas.style.height = '80px'
-          ctx.drawImage(image, 0, 0, image.width, image.height)
-          $vm.$refs.container.appendChild(canvas)
-        }
-        image.src = src
       }
     }
   }

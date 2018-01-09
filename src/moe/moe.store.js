@@ -82,37 +82,29 @@ const actions = {
     return obj
   },
 
-  artwork_AddFilter (oArtwork, oFilter) {
-    oArtwork.bitmap = oFilter
-    console.log('artwork_AddFilter')
-  },
-
   addBitmap (payload) {
     // @payload: {
+    //   file:       // <- load & create from file object
     //   bitmap:     // <- create from template bitmap
     //   imageData:  // <- create from imgData
-    //   file:       // <- load & create from file object
     //   src:        // <- load & create from file name
     //   url:        // <- load & create from url
     // }
     var bitmap = new MoeObjects.Bitmap()
-    var src = state.imgUrls[Math.floor(Math.random() * state.imgUrls.length)]
     var id = 'bit_000' + uid++
-    var testobj = { test: 'pass' }
-   //  state.repo.bitmaps[id] = bitmap
-   // state.repo.bitmaps[id] = bitmap
-    bitmap.init({src, id})
+    bitmap.init({...payload, id})
     Vue.set(state.repo.bitmaps, id, bitmap)
-    // 
-    let ref = new Ref()
-    // state.bitmaps.push(ref)
     state.bitmaps.push(bitmap)
-    ref.init({repo: 'bitmaps', key: id})
   },
 
   setActiveBitmap (bitmap) {
     console.log(':-)')
     state.activeBitmap = bitmap
+  },
+
+  artwork_AddFilter (oArtwork, oFilter) {
+    oArtwork.bitmap = oFilter
+    console.log('artwork_AddFilter')
   },
 
   addArtwork (payload) {

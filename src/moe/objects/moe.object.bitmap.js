@@ -42,7 +42,7 @@ function Bitmap (options) {
 
   // this.image = null // for loading image and copying to canvas
   // this.canvas = document.createElement('canvas') // for generating imageData (only available w. canvas!)
-  this.imageData = null
+  this.imageData = new ImageData(256, 256)
 
   this.stats = {
     tags: null,
@@ -65,25 +65,49 @@ Bitmap.prototype = {
 
     var self = this
 
-    //  Create from file
+    //  Create from a FILE
     //
     if (options.file) {
+
       var file = options.file
-      // Any old image file
+
+      // 1. Is file a jBMP?
       //
-      if (file.type.match(/image.*/)) {
+      if (file.size === 66614 && file.type.match(/image.bmp/)) {
+
+        let reader = new FileReader();
+        reader.onload = function() {
+          let arrayBuffer = this.result
+          self.initFromBuffer(arrayBuffer)
+        }
+        reader.readAsArrayBuffer(file);
+
+      } 
+      // 2. Is file an image??
+      //
+      else if (file.type.match(/image.*/)) {
+
         let img = document.createElement('img')
         img.onload = () => {
           window.URL.revokeObjectURL(this.src)
-          self.normalisePalette(img)
+          self.initFromImage(img)
+          img.remove()
         }
         img.src = window.URL.createObjectURL(options.file)
+        
       }
-      // File 2. Proprietary JBitmap file
-      //
+      // 3. Unknown file type
       else {
-
+        alert('Unable to initialise bitmap from file')
       }
+
+    }
+
+    // Crete from an IMAGE
+    //
+    if (options.image) {
+
+
     }
 
     // Create from http src
@@ -94,8 +118,8 @@ Bitmap.prototype = {
       let img = document.createElement('img')
       img.onload = () => {
         self.title = 'Welcome Aboard'
-        self.normalisePalette(img)
-        console.log("DONE!")
+        self.initFromImage(img)
+        
         // setTimeout(function() {
         //   self.normalisePalette(img)
         //   // self.image = img
@@ -107,98 +131,121 @@ Bitmap.prototype = {
 
   },
 
-  normalisePalette (img) {
+  initFromBuffer (srcArrayBuffer) {
+    /* Expected srcArrayBuffer to match proprietary jBMP format */
 
-    if (1 == 1) {
-      // * scale img to 256x256 via canvas
-      let canvas = document.createElement('canvas')
-      canvas.width = 256
-      canvas.height = 256
-      let ctx = canvas.getContext('2d')
-      ctx.drawImage(img, 0, 0, 256, 256)
-      
-     // this.imageData = Utils.extend(true, {}, ctx.getImageData(0, 0, 256, 256))
-      // let imgData = ctx.getImageData(0, 0, 256, 256)
+    // bitmap stream
+    var dataview = new DataView(srcArrayBuffer)
+    var offBits = dataview.getUint16(10, true)
+    this.width = dataview.getUint32(18, true)
+    this.height = dataview.getUint32(22, true)
+    var bitCount = dataview.getUint16(28, true)
+    // var totalColors = dataview.getUint16(46, true)
+    var usedColors = dataview.getUint16(50, true)
 
-      // * material colors
-      var colorFrom = parseInt(Math.random() * 150)
-      var colorTo = parseInt(Math.random() * 150) + 151
-      colorFrom = 0
-      colorTo = 256
-      var materialColors = ColorUtils.getMaterialColors(colorFrom, colorTo)
-      this.palette_key = materialColors
-      console.log('material colors used:', materialColors)
-      // * iq.palette <= material colors
-      var iqPalette = new iq.utils.Palette()
-     
-      for (var j = 0, l = materialColors.length; j < l; j++) {
-        var color = materialColors[j]
-        iqPalette.add(iq.utils.Point.createByRGBA(color.r, color.g, color.b, color.a))
+    // pixels
+    this.length = this.width * this.height
+    this.pixels_key = new Uint8Array(this.length)
+    for (var y = 0; y < 256; y++) {
+      for (var x = 0; x < 256; x++) {
+        this.pixels_key[x + y * 256] = dataview.getUint8(offBits + x + (255 - y) * 256) // Invert Y axis (BMP8 data goes from bottom->top)
       }
-      // * iq.distance.?
-      var iqDistance = new iq.distance.EuclideanRgbQuantWOAlpha()
-      //     return new iq.distance.Euclidean();Manhattan();IEDE2000(); etc...
-
-      // & iq.image.?
-      var inPointContainer = iq.utils.PointContainer.fromHTMLCanvasElement(canvas)
-      // ////// var iqImage = new iq.image.ErrorDiffusionArray(iqDistance, iq.image.ErrorDiffusionArrayKernel.SierraLite)
-      var iqImage = new iq.image.NearestColor(iqDistance)
-
-      var outPointContainer = iqImage.quantize(inPointContainer, iqPalette)
-      var uint8array = outPointContainer.toUint8Array()
-      console.log(uint8array)
-      
-      var imageData = canvas.getContext('2d').getImageData(0, 0, 256, 256)
-      // Utils.extend(true, this.imageData, imageData)
-      this.imageData = new ImageData(256, 256)
-     //this.imageData.data.set(data)
-      for (var i = 0; i < uint8array.length; i++) {
-        this.imageData.data[i] = uint8array[i]
-      }
-      // tags
-
-      // draw palette
-      var paletteCanvas = ColorUtils.drawPixels(iqPalette.getPointContainer(), 16, 32)
-      paletteCanvas.className = 'palette'
-      //this.$el.appendChild(paletteCanvas)
-
-      // Create pixels array from imageData
-      this.pixels_key = []
-      //this.palette_key.forEach(c=>console.log(c.r + ' ' + c.g + ' ' + c.b))
-
-      this.palette_key.forEach((c,cindex)=>{
-        for(var i=0; i< this.imageData.data.length; i+=4) {
-          if (c.r === this.imageData.data[i] &&
-              c.g === this.imageData.data[i+1] &&
-              c.b === this.imageData.data[i+2])
-          this.pixels_key[i/4]=cindex
-        }
-
-      })
-      this.pixels = this.pixels_key.slice()
-
-      // for (var i = 0; i < this.imageData.data.length; i+=4) {
-      //   var index = this.palette_key.findIndex(c=>
-      //     {
-      //       return c.r === this.imageData.data[i] &&
-      //       c.g === this.imageData.data[i+1] &&
-      //       c.b === this.imageData.data[i+2]
-      //     })
-      //   this.pixels_key.push(index)
-      //   this.pixels.push(index)
-      // }
-      console.log("pixels_key", this.pixels_key)
-
-    } else {
-      // no transform palette
-      let canvas = document.createElement('canvas')
-      canvas.width = 256
-      canvas.height = 256
-      let ctx = canvas.getContext('2d')
-      ctx.drawImage(img, 0, 0, 256, 256)
-      this.imageData = ctx.getImageData(0, 0, 256, 256)
-      return
     }
+    this.pixels = Uint8Array.from(this.pixels_key)
+
+    // palette
+    let 
+      length = bitCount === 0 ? 1 << bitCount : usedColors,
+      tmpPalette = [],
+      index = 54
+    for (var i = 0; i < length; i++) {
+      var b = dataview.getUint8(index++)
+      var g = dataview.getUint8(index++)
+      var r = dataview.getUint8(index++)
+      index++
+      tmpPalette.push({r, g, b})
+    }
+    this.palette_key = tmpPalette
+    this.palette = Array.from(tmpPalette)
+
+    this.generateImageData()
+
+    return this
+
+  },
+
+  initFromImage (img) {
+
+    // * scale img to 256x256 via canvas
+    let canvas = document.createElement('canvas')
+    canvas.width = 256
+    canvas.height = 256
+    let ctx = canvas.getContext('2d')
+    ctx.drawImage(img, 0, 0, 256, 256)
+    
+    // this.imageData = Utils.extend(true, {}, ctx.getImageData(0, 0, 256, 256))
+    // let imgData = ctx.getImageData(0, 0, 256, 256)
+
+    // * material colors
+    var colorFrom = parseInt(Math.random() * 150)
+    var colorTo = parseInt(Math.random() * 150) + 151
+    colorFrom = 0
+    colorTo = 256
+    var materialColors = ColorUtils.getMaterialColors(colorFrom, colorTo)
+    this.palette_key = materialColors
+    this.palette = [...this.palette_key]
+    console.log('material colors used:', materialColors)
+    // * iq.palette <= material colors
+    var iqPalette = new iq.utils.Palette()
+    
+    for (var j = 0, l = materialColors.length; j < l; j++) {
+      var color = materialColors[j]
+      iqPalette.add(iq.utils.Point.createByRGBA(color.r, color.g, color.b, color.a))
+    }
+    // * iq.distance.?
+    var iqDistance = new iq.distance.EuclideanRgbQuantWOAlpha()
+    //     return new iq.distance.Euclidean();Manhattan();IEDE2000(); etc...
+
+    // & iq.image.?
+    var inPointContainer = iq.utils.PointContainer.fromHTMLCanvasElement(canvas)
+    // ////// var iqImage = new iq.image.ErrorDiffusionArray(iqDistance, iq.image.ErrorDiffusionArrayKernel.SierraLite)
+    var iqImage = new iq.image.NearestColor(iqDistance)
+
+    var outPointContainer = iqImage.quantize(inPointContainer, iqPalette)
+    var uint8array = outPointContainer.toUint8Array()
+    console.log(uint8array)
+    
+    var imageData = canvas.getContext('2d').getImageData(0, 0, 256, 256)
+    this.imageData = new ImageData(256, 256)
+    for (var i = 0; i < uint8array.length; i++) {
+      this.imageData.data[i] = uint8array[i]
+    }
+    // tags
+
+    // draw palette
+    var paletteCanvas = ColorUtils.drawPixels(iqPalette.getPointContainer(), 16, 32)
+    paletteCanvas.className = 'palette'
+    //this.$el.appendChild(paletteCanvas)
+
+    // Create pixels array from imageData
+    this.pixels_key = []
+    //this.palette_key.forEach(c=>console.log(c.r + ' ' + c.g + ' ' + c.b))
+
+    this.palette_key.forEach((c,cindex)=>{
+      for(var i=0; i< this.imageData.data.length; i+=4) {
+        if (c.r === this.imageData.data[i] &&
+            c.g === this.imageData.data[i+1] &&
+            c.b === this.imageData.data[i+2])
+        this.pixels_key[i/4]=cindex
+      }
+
+    })
+    this.pixels = this.pixels_key.slice()
+
+    // this.saveBMP(this.pixels, this.palette, 'j'+this.id+'.bmp' )
+
+    //this.generateImageData()
+    console.log("pixels_key", this.pixels_key)
 
   },
 
@@ -228,84 +275,67 @@ Bitmap.prototype = {
   1078 =65536*1vt
   */
 
-  toArrayBuffer () {
+  saveBMP: function toArrayBuffer(pixels, palette, filename) {
     var buffer = new ArrayBuffer(66614)
     var dataView = new DataView(buffer)
+
     // File Header
-    dataView.setUint16(0, 19778) // BM
-    dataView.setUint32(2, 66614) // size of file
-    dataView.setUint8(6, 0)
-    dataView.setUint8(8, 0)
-    dataView.setUint32(10, 1078) // Offset to pixeldata
+    dataView.setUint16(0, 19778, true) // BM
+    dataView.setUint32(2, 66614, true) // size of file
+    // dataView.setUint8(6, 0, true)
+    // dataView.setUint8(8, 0, true)
+    dataView.setUint32(6, 19786, true) // JM
+    dataView.setUint32(10, 1078, true) // Offset to pixeldata
     // Image Header
-    dataView.setUint32(14, 40)
-    dataView.setUint32(18, 256)
-    dataView.setUint32(22, 256)
-    dataView.setUint8(26, 1)
-    dataView.setUint8(28, 8)
-    dataView.setUint32(30, 8)
-    dataView.setUint32(34, 65536)
-    dataView.setUint32(38, 2834)
-    dataView.setUint32(42, 2834)
-    dataView.setUint32(46, 256)
-    dataView.setUint32(50, 256)
+    dataView.setUint32(14, 40, true)
+    dataView.setUint32(18, 256, true)
+    dataView.setUint32(22, 256, true)
+    dataView.setUint8(26, 1, true)
+    dataView.setUint8(28, 8, true)
+    dataView.setUint32(30, 0, true)
+    dataView.setUint32(34, 65536, true)
+    dataView.setUint32(38, 2834, true)
+    dataView.setUint32(42, 2834, true)
+    dataView.setUint32(46, 256, true)
+    dataView.setUint32(50, 256, true)
     // Palette
     let offset = 54
-    for (i=0;i++<256;) {
+    for (let i=0; i < 256; i++) {
       let c = palette[i]
-      dataView.setUint8(offset, c.b)
-      dataView.setUint8(offset+1, c.b)
-      dataView.setUint8(offset+2, c.r)
+      dataView.setUint8(offset, c.b, true)
+      dataView.setUint8(offset+1, c.g, true)
+      dataView.setUint8(offset+2, c.r, true)
       offset += 4
     }
     // Pixels
     offset = 1078
-    for (y = 256; y-- >= 0;) {
-      for (x = 0; x++ < 256;) {
-        dataView.setUint8(offset++, pixels[x + y * 256])
+    for (let y = 256; y > 0; y--) {
+      for (let x = 0; x < 256; x++) {
+        dataView.setUint8(offset++, pixels[x + y * 256], true)
       }
     }
 
+    // Save File
+    var a = document.createElement("a");
+    document.body.appendChild(a);
+    a.style = "display: none";
+
+    let dataArray = new Uint8Array(buffer)
+
+    let
+      blob = new Blob([dataArray], {type: 'octet/stream'}),
+      url = window.URL.createObjectURL(blob)
+    
+      a.href = url
+      a.download = filename
+      a.click()
+      window.URL.revokeObjectURL(url);
+
   },
-  fromArrayBuffer (srcArrayBuffer) {
-    // bitmap stream
-    var dataview = new DataView(srcArrayBuffer)
-    var offBits = dataview.getUint16(10, true)
-    this.width = dataview.getUint32(18, true)
-    this.height = dataview.getUint32(22, true)
-    var bitCount = dataview.getUint16(28, true)
-    // var totalColors = dataview.getUint16(46, true)
-    var usedColors = dataview.getUint16(50, true)
 
-    // pixels
-    this.length = this.width * this.height
-    this.pixels_key = new Uint8Array(this.length)
-    for (var y = 0; y < 256; y++) {
-      for (var x = 0; x < 256; x++) {
-        this.pixels_key[x + y * 256] = dataview.getUint8(offBits + x + (255 - y) * 256) // Invert Y axis (BMP8 data goes from bottom->top)
-      }
-    }
-    this.pixels = Uint8Array.from(this.pixels_key)
-
-    // palette
-    var length = bitCount === 0 ? 1 << bitCount : usedColors
-    // var index = 54
-    var tmpPalette = []
-    for (var i = 0; i < length; i++) {
-//      var b = dataview.getUint8(index++)
-//      var g = dataview.getUint8(index++)
-//      var r = dataview.getUint8(index++)
-//      var a = dataview.getUint8(index++)
-
-      // tmpPalette.push(Palette.getColorFromRGBA(r, g, b, a))
-    }
-    this.palette_key = tmpPalette
-    this.palette = Array.from(tmpPalette)
-
-    return this
-  },
 
   fromFile (srcFile, callback) {
+    debugger
     var file = srcFile
     var reader = new FileReader()
     var title = file.name.replace(/\.bmp|_/g, '').toSentenceCase()
@@ -363,26 +393,30 @@ Bitmap.prototype = {
     this.generateImageData(this.pixels, this.palette, this.imageData)
   },
 
-  getImageData() {
+  getImageData () {
     return this.imageData
   },
 
-  generateImageData (pixels) {
+  generateImageData () {
     // quick method just for the key image with no mapping etc.
     //
-    var data = this.imageData.data
 
-    var mapToIndex = 0
+    let 
+      tmpImageData = new ImageData(256, 256),
+      data = tmpImageData.data,
+      index = 0
 
     for (var i = 0; i < 65535; i++) {
-      var theColor = this.palette_key[pixels[i]]
-      data[mapToIndex++] = theColor.r
-      data[mapToIndex++] = theColor.g
-      data[mapToIndex++] = theColor.b
-      data[mapToIndex++] = 255
+      var theColor = this.palette[this.pixels[i]]
+      data[index++] = theColor.r
+      data[index++] = theColor.g
+      data[index++] = theColor.b
+      data[index++] = 255
     }
 
-    return this.imageData
+    this.imageData = tmpImageData
+
+
   },
 
   // Converts image to canvas; returns new canvas element
