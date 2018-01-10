@@ -34,7 +34,7 @@
     <div
       ref="container"
       :class='computedClass'
-      @click.stop.prevent="openFileInput"
+      @xclick.stop.prevent="openFileInput"
       @dragenter.stop.prevent="doDragEnter"
       @dragover.stop.prevent="doDragOver"
       @drop.stop.prevent="doDrop"
@@ -84,21 +84,27 @@
       },
       doDrop (e) {
         // User drag-dropped from file explorer to dropzone
-        console.log('onDrop:', e)
+        console.log('upload-zone dnDrop:', e)
         let
           dt = event.dataTransfer,
           html = dt.getData('text/html'),
           src = html.match(/src\s*=\s*"(.+?)"/)
           
         if (dt.files.length) {
+          console.log('dropped files')
           this.__addBitmaps(dt.files)
         } 
         else if (src) {
+          console.log('dropped text/html->src=')
           src = src[1]
           var img = new Image()
           img.onload = e => this.$actions.addBitmap({image: img})
           img.src = src
-        }
+        } 
+        else (
+          console.log('dropped nothing I deal with')
+
+        )
         // console.log('text/html', dt.getData('text/html'))
         // var url = dt.getData('url')
         // if (!url) {

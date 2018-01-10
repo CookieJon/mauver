@@ -14,17 +14,17 @@ div
       q-btn(round,primary,small,icon='business', @click='$refs.zone.openFileInput()')
     div.j-tray.area.panel-item-grow(slot='content')
       j-upload-zone(ref='zone')
-        j-collection.frame-type-grid(v-model='$state.bitmaps', @clickItem='b => {$actions.setActiveBitmap(b)}')
-  
+        j-collection.frame-type-grid(v-model='$state.bitmaps', @select='e => {$actions.setActiveBitmap(e.item)}')
+
   // ARTWORKS
   j-panel(icon='business', title='Artworks', :width='370', :height='200', :x='10', :y='210')
     div.j-panel-toolbar.text-black(slot='toolbar', style='padding:4px;')
       q-btn(round,primary,small,icon='business', @click='$actions.addArtwork()')
     div.j-tray.area.panel-item-grow(slot='content')
-      j-collection.frame-type-grid(v-model='$state.artworks', @clickItem='b => {$actions.setActiveArtwork(b)}')
+      j-collection.frame-type-grid(v-model='$state.artworks', @select='e => {$actions.setActiveArtwork(e.item)}')
 
   // ACTIVE ARTWORK
-  j-panel(icon='business', :title='$state.activeArtwork ? $state.activeArtwork.id : "none"', :width='600', :height='680', :x='10', :y='430')
+  j-panel(icon='business', :title='$state.activeArtwork ? $state.activeArtwork.id : "none"', :width='530', :height='680', :x='390', :y='10')
     div.j-tray.area.panel-item-grow(slot='content')
       j-artwork(v-model='$state.activeArtwork')
 
@@ -42,9 +42,7 @@ div
   // BITMAP PREVIEW
   j-panel(icon='business', :title='$state.activeBitmap ? $state.activeBitmap.id : "none"', :width='370', :height='370', :x='600', :y='400')
     div.j-tray.area.panel-item-grow(slot='content')
-      | ss {{ $state.activeBitmap ? $state.activeBitmap.id : 'none'}}
       j-canvas.frame-type-grid(:image-data=' this.$state.activeBitmap ? this.$state.activeBitmap.imageData : null')
-      | dd
 </template>
 
 

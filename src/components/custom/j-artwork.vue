@@ -9,7 +9,7 @@
 
     q-card-main
       div.row 
-        div.col
+        div.col-4
           j-canvas(:imageData='slidingSpeedsImageData',width="60px",height="60px")
           j-lever(v-model='controlTargetPower', rest='50%', :markers='true', 
             :labelAlways='true', 
@@ -27,10 +27,10 @@
             }		
           ) 
           //- p|x{{myValue.filters}}
-          j-collection.frame-type-grid(v-model='jFilters', @add='onAddFilter')
+          j-collection.frame-type-grid(v-model='myFilters', @add='onAddFilter')
           q-select.col(stack-label='Palette', dark, v-model='paletteDDL', :options='paletteOptions')
        
-        div.col
+        div.col-8
           j-canvas(:imageData='slidingImageData',width='420px',height="420px")    
           q-input.col(stack-label='Sliding Speeds Pattern', dark, v-model='slidingSpeedsPattern')
       div.row
@@ -74,13 +74,11 @@ export default {
     return {
       paletteOptions: ColorUtils.presetPalettes.map(v=>{return {'label':v, 'value':v}}),
       paletteDDL: null,
-      myValue: {a:'empty'},
+      myValue: null,
       // >>>><> move to Artwork...!!!!
       palette: null,
 
       sliderInterval: 10,         // Timeout for continuous press
-      myFilters: [{id:'test'},{id:'test2'},{id:'test3'}],
-      jFilters: [],
       // bignum crunching base-256 arrays
       slidingLower: [],
       slidingCurrent: [],
@@ -109,43 +107,47 @@ export default {
   },
   computed: {
     // https://github.com/SortableJS/Vue.Draggable
-    // jFilters: {
-    //   get() {
-    //     alert('get' + this.value)
-    //     return extend({}, {val: this.value.filters}).val
-    //   },
-    //   set(value) {
-    //     alert('asset')
-    //   }
-    // },
+    myFilters: {
+      get() {
+        // alert('get myFilters from artwork ' + this.value)
+        return extend({}, {val: this.value.filters}).val
+      },
+      set(value) {
+        alert('myFilters set')
+      }
+    },
     myImageData () {
       return this.value ? this.value.imageData : null
     }
   },  
   watch: {
-    jFilters (old, newValue) {
-      alert('set')
-      this.myValue.filters = value
-      this.onUpdate()
-    },
+    // myFilters (old, newValue) {
+    //   alert('set jFilters from watching artwork  value')
+    //   this.myValue.filters = value
+    //   this.onUpdate()
+    // },
     value (old, newValue) {
       console.log("watch new value...", newValue)
-      this.myValue = extend({}, {val: this.value}).val
+      this.myValue = extend({}, {val: newValue}).val
     },
     paletteDDL(newValue, oldValue) {
       
     }
   },
   methods: {
-    onUpdate (e) {
+    onUpdate: e => {
       let tmp = extend({}, {val: this.myValue}).val
       this.$emit('input', tmp)
     },
-    onAddFilter (e) {
-      debugger
+    onAddFilter: e => {
+      // Rubaxa drop 1 item 
+      // var el = e.item;
+      // el.parentNode.removeChild(el);
+      //alert('Dropped: ' + el.textContent);      
+      // Moe...
       let tmp = extend({}, {val: this.myValue}).val
-      tmp.filters.push(this.$state.bitmaps[0])
-      this.$emit('input', tmp)
+      tmp.filters = [this.$state.bitmaps[0]]
+      // this.$emit('input', tmp)
     },    
     __init() {
       this.slidingLower = new Array(65536).fill(0)
