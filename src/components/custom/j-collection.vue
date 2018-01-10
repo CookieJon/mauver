@@ -15,8 +15,7 @@
         :key='item.id'
         @click='onClickItem(i, $event)' 
         :value='value[i]'
-        xvalue='$state.repo[item.repo][item.key]||null'>
-      </j-item>
+      ></j-item>
     
     </div>
 </template>
@@ -145,6 +144,7 @@
   background-color #f0f0f0
   min-height 45px
   width 100%
+  overflow hidden
 
 .frame.frame-type-grid > .frame
   width calc(15% - 6px)

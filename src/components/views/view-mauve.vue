@@ -7,25 +7,26 @@ div
   //-   j-object(v-model='$state')
   //-   j-object(v-model='$state.imgUrls')
 
-  //- // ACTIVE ARTWORK SLIDER
-  //- j-panel(icon='business', :title='$state.activeArtwork ? $state.activeArtwork.id : "none"', :width='600', :height='680', :x='20', :y='10')
-  //-   div.j-tray.area.panel-item-grow(slot='content')
-  //-     j-slider(v-model='$state.activeArtwork')
       
   // BITMAPS
-  j-panel(icon='business', title='bmp', :width='370', :height='200', :x='600', :y='10')
+  j-panel(icon='business', title='bmp', :width='370', :height='200', :x='10', :y='10')
     div.j-panel-toolbar.text-black(slot='toolbar', style='padding:4px;')
-      q-btn(round,primary,small,icon='business',@click='$actions.addBitmap()')
+      q-btn(round,primary,small,icon='business', @click='$refs.zone.openFileInput()')
     div.j-tray.area.panel-item-grow(slot='content')
-      j-upload-zone
-      j-collection.frame-type-grid(v-model='$state.bitmaps', @clickItem='b => {$actions.setActiveBitmap(b)}')
+      j-upload-zone(ref='zone')
+        j-collection.frame-type-grid(v-model='$state.bitmaps', @clickItem='b => {$actions.setActiveBitmap(b)}')
   
-  //- // ARTWORKS
-  //- j-panel(icon='business', title='Artworks', :width='370', :height='200', :x='600', :y='210')
-  //-   div.j-panel-toolbar.text-black(slot='toolbar', style='padding:4px;')
-  //-     q-btn(round,primary,small,icon='business',@click='$actions.addArtwork()')
-  //-   div.j-tray.area.panel-item-grow(slot='content')
-  //-     j-collection.frame-type-grid(v-model='$state.artworks', @clickItem='b => {$actions.setActiveArtwork(b)}')
+  // ARTWORKS
+  j-panel(icon='business', title='Artworks', :width='370', :height='200', :x='10', :y='210')
+    div.j-panel-toolbar.text-black(slot='toolbar', style='padding:4px;')
+      q-btn(round,primary,small,icon='business', @click='$actions.addArtwork()')
+    div.j-tray.area.panel-item-grow(slot='content')
+      j-collection.frame-type-grid(v-model='$state.artworks', @clickItem='b => {$actions.setActiveArtwork(b)}')
+
+  // ACTIVE ARTWORK
+  j-panel(icon='business', :title='$state.activeArtwork ? $state.activeArtwork.id : "none"', :width='600', :height='680', :x='10', :y='430')
+    div.j-tray.area.panel-item-grow(slot='content')
+      j-artwork(v-model='$state.activeArtwork')
 
   //- j-panel(:key='item.id', v-for='item in $state.workbench.editors', title='EDIT:', :width='420', :height='420', :x='640', :y='10')
   //-   div.j-panel-toolbar.text-black(slot='toolbar', style='padding:4px;')
@@ -38,7 +39,7 @@ div
   //-   div.j-tray.area.panel-item-grow(slot='content')
   //-     j-canvas.frame-type-grid(:image-data=' this.$state.activeBitmap ? this.$state.activeBitmap.imageData : null')
 
-  // PREVIEW
+  // BITMAP PREVIEW
   j-panel(icon='business', :title='$state.activeBitmap ? $state.activeBitmap.id : "none"', :width='370', :height='370', :x='600', :y='400')
     div.j-tray.area.panel-item-grow(slot='content')
       | ss {{ $state.activeBitmap ? $state.activeBitmap.id : 'none'}}

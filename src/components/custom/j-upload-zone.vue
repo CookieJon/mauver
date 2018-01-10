@@ -4,7 +4,7 @@
     position:relative;
     overflow:hidden;
     width:100%;
-    height:300px;
+    min-height:45px;
     background:transparent;
     border:2px dashed #333;
     cursor:pointer; padding:5px; color:#555; font-family:'Segoe UI'; font-weight:bold;
@@ -30,34 +30,29 @@
 </style>
 
  <template>
-  <div>
+ <div>
     <div
-      vref="container"
+      ref="container"
       :class='computedClass'
-      @click.stop.prevent="doContainerClick"
+      @click.stop.prevent="openFileInput"
       @dragenter.stop.prevent="doDragEnter"
       @dragover.stop.prevent="doDragOver"
       @drop.stop.prevent="doDrop"
     >
-      Drag imgs here
-      <img
-        ref="img"
-        id="photo"
-        src=""
-      />
-    </div>
-    <input
-      type="file"
-      ref="fileinput"
-      class="file-upload"
-      name="userprofile_picture"
-      @change.stop.prevent="doSelect"
-    />
-
+    <slot></slot>    
   </div>
+  <input
+    type="file"
+    ref="fileinput"
+    class="file-upload"
+    name="userprofile_picture"
+    @change.stop.prevent="doSelect"
+  />
+ </div>
 </template>
 
 <script>
+/* eslint-disable */
   var iq = require('image-q')
   console.log(iq)
   export default {
@@ -76,7 +71,7 @@
       }
     },
     methods: {
-      doContainerClick (e) {
+      openFileInput (e) {
         this.$refs.fileinput.click()
       },
       doDragEnter (e) {
@@ -90,10 +85,49 @@
       doDrop (e) {
         // User drag-dropped from file explorer to dropzone
         console.log('onDrop:', e)
-        this.__addBitmaps(e.dataTransfer.files)
+        let
+          dt = event.dataTransfer,
+          html = dt.getData('text/html'),
+          src = html.match(/src\s*=\s*"(.+?)"/)
+          
+        if (dt.files.length) {
+          this.__addBitmaps(dt.files)
+        } 
+        else if (src) {
+          src = src[1]
+          var img = new Image()
+          img.onload = e => this.$actions.addBitmap({image: img})
+          img.src = src
+        }
+        // console.log('text/html', dt.getData('text/html'))
+        // var url = dt.getData('url')
+        // if (!url) {
+        //   url = dt.getData('text/plain')
+        //   if (!url) {
+        //     url = dt.getData('text/uri-list')
+        //     if (!url) {
+        //       // We have tried all that we can to get this url but we can't. Abort mission
+        //     }
+        //   }
+        // }
+        // if (url.match(/http.*/)) {
+        //   alert('new img url:' + url)
+        //   console.log(url)
+        //   var img = new Image()
+        //   img.onload = function (e) {
+        //     alert(img.src)
+        //     this.$actions.addBitmap({image: img})
+        //   }
+        //   img.src = url
+        // }
+        // else {
+        //   this.__addBitmaps(e.dataTransfer.files)
+        // }
       },
+
       doSelect (e) {
         // User selected files from the fileupload
+        // alert('doSelect')
         this.__addBitmaps(e.target.files)
       },
 
@@ -108,22 +142,6 @@
             alert('File not an image.')
           }
         }
-      },
-
-      loadImage (src) {
-        // Prevent any non-image file type from being read.
-        debugger
-        if (!src.type.match(/image.*/)) {
-          alert(src.type)
-          console.log('The dropped file is not an image: ', src.type)
-          return
-        }
-        // Create our FileReader and run the results through the render function.
-        var reader = new FileReader()
-        reader.onload = function (e) {
-          this.render(e.target.result)
-        }.bind(this)
-        reader.readAsDataURL(src)
       }
     }
   }

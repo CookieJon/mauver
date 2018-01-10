@@ -87,6 +87,8 @@ Bitmap.prototype = {
       //
       else if (file.type.match(/image.*/)) {
 
+        this.id = "I" + this.id
+
         let img = document.createElement('img')
         img.onload = () => {
           window.URL.revokeObjectURL(this.src)
@@ -106,6 +108,16 @@ Bitmap.prototype = {
     // Crete from an IMAGE
     //
     if (options.image) {
+      alert("YO HOHO IMAGE HO!")
+      let img = options.image
+      img.setAttribute()
+      var canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth; // or 'width' if you want a special/scaled size
+      canvas.height = img.naturalHeight; // or 'height' if you want a special/scaled size
+      canvas.getContext('2d').drawImage(img, 0, 0);
+
+      // Get raw image data
+      alert(canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, ''));
 
 
     }
@@ -118,6 +130,8 @@ Bitmap.prototype = {
       let img = document.createElement('img')
       img.onload = () => {
         self.title = 'Welcome Aboard'
+        img.setAttribute('crossorigin', 'anonymous')
+        //img.crossOrigin = "Anonymous";
         self.initFromImage(img)
         
         // setTimeout(function() {

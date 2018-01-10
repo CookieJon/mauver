@@ -90,6 +90,7 @@ const actions = {
     //   src:        // <- load & create from file name
     //   url:        // <- load & create from url
     // }
+    console.log('$actions.addBitmap', payload)
     var bitmap = new MoeObjects.Bitmap()
     var id = 'bit_000' + uid++
     bitmap.init({...payload, id})
