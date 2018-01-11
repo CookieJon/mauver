@@ -5,6 +5,7 @@
     q-card-title(slot='overlay')
       //- p.small|VALUE {{value}}
       //- p.small|VALUE {{myValue}}{{myValue.filters}}
+      // @xdrag='__dragLever'
       span(slot="subtitle")
 
     q-card-main
@@ -15,7 +16,6 @@
             :labelAlways='true', 
             @start='__startSliding'
             @stop='__stopSliding'
-            @drag='__dragLever'
             :range={
               'min': -10000,
               '35%': -1200,
@@ -62,6 +62,11 @@ import { extend } from 'quasar'
 var crunch = require("number-crunch");
 import ColorUtils from '../../moe/utils/moe.utils.color.js'
 
+let 
+  CURRENT_TIME, 
+  LAST_TIME = Date.now(),
+  ELAPSED_TIME
+
 export default {
   name: "j-artwork",
   components: { jLever, jCollection, QCard, QCardMain, QCardSeparator, QCardMedia, QCardTitle, QField, QInput, jCanvas, QSelect },
@@ -76,7 +81,9 @@ export default {
       paletteDDL: null,
       myValue: null,
       // >>>><> move to Artwork...!!!!
+      bitmap: null,
       palette: null,
+      pizels: null,
 
       sliderInterval: 10,         // Timeout for continuous press
       // bignum crunching base-256 arrays
@@ -88,13 +95,14 @@ export default {
       slidingImageData: null, // 
       slidingSpeedsImageData: null, // Visual representation of the speed.
 
-      slidingSpeedsPattern: '10,20,80,140,140,140,170,200',
+      slidingSpeedsPattern: '1,2,3,4,3,2,1,0',
       slidingSpeeds: [],
       slidingSpeedsLength: 0,
       slidingSpeedsGradations: 0,
 
       controlMax: 65536,      // The abs(maximum value of the power?)
       controlTargetPower: 0,	// Current position of the knob 
+      controlActualPower: 0,  // Smoothstep power wrt TargetPower
       controlPower: 0,        // Current power. I.e. How many significant digits into the 65536 pixels are changes being applied?
       controlDirection: 0,    // ?? 1=up, -1=down, 0=stopped
 
@@ -145,6 +153,9 @@ export default {
       // el.parentNode.removeChild(el);
       //alert('Dropped: ' + el.textContent);      
       // Moe...
+
+      this.$actions.artwork_addFilter(artworkId, filterId)
+
       let tmp = extend({}, {val: this.myValue}).val
       tmp.filters = [this.$state.bitmaps[0]]
       // this.$emit('input', tmp)
@@ -177,13 +188,14 @@ export default {
       // this.slidingImageData = this.$state.activeBitmap.getImageData()
       this.slidingCurrent = Array.prototype.slice.call(this.$state.activeBitmap.pixels)
       this.slidingTmp = Array.prototype.slice.call(this.$state.activeBitmap.pixels)
+      LAST_TIME = Date.now()
  
       this.__populateSlidingSpeeds()
 
       this.controlPower = 0
       this.controlTargetPower = 0
 
-      this.__dragLever()
+      // this.__dragLever()
 
       this.slidingStarted = true
       this.slidingAnimId = requestAnimationFrame(this.__animateSliding)
@@ -201,11 +213,21 @@ export default {
       }
     },
 
-    __dragLever() {
-      this.__computeSlidingSpeed(this.controlTargetPower);
-    },
+    // __dragLever() {
+    //   this.__computeSlidingSpeed(this.controlTargetPower);
+    // },
 
-    __animateSliding() {
+    __animateSliding(TIME) {
+
+      ELAPSED_TIME = TIME - LAST_TIME
+      LAST_TIME = TIME
+
+      // smoothy
+      this.controlActualPower = (this.controlTargetPower - this.controlActualPower) * ELAPSED_TIME * 0.0001
+      console.log(this.controlActualPower, this.controlTargetPower)
+      // this.controlActualPower = this.controlTargetPower
+      this.__computeSlidingSpeed(this.controlActualPower)
+
 
       this.slidingCurrent = (this.controlDirection > 0) 
         ? crunch.add(this.slidingCurrent, this.slidingSpeed) 
@@ -239,7 +261,7 @@ export default {
         } catch(e) {
           console.log('error',this.$state.activeBitmap.palette_key, theColor, this.slidingCurrent[i], i)
           console.log(i, this.slidingCurrent[i], this.slidingCurrent.length);
-          this.__stopLever()
+          this.__stopSliding()
           return;
         }
       }
@@ -276,18 +298,18 @@ export default {
       //this.slidingAnimId = requestAnimationFrame(this.animateSliding);
     },
 
-    __computeSlidingSpeed() {
+    __computeSlidingSpeed(pow) {
 
 	    // val should be (currently) from -10,000 to +10,000
 	
       // 1. Calculate speed
       //
-      this.controlDirection = (this.controlTargetPower > 0) ? 1 : -1;
-      this.controlPower = Math.abs(this.controlTargetPower);
+      this.controlDirection = (pow > 0) ? 1 : -1;
+      this.controlPower = Math.abs(pow);
       
       // original method:
       //
-      // slidingSpeedPower = parseInt( ((65536 )*Math.abs(val)/1000) ) ;
+      //this.slidingSpeedPower = parseInt( ((65536 )*this.controlPower/10000) ) ;
       //
       // new method:
       //

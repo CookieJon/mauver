@@ -9,6 +9,7 @@
 
 import MoeObjects from '../moe/objects'
 import Vue from 'vue'
+import normalizr from 'normalizr'
 // Global mixing components
 /**/
 var jArtwork = require('components/custom/j-artwork')
@@ -75,6 +76,10 @@ let ui = {
 let uid = 0
 const actions = {
 
+  getEntity(entityType, id) {
+
+  },
+
   getRef (ref, field) {
     let obj = state.repos[ref.repo][ref.key]
     if (!obj) return null
@@ -101,10 +106,15 @@ const actions = {
   setActiveBitmap (bitmap) {
     console.log(':-)')
     state.activeBitmap = bitmap
+    if (state.activeArtwork) {
+      state.activeArtwork.bitmap = bitmap
+    }
   },
 
   artwork_AddFilter (oArtwork, oFilter) {
     oArtwork.bitmap = oFilter
+    oArtwork.pixels = extend({},oArtwork.bitmap.pixels)
+    oArtwork.palette = extend({},oArtwork.bitmap.palette)
     console.log('artwork_AddFilter')
   },
 
