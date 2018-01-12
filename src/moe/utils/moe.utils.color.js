@@ -12,13 +12,16 @@ import 'image-q'
 export default class ColorUtils {
   constructor () {
     console.log('constructor')
+    for (var i=0; i< presetPalettes.length; i++) {
+      console.log(presetPalettes[i])
+    }
         // this._distance   = colorDistanceCalculator;
         // this._distance.setWhitePoint(255 << networkBiasShift,255 << networkBiasShift,255 << networkBiasShift,255 << networkBiasShift);
   }
 
   static presetPalettes = ['greyscale','bichromal','experiment1','experiment2','experiment3','experiment4','raw','raw_lumaUndulating','b_rbgy12_rgby34_g123_w_lumaRising','b_rbgy12_rgby34_g123_w_lumaFalling','w_rgby1234_b_lumaUndulating','w_rgby1234_b_lumaRising','w_rgby1234_b_lumaFalling','supercolor_red','supercolor_green','empty']
 
-  
+  //  ColorUtils.GeneratePaletteColors()
 
   static GeneratePaletteColors(id) {
 
@@ -62,12 +65,12 @@ export default class ColorUtils {
       //  Raw
       default:
       case "raw":
-        return getPaletteRaw()
+        return ColorUtils.getMaterialColors()
         break
 
       // Misc.
-      case "supercolor":
-          return getPaletteSuperColor
+      // case "supercolor":
+      //     return getPaletteSuperColor
 
       case "empty":
           return []
@@ -82,34 +85,34 @@ export default class ColorUtils {
       case "experiment1":
         paletteTo = paletteTo
         .concat(groups.black)
-        .concat(sortColorsByLuma(groups.allReds))
-        .concat(shuffleFromTop( sortColorsByLuma(groups.allBlues.concat(groups.allYellows).concat(groups.allGreys).concat(groups.allGreens)).reverse()))
+        .concat(ColorUtils.sortColorsByLuma(groups.allReds))
+        .concat(ColorUtils.shuffleFromTop(ColorUtils.sortColorsByLuma(groups.allBlues.concat(groups.allYellows).concat(groups.allGreys).concat(groups.allGreens)).reverse()))
         .concat(groups.white)
         return paletteTo
 
       case "experiment2":
         paletteTo = paletteTo
         .concat(groups.white)
-        .concat(sortColorsByLuma(groups.allReds.concat(groups.allYellows)).reverse())
-        .concat(shuffleFromTop( sortColorsByLuma(groups.allBlues.concat(groups.allGreens).concat(groups.allGreys)).reverse()))
+        .concat(ColorUtils.sortColorsByLuma(groups.allReds.concat(groups.allYellows)).reverse())
+        .concat(ColorUtils.shuffleFromTop(ColorUtils.sortColorsByLuma(groups.allBlues.concat(groups.allGreens).concat(groups.allGreys)).reverse()))
         .concat(groups.black)
         return paletteTo
 
       case "experiment3":
         paletteTo = paletteTo
         .concat(groups.white)
-        .concat(sortColorsByLuma(groups.allGreens.concat(groups.allYellows)).reverse())
-        .concat(shuffleFromTop( sortColorsByLuma(groups.allBlues.concat(groups.allReds).concat(groups.allGreys)).reverse()))
+        .concat(ColorUtils.sortColorsByLuma(groups.allGreens.concat(groups.allYellows)).reverse())
+        .concat(ColorUtils.shuffleFromTop(ColorUtils.sortColorsByLuma(groups.allBlues.concat(groups.allReds).concat(groups.allGreys)).reverse()))
         .concat(groups.black)
         return paletteTo
 
       case "experiment4":
-        var a = sortColorsByLuma(groups.allYellows).slice(0,24)
-        var b = sortColorsByLuma(groups.allYellows).slice(24)
+        var a = ColorUtils.sortColorsByLuma(groups.allYellows).slice(0,24)
+        var b = ColorUtils.sortColorsByLuma(groups.allYellows).slice(24)
         paletteTo = paletteTo
         .concat(groups.black)
         .concat(a)
-        .concat( sortColorsByLuma(groups.allBlues.concat(groups.allReds).concat(groups.allGreens).concat(b).concat(groups.allGreys)))
+        .concat(ColorUtils.sortColorsByLuma(groups.allBlues.concat(groups.allReds).concat(groups.allGreens).concat(b).concat(groups.allGreys)))
         .concat(groups.white)
         return paletteTo
 
@@ -118,40 +121,40 @@ export default class ColorUtils {
       case "w_rgby1234_b_lumaUndulating":
         paletteTo = paletteTo
         .concat(groups.black)
-        .concat(sortColorsByLuma(groups.allReds.concat(groups.grey)  .concat(groups.white)))
-        .concat(sortColorsByLuma(groups.allBlues).reverse())
-        .concat(sortColorsByLuma(groups.allGreens.concat(groups.blueGrey)))
-        .concat(sortColorsByLuma(groups.allYellows.concat(groups.brown)).reverse())
+        .concat(ColorUtils.sortColorsByLuma(groups.allReds.concat(groups.grey).concat(groups.white)))
+        .concat(ColorUtils.sortColorsByLuma(groups.allBlues).reverse())
+        .concat(ColorUtils.sortColorsByLuma(groups.allGreens.concat(groups.blueGrey)))
+        .concat(ColorUtils.sortColorsByLuma(groups.allYellows.concat(groups.brown)).reverse())
         return paletteTo
 
       case "w_rgby1234_g_b_lumaUndulating":
         paletteTo = paletteTo
         .concat(groups.black)
-        .concat(sortColorsByLuma(groups.allReds))
-        .concat(sortColorsByLuma(groups.allBlues))
-        .concat(sortColorsByLuma(groups.allGreens))
-        .concat(sortColorsByLuma(groups.allYellows.reverse()))
-        .concat(sortColorsByLuma(groups.allGreys))
+        .concat(ColorUtils.sortColorsByLuma(groups.allReds))
+        .concat(ColorUtils.sortColorsByLuma(groups.allBlues))
+        .concat(ColorUtils.sortColorsByLuma(groups.allGreens))
+        .concat(ColorUtils.sortColorsByLuma(groups.allYellows.reverse()))
+        .concat(ColorUtils.sortColorsByLuma(groups.allGreys))
         .concat(groups.white)
         return paletteTo
 
       case "w_rgby1234_b_lumaRising":
         paletteTo = paletteTo
         .concat(groups.white)
-        .concat(sortColorsByLuma(groups.allReds.concat(groups.grey)))
-        .concat(sortColorsByLuma(groups.allBlues))
-        .concat(sortColorsByLuma(groups.allGreens.concat(groups.blueGrey)))
-        .concat(sortColorsByLuma(groups.allYellows.concat(groups.brown)))
+        .concat(ColorUtils.sortColorsByLuma(groups.allReds.concat(groups.grey)))
+        .concat(ColorUtils.sortColorsByLuma(groups.allBlues))
+        .concat(ColorUtils.sortColorsByLuma(groups.allGreens.concat(groups.blueGrey)))
+        .concat(ColorUtils.sortColorsByLuma(groups.allYellows.concat(groups.brown)))
         .concat(groups.black)
         return paletteTo
 
       case "w_rgby1234_b_lumaFalling":
         paletteTo = paletteTo
         .concat(groups.white)
-        .concat(sortColorsByLuma(groups.allReds.concat(groups.grey)).reverse())
-        .concat(sortColorsByLuma(groups.allBlues).reverse())
-        .concat(sortColorsByLuma(groups.allGreens.concat(groups.blueGrey)).reverse())
-        .concat(sortColorsByLuma(groups.allYellows.concat(groups.brown)).reverse())
+        .concat(ColorUtils.sortColorsByLuma(groups.allReds.concat(groups.grey)).reverse())
+        .concat(ColorUtils.sortColorsByLuma(groups.allBlues).reverse())
+        .concat(ColorUtils.sortColorsByLuma(groups.allGreens.concat(groups.blueGrey)).reverse())
+        .concat(ColorUtils.sortColorsByLuma(groups.allYellows.concat(groups.brown)).reverse())
         .concat(groups.black)
 
           return paletteTo
@@ -160,51 +163,51 @@ export default class ColorUtils {
       case "b_rbgy12_rgby34_g123_w_lumaUndulating":
         paletteTo = paletteTo
         .concat(groups.black)
-        .concat(sortColorsByLuma(groups.reds12))
-        .concat(sortColorsByLuma(groups.blues12).reverse())
-        .concat(sortColorsByLuma(groups.greens12))
-        .concat(sortColorsByLuma(groups.yellows12).reverse())
-        .concat(sortColorsByLuma(groups.reds34))
-        .concat(sortColorsByLuma(groups.blues34).reverse())
-        .concat(sortColorsByLuma(groups.greens34))
-        .concat(sortColorsByLuma(groups.yellows34).reverse())
-        .concat(sortColorsByLuma(groups.blueGrey))
-        .concat(sortColorsByLuma(groups.grey))
-        .concat(sortColorsByLuma(groups.brown))
+        .concat(ColorUtils.sortColorsByLuma(groups.reds12))
+        .concat(ColorUtils.sortColorsByLuma(groups.blues12).reverse())
+        .concat(ColorUtils.sortColorsByLuma(groups.greens12))
+        .concat(ColorUtils.sortColorsByLuma(groups.yellows12).reverse())
+        .concat(ColorUtils.sortColorsByLuma(groups.reds34))
+        .concat(ColorUtils.sortColorsByLuma(groups.blues34).reverse())
+        .concat(ColorUtils.sortColorsByLuma(groups.greens34))
+        .concat(ColorUtils.sortColorsByLuma(groups.yellows34).reverse())
+        .concat(ColorUtils.sortColorsByLuma(groups.blueGrey))
+        .concat(ColorUtils.sortColorsByLuma(groups.grey))
+        .concat(ColorUtils.sortColorsByLuma(groups.brown))
         .concat(groups.white)
         return paletteTo
 
       case "b_rbgy12_rgby34_g123_w_lumaRising":
         paletteTo = paletteTo
         .concat(groups.black)
-        .concat(sortColorsByLuma(groups.reds12))
-        .concat(sortColorsByLuma(groups.blues12))
-        .concat(sortColorsByLuma(groups.greens12))
-        .concat(sortColorsByLuma(groups.yellows12))
-        .concat(sortColorsByLuma(groups.reds34))
-        .concat(sortColorsByLuma(groups.blues34))
-        .concat(sortColorsByLuma(groups.greens34))
-        .concat(sortColorsByLuma(groups.yellows34))
-        .concat(sortColorsByLuma(groups.blueGrey))
-        .concat(sortColorsByLuma(groups.grey))
-        .concat(sortColorsByLuma(groups.brown))
+        .concat(ColorUtils.sortColorsByLuma(groups.reds12))
+        .concat(ColorUtils.sortColorsByLuma(groups.blues12))
+        .concat(ColorUtils.sortColorsByLuma(groups.greens12))
+        .concat(ColorUtils.sortColorsByLuma(groups.yellows12))
+        .concat(ColorUtils.sortColorsByLuma(groups.reds34))
+        .concat(ColorUtils.sortColorsByLuma(groups.blues34))
+        .concat(ColorUtils.sortColorsByLuma(groups.greens34))
+        .concat(ColorUtils.sortColorsByLuma(groups.yellows34))
+        .concat(ColorUtils.sortColorsByLuma(groups.blueGrey))
+        .concat(ColorUtils.sortColorsByLuma(groups.grey))
+        .concat(ColorUtils.sortColorsByLuma(groups.brown))
         .concat(groups.white)
         return paletteTo
 
       case "b_rbgy12_rgby34_g123_w_lumaFalling":
         paletteTo = paletteTo
         .concat(groups.black)
-        .concat(sortColorsByLuma(groups.reds12).reverse())
-        .concat(sortColorsByLuma(groups.blues12).reverse())
-        .concat(sortColorsByLuma(groups.greens12).reverse())
-        .concat(sortColorsByLuma(groups.yellows12).reverse())
-        .concat(sortColorsByLuma(groups.reds34).reverse())
-        .concat(sortColorsByLuma(groups.blues34).reverse())
-        .concat(sortColorsByLuma(groups.greens34).reverse())
-        .concat(sortColorsByLuma(groups.yellows34).reverse())
-        .concat(sortColorsByLuma(groups.blueGrey))
-        .concat(sortColorsByLuma(groups.grey))
-        .concat(sortColorsByLuma(groups.brown))
+        .concat(ColorUtils.sortColorsByLuma(groups.reds12).reverse())
+        .concat(ColorUtils.sortColorsByLuma(groups.blues12).reverse())
+        .concat(ColorUtils.sortColorsByLuma(groups.greens12).reverse())
+        .concat(ColorUtils.sortColorsByLuma(groups.yellows12).reverse())
+        .concat(ColorUtils.sortColorsByLuma(groups.reds34).reverse())
+        .concat(ColorUtils.sortColorsByLuma(groups.blues34).reverse())
+        .concat(ColorUtils.sortColorsByLuma(groups.greens34).reverse())
+        .concat(ColorUtils.sortColorsByLuma(groups.yellows34).reverse())
+        .concat(ColorUtils.sortColorsByLuma(groups.blueGrey))
+        .concat(ColorUtils.sortColorsByLuma(groups.grey))
+        .concat(ColorUtils.sortColorsByLuma(groups.brown))
         .concat(groups.white)
         return paletteTo
     }
@@ -550,22 +553,54 @@ export default class ColorUtils {
       }
     }
     var _startIndex = (startIndex === undefined) ? 0 : startIndex
-    var _endIndex = (endIndex === undefined) ? 255 : endIndex
+    var _endIndex = (endIndex === undefined) ? 256 : endIndex
     // prepare the raw Material Design (hex) colors
     var materialColors = []
     for (var group in materialJSON) {
       for (var member in materialJSON[group]) {
         var hex = materialJSON[group][member]
-        var rgba = ColorUtils.hexToRgba(hex)
-        // console.log(hex, rgba, 'is done')
-        materialColors.push(rgba)
+        // var rgba = ColorUtils.hexToRgba(hex)
+        var color = ColorUtils.hexToColor(hex)
+        console.log(color, 'is done')
+        materialColors.push(color)
       }
     }
     return materialColors.slice(_startIndex, _endIndex)
   }
 
+  // COLOR SORTERS
+  //
+  static sortColorsByHue(colors) {
+    return colors.sort(function (a, b) {
+      return (a.hue != b.hue) ? a.hue - b.hue : a.chroma - b.chroma;
+    })
+  }
+
+  static sortColorsByLuma(colors) {
+    return colors.sort(function (a, b) {
+      return a.luma - b.luma
+    })
+  }
+
+  static shuffleFromTop(colors) {
+    var len = colors.length;
+    var tmpColors = Array.from(colors)
+    for (var i=0; i< len/2; i++) {
+      colors[i] = tmpColors[i*2]
+      colors[len-i-1] = tmpColors[i*2+1]
+    }
+    return colors
+  }
+
+
   // COLOR SPACE CONVERTERS
   //
+  static hexToColor (hex) {
+    var rgba = ColorUtils.hexToRgba(hex);
+    var hsv = ColorUtils.rgbToHsv(rgba.r, rgba.g, rgba.b)
+    return {...rgba, ...hsv}
+  }
+
   static hexToRgba (hex) {
       // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
     var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i
@@ -580,4 +615,37 @@ export default class ColorUtils {
       a: 255
     } : null
   }
+
+  static rgbToHsv (r, g, b) {
+
+    /* Getting the Max and Min values for Chroma. */
+    var max = Math.max.apply(Math, [r, g, b]);
+    var min = Math.min.apply(Math, [r, g, b]);
+
+    /* Variables for HSV value of hex color. */
+    var chr = max - min;
+    var hue = 0;
+    var val = max;
+    var sat = 0;
+    var luma = 0.3 * r + 0.59 * g + 0.11 * b;
+    if (val > 0) {
+        /* Calculate Saturation only if Value isn't 0. */
+        sat = chr / val;
+        if (sat > 0) {
+            if (r == max) {
+                hue = 60 * (((g - min) - (b - min)) / chr);
+                if (hue < 0) {
+                    hue += 360;
+                }
+            } else if (g == max) {
+                hue = 120 + 60 * (((b - min) - (r - min)) / chr);
+            } else if (b == max) {
+                hue = 240 + 60 * (((r - min) - (g - min)) / chr);
+            }
+        }
+    }
+    return { h: hue, s: sat, v: val, chroma: chr, luma: luma };
+
+  }
+
 }

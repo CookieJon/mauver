@@ -95,7 +95,7 @@ export default {
       slidingImageData: null, // 
       slidingSpeedsImageData: null, // Visual representation of the speed.
 
-      slidingSpeedsPattern: '1,2,3,4,3,2,1,0',
+      slidingSpeedsPattern: '1,2,3,2,1,1,1,1,1,2,3,2',
       slidingSpeeds: [],
       slidingSpeedsLength: 0,
       slidingSpeedsGradations: 0,
@@ -129,17 +129,14 @@ export default {
     }
   },  
   watch: {
-    // myFilters (old, newValue) {
-    //   alert('set jFilters from watching artwork  value')
-    //   this.myValue.filters = value
-    //   this.onUpdate()
-    // },
     value (old, newValue) {
       console.log("watch new value...", newValue)
       this.myValue = extend({}, {val: newValue}).val
     },
-    paletteDDL(newValue, oldValue) {
-      
+    paletteDDL(oldValue, newValue) {
+      var newPalette = ColorUtils.GeneratePaletteColors(newValue)
+      console.log('GENERATED:', newPalette)
+      this.$state.activeBitmap.palette  = newPalette
     }
   },
   methods: {
@@ -194,6 +191,7 @@ export default {
 
       this.controlPower = 0
       this.controlTargetPower = 0
+      this.controlActualPower = 0
 
       // this.__dragLever()
 
@@ -223,9 +221,10 @@ export default {
       LAST_TIME = TIME
 
       // smoothy
-      this.controlActualPower = (this.controlTargetPower - this.controlActualPower) * ELAPSED_TIME * 0.0001
-      console.log(this.controlActualPower, this.controlTargetPower)
+      this.controlActualPower += (this.controlTargetPower - this.controlActualPower) * .1 //* ELAPSED_TIME/1000
       // this.controlActualPower = this.controlTargetPower
+
+      console.log(ELAPSED_TIME, this.controlActualPower, this.controlTargetPower)
       this.__computeSlidingSpeed(this.controlActualPower)
 
 
@@ -234,13 +233,13 @@ export default {
         : crunch.sub(this.slidingCurrent, this.slidingSpeed)
 
       // recCounter++;
-      if (this.slidingCurrent.length!=65536) {
+      if (this.slidingCurrent.length > 65536) {
 
         this.slidingCurrent.shift(1);
         
         console.log('too high beep!')
         //oRangeDisplay.val(oRangeDisplay.val() + " \n " + " Stopping @ " + (controlDirection > 0 ? "UPPER":"LOWER") );
-        this.__stopSliding();
+        // this.__stopSliding();
         
       } 
     
@@ -252,14 +251,14 @@ export default {
         //  mappedIndex = (slidingMap[i*2] + 256*slidingMap[i*2+1]) *4 ;  // *2=x,y *4 = R,G,B,A
         mappedIndex = i * 4;
         try {
-          theColor = this.$state.activeBitmap.palette_key[this.slidingCurrent[i]];
+          theColor = this.$state.activeBitmap.palette[this.slidingCurrent[i]];
           
           tmp.data[mappedIndex] = theColor.r; //*4 =*4 =*4 =*4 = !! NB!!!
           tmp.data[mappedIndex+1] = theColor.g;
           tmp.data[mappedIndex+2] = theColor.b;
           tmp.data[mappedIndex+3] = 255;
         } catch(e) {
-          console.log('error',this.$state.activeBitmap.palette_key, theColor, this.slidingCurrent[i], i)
+          console.log('error',this.$state.activeBitmap.palette, theColor, this.slidingCurrent[i], i)
           console.log(i, this.slidingCurrent[i], this.slidingCurrent.length);
           this.__stopSliding()
           return;
@@ -309,7 +308,7 @@ export default {
       
       // original method:
       //
-      //this.slidingSpeedPower = parseInt( ((65536 )*this.controlPower/10000) ) ;
+      // this.slidingSpeedPower = parseInt( ((65536 )*this.controlPower/10000) ) ;
       //
       // new method:
       //

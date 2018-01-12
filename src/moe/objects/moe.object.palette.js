@@ -14,7 +14,7 @@ function Palette () {
   this._type = 'Bitmap'
   this.title = 'Untitled'
 
-  this.colors = []  // 256 array of {r: g: b: } 
+  this.colors = []  // 256 array of {r: g: b: , h:, s:, v:, luma:, chroma:} 
  
   this.imageData = null
 

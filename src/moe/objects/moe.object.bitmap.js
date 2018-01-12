@@ -207,6 +207,13 @@ Bitmap.prototype = {
     colorTo = 256
     var materialColors = ColorUtils.getMaterialColors(colorFrom, colorTo)
     this.palette_key = materialColors
+    this.palette_key = ColorUtils.GeneratePaletteColors('raw_lumaUndulating')
+    // ['greyscale','bichromal','experiment1','experiment2','experiment3','experiment4','raw',
+    // 'raw_lumaUndulating','b_rbgy12_rgby34_g123_w_lumaRising','b_rbgy12_rgby34_g123_w_lumaFalling','w_rgby1234_b_lumaUndulating','w_rgby1234_b_lumaRising','w_rgby1234_b_lumaFalling','supercolor_red','supercolor_green','empty']
+
+    
+  
+
     this.palette = [...this.palette_key]
     console.log('material colors used:', materialColors)
     // * iq.palette <= material colors
