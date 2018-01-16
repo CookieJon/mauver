@@ -44,7 +44,7 @@ export default {
   },
   watch: {
     imageData (newVal, oldVal) {
-      // console.log('** canvas watch imageData **', newVal)
+      console.log('** canvas watch imageData **', newVal)
       this.updateImage()
     }
   },
@@ -58,7 +58,7 @@ export default {
   methods: {
     // Update from imageData
     updateImage () {
-      // console.log('** canvas update from imageData **')
+      console.log('** canvas update from imageData **')
       this.ctx.putImageData(this.imageData, 0, 0)
       // this.$emit('input', this.imageData)
     },

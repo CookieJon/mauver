@@ -52,14 +52,28 @@ export default {
   },
   methods: {
     addPalette () {
+      // INITIALISE PALETTE!
+      let colors = this.$store.getters['entities/colors/all']()
+      let imageData = new ImageData(256, 256)
+      let offset = 0
+      for (let j = 0; j < 16; j++) {
+        
+        for (let i=0; i < 256; i++ ) {
+          imageData.data[offset++] = colors[i].r
+          imageData.data[offset++] = colors[i].g
+          imageData.data[offset++] = colors[i].b
+          imageData.data[offset++] = colors[i].a
+        } 
+      }
       let pal = {
         id: this.uid++,
-        colors: [{id:'red'}, {id:'green'}, {id:'blue'}]
+        colors,
+        imageData
       }
-
+      console.log("CREATED PALETTE", pal)
       this.$store.dispatch('entities/palettes/insert', {data: pal})
       //let pal = this.$store.getters['entities/palettes/find'](this.uid-1)
-      pal.init()
+      //pal.init()
     },
     selectPalette (e) {
       this.selectedPalette = e.item.id

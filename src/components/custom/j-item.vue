@@ -29,6 +29,7 @@
     },
     computed: {
       myImageData () {
+        console.log('j-item imagedata computed', this.value.imageData)
         return this.value ? this.value.imageData : null
       }
     },
