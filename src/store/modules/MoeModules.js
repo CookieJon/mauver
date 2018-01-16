@@ -13,4 +13,5 @@ const bitmaps = {
 const artworks = {
   namespaced: true
 }
+
 export { colors, palettes, bitmaps, artworks }

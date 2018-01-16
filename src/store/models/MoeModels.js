@@ -14,7 +14,10 @@ export class Color extends Model {
       s: this.attr(null),
       v: this.attr(null),
       chroma: this.attr(null),
-      luma: this.attr(null)
+      luma: this.attr(null),
+      init () {
+        alert('hi')
+      }
     }
   }
 }
@@ -26,7 +29,11 @@ export class Palette extends Model {
     return {
       id: this.attr(null),
       name: this.attr(''),
-      colors: this.hasMany(Color, 'id')
+      imageData: this.attr(''),
+      colors: this.hasMany(Color, 'id'),
+      init () {
+        alert('hi')
+      }
     }
   }
 }

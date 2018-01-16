@@ -20,7 +20,7 @@
 
     </q-toolbar>
       <!-- Navigation Tabs    -->
-      <q-tabs slot="title"  position="top" >
+      <q-tabs slot="title" position="top" >
         <q-route-tab slot="title" icon="settings_system_daydream" to="/view-mauve" replace hide="icon" label="About" />
         <q-route-tab slot="title" icon="mail" to="/view-panels" replace hide="icon" label="Toolbar" />
         <q-route-tab slot="title" icon="alarm" to="/view-sortable" replace label="Tabs" />
