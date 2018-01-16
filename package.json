@@ -15,7 +15,6 @@
     "image-q": "^1.1.1",
     "jquery": "^3.2.1",
     "jquery-ui": "^1.12.1",
-    "malihu-custom-scrollbar-plugin": "^3.1.5",
     "normalizr": "^3.2.4",
     "number-crunch": "^1.2.1",
     "pug": "^2.0.0-rc.4",
@@ -24,7 +23,7 @@
     "sortablejs": "^1.7.0",
     "vue": "~2.3.0",
     "vue-router": "^2.0.0",
-    "vuedraggable": "^2.16.0"
+    "vuex-orm": "^0.15.0"
   },
   "devDependencies": {
     "autoprefixer": "^6.4.0",

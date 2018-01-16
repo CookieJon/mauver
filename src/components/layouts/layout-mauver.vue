@@ -52,7 +52,7 @@
         internal vue-router navigation
       -->
       <div class='j-tray.area.panel-item-grow' slot='content'>
-        <j-object :value='$state'></j-object>
+
       </div>      
       <!-- <j-panel icon='business' title='debug'>
 

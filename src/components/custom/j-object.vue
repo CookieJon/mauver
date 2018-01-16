@@ -5,8 +5,6 @@ export default
   import { extend } from 'quasar'
 
   var $ = require('jquery')
-  require('malihu-custom-scrollbar-plugin')
-  require('jquery-mousewheel')
   require('jquery-ui/draggable')
   require('jquery-ui/resizable')
   require('jquery-ui-css/core.css')

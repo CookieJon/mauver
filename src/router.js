@@ -31,7 +31,7 @@ export default new VueRouter({
       children: [
         {
           path: '/*',
-          component: load('views/view-mauve')
+          component: load('views/view-mauver')
         },
         {
           path: '/view-vip',

@@ -13,14 +13,29 @@ require(`./themes/app.${__THEME}.styl`)
 import Vue from 'vue'
 import Quasar from 'quasar'
 import router from './router'
-import Store from './moe/moe.store.js'
-// import Sortable from 'sortablejs'
+import store from './store'
 
 Vue.config.productionTip = false
 
 Vue.use(Quasar) // Install Quasar Framework
-Vue.use(Store)
-// Vue.use(Sortable)
+Vue.use(store)
+
+// Moe Cusatom Components
+import jArtwork from 'components/custom/j-artwork'
+import jBitmap from 'components/custom/j-bitmap'
+import jCanvas from 'components/custom/j-canvas'
+import jCollection from 'components/custom/j-collection'
+import jItem from 'components/custom/j-item'
+import jLever from 'components/custom/j-lever'
+import jObject from 'components/custom/j-object'
+import jPanel from 'components/custom/j-panel'
+import jUploadZone from 'components/custom/j-upload-zone'
+
+Vue.mixin({
+  components: {
+    jArtwork, jBitmap, jCanvas, jCollection, jItem, jLever, jObject, jPanel, jUploadZone
+  }
+})
 
 if (__THEME === 'mat') {
   require('quasar-extras/roboto-font')

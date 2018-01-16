@@ -107,8 +107,6 @@ import { extend, QBtn, QIcon, QPopover, QTooltip } from 'quasar'
   // import '../../store/actions'
 
   var $ = require('jquery')
-  // require('malihu-custom-scrollbar-plugin')
-  require('jquery-mousewheel')
   require('jquery-ui/draggable')
   require('jquery-ui/resizable')
   require('jquery-ui-css/core.css')
@@ -222,15 +220,6 @@ import { extend, QBtn, QIcon, QPopover, QTooltip } from 'quasar'
       // var $content = $(vm.$refs.content)
       this.header_height = $(vm.$refs.header).outerHeight()
 
-      // Scrollable
-      //
-      // $(vm.$refs.contentInner)
-      // $el
-      //   .find('.scroll')
-      //   .wrapInner('<div></div>')
-      //   .mCustomScrollbar({
-      //     theme: 'dark'
-      //   })
 
       // Resizable
       //
@@ -296,35 +285,6 @@ import { extend, QBtn, QIcon, QPopover, QTooltip } from 'quasar'
   }
 </script>
 
-<style>
-.mCSB_inside > .mCSB_container {
-  margin:0;
-}
-
-  .ripple {
-    position: absolute;
-    background: rgba(0,0,0,.25);
-    border-radius: 100%;
-    -webkit-transform: scale(0);
-    -ms-transform: scale(0);
-    transform: scale(0);
-    pointer-events: none;
-  }
-
-  .ripple.show {
-    -webkit-animation: ripple .5s ease-out;
-    animation: ripple .5s ease-out;
-  }
-
-  @-webkit-keyframes,
-  @keyframes
-    ripple { to {
-     -webkit-transform: scale(1.5);
-     transform: scale(1.5);
-     opacity: 0;
-    }
-  }
-</style>
 
 
 <style lang='styl'>
@@ -519,6 +479,3 @@ import { extend, QBtn, QIcon, QPopover, QTooltip } from 'quasar'
 
 
 </style>
-
-
-<style src="malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css"></style>

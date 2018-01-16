@@ -15,18 +15,12 @@
 </template>
 <script>
 /* eslint-disable */
-  // var Bitmap = require('../../moe/moe.bitmap.js')
-  var jItem = require('components/custom/j-item')
-  var jDebug = require('components/custom/j-debug')
   import { extend } from 'quasar'
   import Sortable from 'sortablejs'
-  import draggable from 'vuedraggable'
  
   export default {
     name: 'j-collection-rubaxax',
-    components: {
-      jItem, jDebug, draggable
-    },
+    components: { },
     props: {
       value: {
         type: [Array, Object]
@@ -39,9 +33,9 @@
     data () {
       return {
         options: {
-            animation: 150,
-            ghostClass: 'sortable-ghost',  // Class name for the drop placeholder
-            chosenClass: 'sortable-chosen',  // Class name for the chosen item
+          animation: 150,
+          ghostClass: 'sortable-ghost',  // Class name for the drop placeholder
+          chosenClass: 'sortable-chosen',  // Class name for the chosen item
           dragClass: 'sortable-drag',  // Class name for the dragging item
           group: {
             name: 'general', 

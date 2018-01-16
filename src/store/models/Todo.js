@@ -10,10 +10,7 @@ export default class Todo extends Model {
       user_id: this.attr(null),
       title: this.attr(''),
       done: this.attr(false),
-      assignee: this.belongsTo(User, 'user_id'),
-      flip () {
-        alert('glip')
-      }
+      assignee: this.belongsTo(User, 'user_id')
     }
   }
 }

@@ -1,14 +1,12 @@
 <template>
 <div :style="styleComponent">
   <canvas ref="canvas" :width='pixelWidth' :height='pixelHeight'></canvas>
-  <!-- <j-debug :value="imageData"></j-debug> -->
 </div>
 </template>
 
 <script>
 import { extend } from 'quasar'
 
-var jDebug = require('./j-debug')
 export default {
   name: 'j-canvas',
   props: {
@@ -35,9 +33,7 @@ export default {
       type: Image
     }
   },
-  components: {
-    jDebug
-  },
+  components: { },
   computed: {
     styleComponent () {
       return {
@@ -56,9 +52,7 @@ export default {
     return {
       myImageData: extend({}, this.imageData),
       ctx: null,
-      id: 'j-canvas-1',
-      _test2: 'test2',
-      test2: 'test22'
+      id: 'j-canvas-1'
     }
   },
   methods: {
