@@ -2,9 +2,8 @@
 <template>
   <!-- item is just "Bitmap" at the moment... make generic later -->
   <div class='frame' @click="onClick($event)">
-    <div class='item-label'>{{value.id}}</div>
+    <div class='item-label'>{{value.id}} {{value.name}}</div>
     <j-canvas ref="jCanvas" :imageData='myImageData'></j-canvas>
-     
     <!-- <j-canvas ref="jCanvas" :width='256' :height='256' :imageData='myImageData'></j-canvas>-->
     <!--   <j-debug :value="value.imageData"></j-debug> -->
     <!-- -->
@@ -27,11 +26,27 @@
       return {
       }
     },
+    watch: {
+      value (oldValue, newValue) {
+        
+        // this.$nextTick(function () {
+          
+        //   alert("ho")
+        // })
+        
+      }
+    },
     computed: {
       myImageData () {
-        console.log('j-item imagedata computed', this.value.imageData)
+        //this.$refs['jCanvas'].updateImage()
+        // console.log('|---j-item computed.myImageData()----------------------> ')
+        console.log(' this.value.imageData.data', this.value.imageData.data)
+        // console.log('<---j-item computed.myImageData()----------------------|')
         return this.value ? this.value.imageData : null
       }
+    },
+    mounted () {
+      this.$refs.jCanvas.updateImage()
     },
     methods: {
       onClick (e) {

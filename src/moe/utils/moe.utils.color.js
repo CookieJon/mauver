@@ -555,16 +555,17 @@ export default class ColorUtils {
     var _startIndex = (startIndex === undefined) ? 0 : startIndex
     var _howMany = (howMany === undefined) ? 256 : howMany
     // prepare the raw Material Design (hex) colors
+    var counter = 0
     var materialColors = []
     for (var group in materialJSON) {
       for (var member in materialJSON[group]) {
         var hex = materialJSON[group][member]
         // var rgba = ColorUtils.hexToRgba(hex)
         var color = ColorUtils.hexToColor(hex)
-        var title = group + ' ' + member
-        var id = title.replace(' ','')
-        color.title = title
-        color.id = id
+        var name = group + ' ' + member
+        color.hex = hex;
+        color.name = name.replace(' ','')
+        color.id = counter++
         materialColors.push(color)
       }
     }

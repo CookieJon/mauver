@@ -1,6 +1,7 @@
 <template>
 <div :style="styleComponent">
   <canvas ref="canvas" :width='pixelWidth' :height='pixelHeight'></canvas>
+  <!-- // {{ imageData.data.length }} -->
 </div>
 </template>
 
@@ -27,7 +28,7 @@ export default {
       default: 256
     },
     imageData: {
-      // type: ImageData
+      type: ImageData
     },
     image: {
       type: Image
@@ -43,9 +44,12 @@ export default {
     }
   },
   watch: {
-    imageData (newVal, oldVal) {
+    imageData (oldVal, newVal) {
       console.log('** canvas watch imageData **', newVal)
-      this.updateImage()
+      // this.$nextTick(function () {
+      //   this.updateImage()
+      //   // console.log(this.$el.textContent) // => 'updated'
+      // })
     }
   },
   data () {

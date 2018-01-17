@@ -23,7 +23,7 @@
     components: { },
     props: {
       value: {
-        type: [Array, Object]
+        type: [Array]
       },
       myClass: {
         type: String,
