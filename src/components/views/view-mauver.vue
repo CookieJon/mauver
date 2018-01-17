@@ -3,7 +3,7 @@
 div
 
   // COLLECTION
-  j-panel(icon='business', title='Sample', :width='170', :height='800', :x='10', :y='10')
+  j-panel(icon='business', title='Sample', :width='300', :height='400', :x='10', :y='10')
     div.j-panel-toolbar.text-black(slot='toolbar', style='padding:4px;')
       q-btn(round,primary,small,icon='business', @click='addPalette')
       q-btn(round,primary,small,icon='business', @click='addPalette')
@@ -13,6 +13,10 @@ div
       j-upload-zone(ref='zone')
         j-collection.frame-type-grid(v-model='palettes', @select='selectPalette')
 
+  // SELECTED 
+  j-panel(icon='business', title='Selected', :width='200', :height='300', :x='10', :y='400')
+    div.j-tray.area.panel-item-grow(slot='content')
+      j-canvas.frame-type-grid(:image-data='selectedPaletteImageData')
 </template>
 
 <script>
@@ -40,6 +44,10 @@ export default {
     }
   },
   computed: {
+    selectedPaletteImageData () {
+      let selectedPalette = this.$store.getters['entities/palettes/find'](this.selectedPalette)
+      return selectedPalette ? selectedPalette.imageData : null
+    },
     palettes: {
       get () {
         // return this.$store.getters['entities/palettes/query']().orderBy('id', 'desc').get()
@@ -74,16 +82,27 @@ export default {
       // draw palette image data
       let offset = 0
       let colorIndex = 0
+      // for (let y = 0; y < 16; y++) {
+      //   for (let x = 0; x < 16; x++) {
+      //     offset = x + (y*16)
+      //     // console.log(offset, colors[colorIndex])
+      //     imageData.data[offset++] = colors[colorIndex].r
+      //     imageData.data[offset++] = colors[colorIndex].g //colors[i].g
+      //     imageData.data[offset++] = colors[colorIndex].b //colors[i].b
+      //     imageData.data[offset++] = colors[colorIndex].a  
+      //     colorIndex++
+      //   }
+      // }      
       for (let y = 0; y < 16; y++) {
         for (let x = 0; x < 16; x++) {
           for (let yy = 0; yy < 16; yy++) {
             for (let xx = 0; xx < 16; xx++) {
               offset = (((x * 16) + xx) * 4) +  (((y * 16) + yy) * 256 * 4)
               // console.log(offset, colors[colorIndex])
-              imageData.data[offset++] = colors[255 - colorIndex].r
-              imageData.data[offset++] = colors[255 - colorIndex].g //colors[i].g
-              imageData.data[offset++] = colors[255 - colorIndex].b //colors[i].b
-              imageData.data[offset++] = 254 //colors[i].a  
+              imageData.data[offset++] = colors[colorIndex].r
+              imageData.data[offset++] = colors[colorIndex].g //colors[i].g
+              imageData.data[offset++] = colors[colorIndex].b //colors[i].b
+              imageData.data[offset++] = colors[colorIndex].a  
             }
           }
           colorIndex++

@@ -46,6 +46,7 @@ export default {
   watch: {
     imageData (oldVal, newVal) {
       console.log('** canvas watch imageData **', newVal)
+      this.updateImage()
       // this.$nextTick(function () {
       //   this.updateImage()
       //   // console.log(this.$el.textContent) // => 'updated'
@@ -64,7 +65,6 @@ export default {
     updateImage () {
       console.log('** canvas update from imageData **')
       this.ctx.putImageData(this.imageData, 0, 0)
-      // this.$emit('input', this.imageData)
     },
     // get canvas FROM...
     fromImageData (imageData) {
