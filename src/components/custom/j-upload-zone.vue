@@ -1,33 +1,3 @@
-<style>
-
-  .upload-zone {
-    position:relative;
-    overflow:hidden;
-    width:100%;
-    min-height:45px;
-    background:transparent;
-    border:2px dashed #333;
-    cursor:pointer; padding:5px; color:#555; font-family:'Segoe UI'; font-weight:bold;
-  }
-  .upload-zone:hover {
-    border-color: green;
-  }
-
-  .file-upload{
-    display:none;
-  }
-
-  .upload-zone img {
-    position:absolute;
-    width:312px;
-    height:362px;
-    top:-1px;
-    left:-1px;
-    z-index:-1;
-    border:none;
-    background-color: #eee;
-  }
-</style>
 
  <template>
  <div>
@@ -153,3 +123,34 @@
     }
   }
 </script>
+
+<style>
+
+  .upload-zone {
+    position:relative;
+    overflow:hidden;
+    width:100%;
+    min-height:45px;
+    background:transparent;
+    border:2px dashed #333;
+    cursor:pointer; padding:5px; color:#555; font-family:'Segoe UI'; font-weight:bold;
+  }
+  .upload-zone:hover {
+    border-color: green;
+  }
+
+  .file-upload{
+    display:none;
+  }
+
+  .upload-zone img {
+    position:absolute;
+    width:312px;
+    height:362px;
+    top:-1px;
+    left:-1px;
+    z-index:-1;
+    border:none;
+    background-color: #eee;
+  }
+</style>

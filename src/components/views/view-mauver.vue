@@ -6,14 +6,18 @@ div
   j-panel(icon='business', title='Sample', :width='300', :height='400', :x='10', :y='10')
     div.j-panel-toolbar.text-black(slot='toolbar', style='padding:4px;')
       q-btn(round,primary,small,icon='business', @click='addPalette')
-      q-btn(round,primary,small,icon='business', @click='addBitmap')
+      q-btn(round,primary,small,icon='business', @click='openFileInput')
     div.j-tray.area.panel-item-grow(slot='content')
-      j-collection.frame-type-grid(v-model='palettes', @select='selectPalette')
+      j-upload-zone(ref='zone',@select='loadImagesFromFile')
+        j-collection.frame-type-grid(v-model='palettes', @select='selectPalette')
     div.j-tray.area.panel-item-grow(slot='content')
-      j-upload-zone(ref='zone',@select='addBitmapsFromFiles')
-        j-collection.frame-type-grid(v-model='bitmaps', @select='selectBitmap')
+      j-collection.frame-type-grid(v-model='bitmaps', @select='selectBitmap')
 
-
+  // SELECTED 
+  j-panel(v-if='selectedBitmap != null', icon='business', title='Selected', :width='200', :height='300', :x='110', :y='400')
+    div.j-tray.area.panel-item-grow(slot='content')
+      j-canvas.frame-type-grid(:image-data='selectedBitmapImageData')
+  
   // SELECTED 
   j-panel(v-if='selectedPalette != null', icon='business', title='Selected', :width='200', :height='300', :x='10', :y='400')
     div.j-tray.area.panel-item-grow(slot='content')
@@ -49,8 +53,8 @@ export default {
       return selectedPalette != null ? selectedPalette.imageData : null
     },
     selectedBitmapImageData () {
-      let selectedPalette = this.$store.getters['entities/palettes/find'](this.selectedPalette)
-      return selectedPalette ? selectedPalette.imageData : null
+      let selectedBitmap = this.$store.getters['entities/bitmaps/find'](this.selectedBitmap)
+      return selectedBitmap ? selectedBitmap.imageData : null
     },
     palettes: {
       get () {
@@ -79,19 +83,68 @@ export default {
     this.$store.dispatch('entities/colors/create', { data: initialData })
   },
   methods: {
-    addBitmap () {
+
+    loadImagesFromFile(files) {
+      // Invoked from uploadZone@select
+      for (let i = 0; i < files.length; i++) {
+        let file = files[i]
+        this.loadImageFromFile(file).then((bmp) => {
+          console.log("LOADED BMP", bmp)
+          this.addBitmap(bmp)
+        }).catch((err) => {
+          console.log("ERROR!", err)
+        })
+      }
+    },
+
+    loadImageFromFile(file) {
+      // One file at a time, please!
+      console.log('loadImageFromFile:', file)
+      return new Promise((resolve, reject) => {
+
+        let bmp = {
+          id: this.uid++
+        }
+
+        // A. Custom jBMP
+        //
+        if (file.size === 66614 && file.name.match(/.bmp/) ) {
+          var reader = new FileReader()
+          reader.onload = () => {
+            let arrayBuffer = reader.result
+            let pixPalImagedata = this.fromArrayBuffer(arrayBuffer)
+            let bmp = {
+              id: this.uid++, 
+              ...pixPalImagedata
+            }
+            resolve(bmp)
+          }
+          reader.readAsArrayBuffer(file) // for BMP8 raw file
+        }
+        // B. Any other image
+        //
+        else if (file.type.match(/image.*/)) {
+          var reader = new FileReader()
+          reader.onload = () => {
+            bmp.dataURL = reader.result
+            resolve(bmp)
+          }
+          reader.readAsDataURL(file) //  for Image() object     
+        }
+        // C. Can't load this file as image
+        //
+        else {
+          reject('Can\'t load. File is not an image!')
+        }
+
+      })
+    },
+    openFileInput() {
       this.$refs.zone.openFileInput()
     },
-    addBitmapsFromFiles (files) {
-      console.clear()
-      console.log('|---addBitmap()---------------------------------------> ')
-      var bitmap = new MoeObjects.Bitmap()
-      var id = 'bit_000' + this.uid++
-      bitmap.init({...payload, id})
-      Vue.set(state.repo.bitmaps, id, bitmap)
-      state.bitmaps.push(bitmap)
-
-      this.$store.dispatch('entities/bitmap/insert', {data: bitmap})
+    addBitmap (bmp) {
+      console.log('addBitmap:', bmp)
+      this.$store.dispatch('entities/bitmaps/insert', {data: bmp})
     },
     addPalette () {
       console.clear()
@@ -150,7 +203,63 @@ export default {
 
     destroy (id) {
       this.$store.dispatch('entities/todos/delete', id)
-    }
+    },
+
+    fromArrayBuffer (srcArrayBuffer) {
+      // bitmap stream
+      let dataview = new DataView(srcArrayBuffer)
+      let offBits = dataview.getUint16(10, true)
+      let width = dataview.getUint32(18, true)
+      let height = dataview.getUint32(22, true)
+      let bitCount = dataview.getUint16(28, true)
+      // var totalColors = dataview.getUint16(46, true)
+      let usedColors = dataview.getUint16(50, true)
+
+      // pixels
+      let length = width * height
+      let pixels_key = new Uint8Array(length)
+      for (var y = 0; y < 256; y++) {
+        for (var x = 0; x < 256; x++) {
+          pixels_key[x + y * 256] = dataview.getUint8(offBits + x + (255 - y) * 256) // Invert Y axis (BMP8 data goes from bottom->top)
+        }
+      }
+      let pixels = Uint8Array.from(pixels_key)
+
+      // palette
+      let paletteLength = bitCount === 0 ? 1 << bitCount : usedColors
+      let index = 54
+      let tmpPalette = []
+      for (let i = 0; i < paletteLength; i++) {
+        var b = dataview.getUint8(index++)
+        var g = dataview.getUint8(index++)
+        var r = dataview.getUint8(index++)
+        var a = dataview.getUint8(index++)
+        tmpPalette.push({r, g, b, a}) // TODO: Make real colors!
+      }
+      let palette_key = tmpPalette
+      let palette = Array.from(tmpPalette)
+
+
+      let imageData = new ImageData(width, height)
+      let data = imageData.data
+      let mapToIndex = 0
+      for (var i = 0; i < 65535; i++) {
+        let theColor = palette_key[pixels[i]]
+        data[mapToIndex++] = theColor.r
+        data[mapToIndex++] = theColor.g
+        data[mapToIndex++] = theColor.b
+        data[mapToIndex++] = 255
+      }
+
+      console.log("ASDASDASD", imageData)
+
+      let ppid =  {
+        pixels,
+        palette,
+        imageData
+      }
+      return ppid
+    },
   }
 }
 </script>

@@ -37,7 +37,10 @@ export class Bitmap extends Model {
   static fields () {
     return {
       id: this.attr(null),
-      name: this.attr('')
+      name: this.attr(''),
+      dataURL: this.attr(null),
+      arrayBuffer: this.attr(null),
+      imageData: this.attr(Object)
     }
   }
 }
