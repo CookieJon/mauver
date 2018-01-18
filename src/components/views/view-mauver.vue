@@ -6,25 +6,24 @@ div
   j-panel(icon='business', title='Sample', :width='300', :height='400', :x='10', :y='10')
     div.j-panel-toolbar.text-black(slot='toolbar', style='padding:4px;')
       q-btn(round,primary,small,icon='business', @click='addPalette')
-      q-btn(round,primary,small,icon='business', @click='addPalette')
-      q-btn(round,primary,small,icon='business', @click='addPalette')
-      //$refs.zone.openFileInput()
+      q-btn(round,primary,small,icon='business', @click='addBitmap')
     div.j-tray.area.panel-item-grow(slot='content')
-      j-upload-zone(ref='zone')
-        j-collection.frame-type-grid(v-model='palettes', @select='selectPalette')
+      j-collection.frame-type-grid(v-model='palettes', @select='selectPalette')
+    div.j-tray.area.panel-item-grow(slot='content')
+      j-upload-zone(ref='zone',@select='addBitmapsFromFiles')
+        j-collection.frame-type-grid(v-model='bitmaps', @select='selectBitmap')
+
 
   // SELECTED 
-  j-panel(icon='business', title='Selected', :width='200', :height='300', :x='10', :y='400')
+  j-panel(v-if='selectedPalette != null', icon='business', title='Selected', :width='200', :height='300', :x='10', :y='400')
     div.j-tray.area.panel-item-grow(slot='content')
       j-canvas.frame-type-grid(:image-data='selectedPaletteImageData')
 </template>
 
 <script>
 /* eslint-disable */
-import {
-  dom,  event,  openURL,  QLayout,  QToolbar,  QToolbarTitle,  QBtn,  QIcon,  QList,  QListHeader,  QItem,  QItemSide,  QItemMain,  QSlider
-} from 'quasar'
-
+import { dom, event, openURL, QLayout, QToolbar, QToolbarTitle, QBtn, QIcon, QList, QListHeader, QItem, QItemSide, QItemMain, QSlider} from 'quasar'
+import MoeObjects from '../../moe/objects'
 import colors from '../../data'
 
 // CREATE INITIAL DATA
@@ -40,11 +39,16 @@ export default {
   data () {
     return {
       selectedPalette: null,
+      selectedBitmap: null,
       uid: 0
     }
   },
   computed: {
     selectedPaletteImageData () {
+      let selectedPalette = this.$store.getters['entities/palettes/find'](this.selectedPalette)
+      return selectedPalette != null ? selectedPalette.imageData : null
+    },
+    selectedBitmapImageData () {
       let selectedPalette = this.$store.getters['entities/palettes/find'](this.selectedPalette)
       return selectedPalette ? selectedPalette.imageData : null
     },
@@ -56,7 +60,16 @@ export default {
       set() {
         // alert('sorted')
       }
-    }
+    },
+    bitmaps: {
+      get () {
+        // return this.$store.getters['entities/palettes/query']().orderBy('id', 'desc').get()
+        return this.$store.getters['entities/bitmaps/query']().get()
+      },
+      set() {
+        // alert('sorted')
+      }
+    }    
   },
   created () {
     // Here we are stubbing the initial data. In the real world, this
@@ -66,11 +79,23 @@ export default {
     this.$store.dispatch('entities/colors/create', { data: initialData })
   },
   methods: {
+    addBitmap () {
+      this.$refs.zone.openFileInput()
+    },
+    addBitmapsFromFiles (files) {
+      console.clear()
+      console.log('|---addBitmap()---------------------------------------> ')
+      var bitmap = new MoeObjects.Bitmap()
+      var id = 'bit_000' + this.uid++
+      bitmap.init({...payload, id})
+      Vue.set(state.repo.bitmaps, id, bitmap)
+      state.bitmaps.push(bitmap)
+
+      this.$store.dispatch('entities/bitmap/insert', {data: bitmap})
+    },
     addPalette () {
-      
       console.clear()
       console.log('|---addPalette()---------------------------------------> ')
-
       // INITIALISE PALETTE!
       let colors = this.$store.getters['entities/colors/all']()
 
@@ -79,20 +104,9 @@ export default {
 
       let imageData = new ImageData(256, 256)
       
-      // draw palette image data
+      // Draw palette image data
       let offset = 0
-      let colorIndex = 0
-      // for (let y = 0; y < 16; y++) {
-      //   for (let x = 0; x < 16; x++) {
-      //     offset = x + (y*16)
-      //     // console.log(offset, colors[colorIndex])
-      //     imageData.data[offset++] = colors[colorIndex].r
-      //     imageData.data[offset++] = colors[colorIndex].g //colors[i].g
-      //     imageData.data[offset++] = colors[colorIndex].b //colors[i].b
-      //     imageData.data[offset++] = colors[colorIndex].a  
-      //     colorIndex++
-      //   }
-      // }      
+      let colorIndex = 0    
       for (let y = 0; y < 16; y++) {
         for (let x = 0; x < 16; x++) {
           for (let yy = 0; yy < 16; yy++) {
@@ -114,9 +128,6 @@ export default {
         imageData 
       }
       
-
-
-      console.log("CREATED PALETTE", pal)
       this.$store.dispatch('entities/palettes/insert', {data: pal})
       console.log('<---addPalette()---------------------------------------|')
       //let pal = this.$store.getters['entities/palettes/find'](this.uid-1)
@@ -124,6 +135,9 @@ export default {
     },
     selectPalette (e) {
       this.selectedPalette = e.item.id
+    },
+    selectBitmap(e) {
+      this.selectedBitmap = e.item.id
     },
 
     toggle (todo) {

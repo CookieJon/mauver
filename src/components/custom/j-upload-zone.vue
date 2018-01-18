@@ -132,9 +132,10 @@
       },
 
       doSelect (e) {
+        this.$emit('select', e.target.files)
         // User selected files from the fileupload
         // alert('doSelect')
-        this.__addBitmaps(e.target.files)
+        ////this.__addBitmaps(e.target.files)
       },
 
       __addBitmaps (files) {
