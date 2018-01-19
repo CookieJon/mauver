@@ -13,7 +13,7 @@
     <!-- > J-PANEL-HEADER -->
     <div
       class='j-panel-header'
-      @dblclick='toggle_ExpandCollapse()'
+      @xdblclick='toggle_ExpandCollapse()'
       ref="header"
     >
       <!-- > HEADER > j-PANEL-TITLEBAR -->

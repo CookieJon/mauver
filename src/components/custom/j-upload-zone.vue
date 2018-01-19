@@ -16,6 +16,7 @@
     ref="fileinput"
     class="file-upload"
     name="userprofile_picture"
+    multiple="multiple"
     @change.stop.prevent="doSelect"
   />
  </div>

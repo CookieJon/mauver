@@ -38,9 +38,11 @@ export class Bitmap extends Model {
     return {
       id: this.attr(null),
       name: this.attr(''),
-      dataURL: this.attr(null),
       arrayBuffer: this.attr(null),
-      imageData: this.attr(Object)
+      dataURL: this.attr(null),
+      imageData: this.attr(Object),
+      pixels: this.attr(null)
+      // palette: this.hasOne(Palette, 'id')
     }
   }
 }

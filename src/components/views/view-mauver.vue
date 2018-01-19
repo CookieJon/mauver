@@ -8,7 +8,7 @@ div
       q-btn(round,primary,small,icon='business', @click='addPalette')
       q-btn(round,primary,small,icon='business', @click='openFileInput')
     div.j-tray.area.panel-item-grow(slot='content')
-      j-upload-zone(ref='zone',@select='loadImagesFromFile')
+      j-upload-zone(ref='zone',@select='loadImagesFromFiles')
         j-collection.frame-type-grid(v-model='palettes', @select='selectPalette')
     div.j-tray.area.panel-item-grow(slot='content')
       j-collection.frame-type-grid(v-model='bitmaps', @select='selectBitmap')
@@ -22,6 +22,7 @@ div
   j-panel(v-if='selectedPalette != null', icon='business', title='Selected', :width='200', :height='300', :x='10', :y='400')
     div.j-tray.area.panel-item-grow(slot='content')
       j-canvas.frame-type-grid(:image-data='selectedPaletteImageData')
+
 </template>
 
 <script>
@@ -84,8 +85,8 @@ export default {
   },
   methods: {
 
-    loadImagesFromFile(files) {
-      // Invoked from uploadZone@select
+    // 1. Invoked from uploadZone@select
+    loadImagesFromFiles(files) {
       for (let i = 0; i < files.length; i++) {
         let file = files[i]
         this.loadImageFromFile(file).then((bmp) => {
@@ -97,6 +98,7 @@ export default {
       }
     },
 
+    // 2. Invoked from loadImagesFromFiles
     loadImageFromFile(file) {
       // One file at a time, please!
       console.log('loadImageFromFile:', file)
@@ -112,7 +114,7 @@ export default {
           var reader = new FileReader()
           reader.onload = () => {
             let arrayBuffer = reader.result
-            let pixPalImagedata = this.fromArrayBuffer(arrayBuffer)
+            let pixPalImagedata = this.bitmapFromArrayBuffer(arrayBuffer)
             let bmp = {
               id: this.uid++, 
               ...pixPalImagedata
@@ -127,7 +129,12 @@ export default {
           var reader = new FileReader()
           reader.onload = () => {
             bmp.dataURL = reader.result
-            resolve(bmp)
+            let pixPalImagedata = this.bitmapFromDataURL(dataURL)
+            let bmp = {
+              id: this.uid++, 
+              ...pixPalImagedata
+            }
+            resolve(bmp)   
           }
           reader.readAsDataURL(file) //  for Image() object     
         }
@@ -205,61 +212,134 @@ export default {
       this.$store.dispatch('entities/todos/delete', id)
     },
 
-    fromArrayBuffer (srcArrayBuffer) {
-      // bitmap stream
+    bitmapFromArrayBuffer (srcArrayBuffer) {
+      // a. Parse arrayBuffer
+
+      // header
       let dataview = new DataView(srcArrayBuffer)
       let offBits = dataview.getUint16(10, true)
       let width = dataview.getUint32(18, true)
       let height = dataview.getUint32(22, true)
       let bitCount = dataview.getUint16(28, true)
-      // var totalColors = dataview.getUint16(46, true)
+      let totalColors = dataview.getUint16(46, true)
       let usedColors = dataview.getUint16(50, true)
 
       // pixels
       let length = width * height
-      let pixels_key = new Uint8Array(length)
+      let pixels = new Uint8Array(length)
       for (var y = 0; y < 256; y++) {
         for (var x = 0; x < 256; x++) {
-          pixels_key[x + y * 256] = dataview.getUint8(offBits + x + (255 - y) * 256) // Invert Y axis (BMP8 data goes from bottom->top)
+          pixels[x + y * 256] = dataview.getUint8(offBits + x + (255 - y) * 256) // Invert Y axis (BMP8 data goes from bottom->top)
         }
       }
-      let pixels = Uint8Array.from(pixels_key)
 
       // palette
       let paletteLength = bitCount === 0 ? 1 << bitCount : usedColors
       let index = 54
-      let tmpPalette = []
+      let palette = []
       for (let i = 0; i < paletteLength; i++) {
         var b = dataview.getUint8(index++)
         var g = dataview.getUint8(index++)
         var r = dataview.getUint8(index++)
         var a = dataview.getUint8(index++)
-        tmpPalette.push({r, g, b, a}) // TODO: Make real colors!
+        palette.push({r, g, b, a}) // TODO: Make real colors!
       }
-      let palette_key = tmpPalette
-      let palette = Array.from(tmpPalette)
 
-
+      // b. generate imageData
       let imageData = new ImageData(width, height)
       let data = imageData.data
       let mapToIndex = 0
       for (var i = 0; i < 65535; i++) {
-        let theColor = palette_key[pixels[i]]
+        let theColor = palette[pixels[i]]
         data[mapToIndex++] = theColor.r
         data[mapToIndex++] = theColor.g
         data[mapToIndex++] = theColor.b
         data[mapToIndex++] = 255
       }
 
-      console.log("ASDASDASD", imageData)
-
-      let ppid =  {
+      let ppid = {
         pixels,
         palette,
         imageData
       }
       return ppid
     },
+
+
+    normalisePalette (img) {
+
+
+      if (1 == 1) {
+        // * scale img to 256x256 via canvas
+        let canvas = document.createElement('canvas')
+        canvas.width = 256
+        canvas.height = 256
+        let ctx = canvas.getContext('2d')
+        ctx.drawImage(img, 0, 0, 256, 256)
+        
+      // this.imageData = Utils.extend(true, {}, ctx.getImageData(0, 0, 256, 256))
+        // let imgData = ctx.getImageData(0, 0, 256, 256)
+
+        // * material colors
+        var colorFrom = parseInt(Math.random() * 150)
+        var colorTo = parseInt(Math.random() * 150) + 151
+        colorFrom = 0
+        colorTo = 255
+        var materialColors = ColorUtils.getMaterialColors(colorFrom, colorTo)
+  console.log('material colors used:', materialColors)
+        // * iq.palette <= material colors
+        var iqPalette = new iq.utils.Palette()
+        for (var j = 0, l = materialColors.length; j < l; j++) {
+          var color = materialColors[j]
+          iqPalette.add(iq.utils.Point.createByRGBA(color.r, color.g, color.b, color.a))
+        }
+        // * iq.distance.?
+        var iqDistance = new iq.distance.EuclideanRgbQuantWOAlpha()
+        //     return new iq.distance.Euclidean();Manhattan();IEDE2000(); etc...
+
+        // & iq.image.?
+        var inPointContainer = iq.utils.PointContainer.fromHTMLCanvasElement(canvas)
+        // ////// var iqImage = new iq.image.ErrorDiffusionArray(iqDistance, iq.image.ErrorDiffusionArrayKernel.SierraLite)
+        var iqImage = new iq.image.NearestColor(iqDistance)
+
+        var outPointContainer = iqImage.quantize(inPointContainer, iqPalette)
+        var uint8array = outPointContainer.toUint8Array()
+        console.log(uint8array)
+        var imageData = canvas.getContext('2d').getImageData(0, 0, 256, 256)
+        // Utils.extend(true, this.imageData, imageData)
+        this.imageData = new ImageData(256, 256)
+        //this.imageData.data.set(data)
+        for (var i = 0; i < uint8array.length; i++) {
+          this.imageData.data[i] = uint8array[i]
+        }
+        // tags
+
+        // draw palette
+        
+        var paletteCanvas = ColorUtils.drawPixels(iqPalette.getPointContainer(), 16, 32)
+        paletteCanvas.className = 'palette'
+        this.$el.appendChild(paletteCanvas)
+
+      } else {
+        // no transform palette
+        let canvas = document.createElement('canvas')
+        canvas.width = 256
+        canvas.height = 256
+        let ctx = canvas.getContext('2d')
+        ctx.drawImage(img, 0, 0, 256, 256)
+        this.imageData = ctx.getImageData(0, 0, 256, 256)
+        return
+      }
+
+    },    
+
+    imageDataFromPixelsAndPalette() {
+
+      return imageData
+    },
+    imageDataFromPalette() {
+
+    }
   }
 }
 </script>
