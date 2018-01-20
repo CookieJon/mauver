@@ -13,6 +13,10 @@ div
     div.j-tray.area.panel-item-grow(slot='content')
       j-collection.frame-type-grid(v-model='bitmaps', @select='selectBitmap')
 
+  j-panel(icon='business', title='Sample', :width='300', :height='400', :x='410', :y='10')      
+    div.j-tray.area.panel-item-grow(slot='content')
+      canvas(ref='testcanvas', :width=256, :height=256)
+
   // SELECTED 
   j-panel(v-if='selectedBitmap != null', icon='business', title='Selected', :width='200', :height='300', :x='110', :y='400')
     div.j-tray.area.panel-item-grow(slot='content')
@@ -29,7 +33,8 @@ div
 /* eslint-disable */
 import { dom, event, openURL, QLayout, QToolbar, QToolbarTitle, QBtn, QIcon, QList, QListHeader, QItem, QItemSide, QItemMain, QSlider} from 'quasar'
 import MoeObjects from '../../moe/objects'
-import colors from '../../data'
+import dataColors from '../../data'
+import iq from 'image-q'
 
 // CREATE INITIAL DATA
 // import colorUtils from 'moe/utils/moe.utils.color.js'
@@ -79,8 +84,8 @@ export default {
   created () {
     // Here we are stubbing the initial data. In the real world, this
     // should be the response from the API Backend.
-    const initialData = colors
-    console.log('data', colors)
+    const initialData = dataColors
+    console.log('data', dataColors)
     this.$store.dispatch('entities/colors/create', { data: initialData })
   },
   methods: {
@@ -111,7 +116,7 @@ export default {
         // A. Custom jBMP
         //
         if (file.size === 66614 && file.name.match(/.bmp/) ) {
-          var reader = new FileReader()
+          let reader = new FileReader()
           reader.onload = () => {
             let arrayBuffer = reader.result
             let pixPalImagedata = this.bitmapFromArrayBuffer(arrayBuffer)
@@ -126,15 +131,19 @@ export default {
         // B. Any other image
         //
         else if (file.type.match(/image.*/)) {
-          var reader = new FileReader()
+          let reader = new FileReader()
           reader.onload = () => {
-            bmp.dataURL = reader.result
-            let pixPalImagedata = this.bitmapFromDataURL(dataURL)
-            let bmp = {
-              id: this.uid++, 
-              ...pixPalImagedata
+            let dataURL = reader.result
+            let img = new Image
+            img.onload = () => {
+              let pixPalImagedata = this.bitmapFromImg(img)
+              let bmp = {
+                id: this.uid++, 
+                ...pixPalImagedata
+              }
+              resolve(bmp)   
             }
-            resolve(bmp)   
+            img.src = dataURL
           }
           reader.readAsDataURL(file) //  for Image() object     
         }
@@ -149,49 +158,15 @@ export default {
     openFileInput() {
       this.$refs.zone.openFileInput()
     },
+    
     addBitmap (bmp) {
       console.log('addBitmap:', bmp)
       this.$store.dispatch('entities/bitmaps/insert', {data: bmp})
     },
     addPalette () {
       console.clear()
-      console.log('|---addPalette()---------------------------------------> ')
-      // INITIALISE PALETTE!
-      let colors = this.$store.getters['entities/colors/all']()
-
-      // DEBUG COLOR LIST
-      // let out = '', styles=[];for (let i=0; i < colors.length; i++) {out += '%c'+i,styles.push('color:'+colors[i].hex+';')};console.log("COLORS:");console.log(out, ...styles)
-
-      let imageData = new ImageData(256, 256)
-      
-      // Draw palette image data
-      let offset = 0
-      let colorIndex = 0    
-      for (let y = 0; y < 16; y++) {
-        for (let x = 0; x < 16; x++) {
-          for (let yy = 0; yy < 16; yy++) {
-            for (let xx = 0; xx < 16; xx++) {
-              offset = (((x * 16) + xx) * 4) +  (((y * 16) + yy) * 256 * 4)
-              // console.log(offset, colors[colorIndex])
-              imageData.data[offset++] = colors[colorIndex].r
-              imageData.data[offset++] = colors[colorIndex].g //colors[i].g
-              imageData.data[offset++] = colors[colorIndex].b //colors[i].b
-              imageData.data[offset++] = colors[colorIndex].a  
-            }
-          }
-          colorIndex++
-        }
-      }
-      let pal = {
-        id: this.uid++,
-        colors,
-        imageData 
-      }
-      
+      let pal = this.paletteFromPreset('MaterialDefault')
       this.$store.dispatch('entities/palettes/insert', {data: pal})
-      console.log('<---addPalette()---------------------------------------|')
-      //let pal = this.$store.getters['entities/palettes/find'](this.uid-1)
-      //pal.init()
     },
     selectPalette (e) {
       this.selectedPalette = e.item.id
@@ -212,6 +187,48 @@ export default {
       this.$store.dispatch('entities/todos/delete', id)
     },
 
+    paletteFromPreset(presetId) {
+
+      // Get the colors
+      let colors
+      switch(presetId) {
+        case 'Empty':
+          colors = []
+        case 'MaterialDefault':
+        default:
+          colors = this.$store.getters['entities/colors/query']().orderBy('id').get()
+      }
+      // Debug color list
+      // let out = '', styles=[];for (let i=0; i < colors.length; i++) {out += '%c'+i,styles.push('color:'+colors[i].hex+';')};console.log("COLORS:");console.log(out, ...styles)
+
+      // imageData
+      let imageData = new ImageData(256, 256)
+      let offset = 0
+      let colorIndex = 0    
+      for (let y = 0; y < 16; y++) {
+        for (let x = 0; x < 16; x++) {
+          for (let yy = 0; yy < 16; yy++) {
+            for (let xx = 0; xx < 16; xx++) {
+              offset = (((x * 16) + xx) * 4) +  (((y * 16) + yy) * 256 * 4)
+              imageData.data[offset++] = colors[colorIndex].r
+              imageData.data[offset++] = colors[colorIndex].g //colors[i].g
+              imageData.data[offset++] = colors[colorIndex].b //colors[i].b
+              imageData.data[offset++] = colors[colorIndex].a  
+            }
+          }
+          colorIndex++
+        }
+      }
+
+      let pal = {
+        id: this.uid++,
+        colors,
+        imageData 
+      }
+      
+      return pal
+    },
+
     bitmapFromArrayBuffer (srcArrayBuffer) {
       // a. Parse arrayBuffer
 
@@ -227,29 +244,29 @@ export default {
       // pixels
       let length = width * height
       let pixels = new Uint8Array(length)
-      for (var y = 0; y < 256; y++) {
-        for (var x = 0; x < 256; x++) {
+      for (let y = 0; y < 256; y++) {
+        for (let x = 0; x < 256; x++) {
           pixels[x + y * 256] = dataview.getUint8(offBits + x + (255 - y) * 256) // Invert Y axis (BMP8 data goes from bottom->top)
         }
       }
 
       // palette
+      let palette = this.paletteFromPreset('Empty')
       let paletteLength = bitCount === 0 ? 1 << bitCount : usedColors
       let index = 54
-      let palette = []
       for (let i = 0; i < paletteLength; i++) {
-        var b = dataview.getUint8(index++)
-        var g = dataview.getUint8(index++)
-        var r = dataview.getUint8(index++)
-        var a = dataview.getUint8(index++)
-        palette.push({r, g, b, a}) // TODO: Make real colors!
+        let b = dataview.getUint8(index++)
+        let g = dataview.getUint8(index++)
+        let r = dataview.getUint8(index++)
+        let a = dataview.getUint8(index++)
+        palette.colors.push({r, g, b, a}) // TODO: Make real colors!
       }
 
       // b. generate imageData
       let imageData = new ImageData(width, height)
       let data = imageData.data
       let mapToIndex = 0
-      for (var i = 0; i < 65535; i++) {
+      for (let i = 0; i < 65535; i++) {
         let theColor = palette[pixels[i]]
         data[mapToIndex++] = theColor.r
         data[mapToIndex++] = theColor.g
@@ -257,6 +274,7 @@ export default {
         data[mapToIndex++] = 255
       }
 
+      // Return a bitmap
       let ppid = {
         pixels,
         palette,
@@ -265,72 +283,91 @@ export default {
       return ppid
     },
 
+    bitmapFromImg (img) {
+      // NB: IMAGE must have loaded by this  time.
+      // Converts a true-color image to 256-color palette & 256x256 pixels
+      // imgSrc = [img|dataURL]
 
-    normalisePalette (img) {
+      // use dataURL for imgSrc so far
+      // * scale img to 256x256 via canvas
+      let canvas = document.createElement('canvas')
+      canvas = this.$refs.testcanvas
+      canvas.width = 256
+      canvas.height = 256
+      let ctx = canvas.getContext('2d')
+      ctx.drawImage(img, 0, 0, 256, 256)
+      
+      // * material colors
+      let materialColors = this.$store.getters['entities/colors/query']().orderBy('id').get()
 
-
-      if (1 == 1) {
-        // * scale img to 256x256 via canvas
-        let canvas = document.createElement('canvas')
-        canvas.width = 256
-        canvas.height = 256
-        let ctx = canvas.getContext('2d')
-        ctx.drawImage(img, 0, 0, 256, 256)
-        
-      // this.imageData = Utils.extend(true, {}, ctx.getImageData(0, 0, 256, 256))
-        // let imgData = ctx.getImageData(0, 0, 256, 256)
-
-        // * material colors
-        var colorFrom = parseInt(Math.random() * 150)
-        var colorTo = parseInt(Math.random() * 150) + 151
-        colorFrom = 0
-        colorTo = 255
-        var materialColors = ColorUtils.getMaterialColors(colorFrom, colorTo)
-  console.log('material colors used:', materialColors)
-        // * iq.palette <= material colors
-        var iqPalette = new iq.utils.Palette()
-        for (var j = 0, l = materialColors.length; j < l; j++) {
-          var color = materialColors[j]
-          iqPalette.add(iq.utils.Point.createByRGBA(color.r, color.g, color.b, color.a))
-        }
-        // * iq.distance.?
-        var iqDistance = new iq.distance.EuclideanRgbQuantWOAlpha()
-        //     return new iq.distance.Euclidean();Manhattan();IEDE2000(); etc...
-
-        // & iq.image.?
-        var inPointContainer = iq.utils.PointContainer.fromHTMLCanvasElement(canvas)
-        // ////// var iqImage = new iq.image.ErrorDiffusionArray(iqDistance, iq.image.ErrorDiffusionArrayKernel.SierraLite)
-        var iqImage = new iq.image.NearestColor(iqDistance)
-
-        var outPointContainer = iqImage.quantize(inPointContainer, iqPalette)
-        var uint8array = outPointContainer.toUint8Array()
-        console.log(uint8array)
-        var imageData = canvas.getContext('2d').getImageData(0, 0, 256, 256)
-        // Utils.extend(true, this.imageData, imageData)
-        this.imageData = new ImageData(256, 256)
-        //this.imageData.data.set(data)
-        for (var i = 0; i < uint8array.length; i++) {
-          this.imageData.data[i] = uint8array[i]
-        }
-        // tags
-
-        // draw palette
-        
-        var paletteCanvas = ColorUtils.drawPixels(iqPalette.getPointContainer(), 16, 32)
-        paletteCanvas.className = 'palette'
-        this.$el.appendChild(paletteCanvas)
-
-      } else {
-        // no transform palette
-        let canvas = document.createElement('canvas')
-        canvas.width = 256
-        canvas.height = 256
-        let ctx = canvas.getContext('2d')
-        ctx.drawImage(img, 0, 0, 256, 256)
-        this.imageData = ctx.getImageData(0, 0, 256, 256)
-        return
+      // * iq.palette <= material colors
+      let iqPalette = new iq.utils.Palette()
+      for (let j = 0, l = materialColors.length; j < l; j++) {
+        let color = materialColors[j]
+        iqPalette.add(iq.utils.Point.createByRGBA(color.r, color.g, color.b, color.a))
       }
+      // * iq.distance.?
+      // iq.distance.Euclidean();Manhattan();IEDE2000(); etc...
+      let iqDistance = new iq.distance.EuclideanRgbQuantWOAlpha()
+      let inPointContainer = iq.utils.PointContainer.fromHTMLCanvasElement(canvas)
+      iq.utils.PointContainer.fromHTMLImageElement
+      let iqImage = new iq.image.ErrorDiffusionArray(iqDistance, iq.image.ErrorDiffusionArrayKernel.SierraLite)
+      // let iqImage = new iq.image.NearestColor(iqDistance)
 
+      let outPointContainer = iqImage.quantize(inPointContainer, iqPalette)
+      let uint8array = outPointContainer.toUint8Array() // <- imagedata data
+
+
+      // palette
+      let palette = this.paletteFromPreset('MaterialDefault')
+
+      // pixels
+      let pixels = Array(65536).fill(0) // default all to 0
+      let pixelIndex = 0
+      console.log('match this!>>', uint8array)
+
+      // Loop through imagedata
+      for (let i=0; i < uint8array.length; i+=4) {
+        // Find matching palette color
+        for (let c=0; c < palette.colors.length; c++) {
+          let col = palette.colors[c]
+          if (
+            col.r === uint8array[c] &&
+            col.g === uint8array[c+1] &&
+            col.b === uint8array[c+2] 
+          ) {
+            pixels[pixelIndex++] = c
+            break
+          }
+        }
+
+      }
+      
+
+      // generate imageData
+      let imageData = new ImageData(256, 256)
+      // From original...
+        for (let i = 0; i < uint8array.length; i++) {
+          imageData.data[i] = uint8array[i]
+        }
+      // From pixels & palette...
+      // let data = imageData.data
+      // let index = 0
+      // for (let i = 0; i < 65535; i++) {
+      //   let theColor = palette.colors[pixels[i]]
+      //   data[index++] = theColor.r
+      //   data[index++] = theColor.g
+      //   data[index++] = theColor.b
+      //   data[index++] = 255
+      // }
+
+      // Return a bitmap
+      let ppid = {
+        pixels,
+        palette,
+        imageData
+      }
+      return ppid
     },    
 
     imageDataFromPixelsAndPalette() {
@@ -338,6 +375,7 @@ export default {
       return imageData
     },
     imageDataFromPalette() {
+      
 
     }
   }

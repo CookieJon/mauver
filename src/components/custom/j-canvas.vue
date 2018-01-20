@@ -61,10 +61,21 @@ export default {
     }
   },
   methods: {
-    // Update from imageData
+
     updateImage () {
-      console.log('** canvas update from imageData **')
-      this.ctx.putImageData(this.imageData, 0, 0)
+      // Get prop:imageData
+      if (this.imageData instanceof ImageData) {
+        this.ctx.putImageData(this.imageData, 0, 0)
+      }
+      else {
+        // draw error on canvas
+        this.ctx.font = '30px Comic Sans MS'
+        this.ctx.fillStyle = 'red'
+        this.ctx.textAlign = 'center'
+        this.ctx.fillText((typeof this.imageData) + ' is not ImageData', 128, 128)
+      }
+      // Set local:myImageData
+      this.myImageData = this.ctx.getImageData(0, 0, this.pixelWidth, this.pixelHeight)
     },
     // get canvas FROM...
     fromImageData (imageData) {
