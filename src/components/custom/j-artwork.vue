@@ -10,24 +10,32 @@
 
     q-card-main
       div.row 
+        q-field(
+          icon="satellite",
+          label="Bitmap",
+          dark)
+        
+        q-input.col(stack-label='Sliding Speeds Pattern', dark, v-model='slidingSpeedsPattern')
+      div.row 
         div.col-4
           j-canvas(:imageData='slidingSpeedsImageData',width="60px",height="60px")
-          j-lever(v-model='controlTargetPower', rest='50%', :markers='true', 
-            :labelAlways='true', 
-            @start='__startSliding'
-            @stop='__stopSliding'
-            :range={
-              'min': -10000,
-              '35%': -1200,
-              '45%': -100,
-              '50%': 0,
-              '55%': 100,
-              '65%': 1200,
-              'max': 10000
-            }		
-          ) 
+          //- j-lever(v-model='controlTargetPower', rest='50%', :markers='true', 
+          //-   :labelAlways='true', 
+          //-   @start='__startSliding'
+          //-   @stop='__stopSliding'
+          //-   :range={
+          //-     'min': -10000,
+          //-     '35%': -1200,
+          //-     '45%': -100,
+          //-     '50%': 0,
+          //-     '55%': 100,
+          //-     '65%': 1200,
+          //-     'max': 10000
+          //-   }		
+          //- ) 
           //- p|x{{myValue.filters}}
-          j-collection.frame-type-grid(v-model='myFilters', @add='onAddFilter')
+          j-collection.frame-type-grid(v-model='myFilters', @add='addFilter($event)', style='width:80px')
+          //  j-canvas(:image-data='bitmapPreview',width='420px',height="420px") 
           q-select.col(stack-label='Palette', dark, v-model='paletteDDL', :options='paletteOptions')
        
         div.col-8
@@ -116,12 +124,15 @@ export default {
   computed: {
     // https://github.com/SortableJS/Vue.Draggable
     myFilters: {
-      get() {
-        // alert('get myFilters from artwork ' + this.value)
-        return extend({}, {val: this.value.filters}).val
+      get () {
+        // return this.$store.getters['entities/palettes/query']().orderBy('id', 'desc').get()
+        let filters = this.$store.getters['entities/bitmaps/query']().where(bitmap => {
+          return this.value.filters.includes(bitmap.id)
+        }).get()
+        return filters
       },
-      set(value) {
-        alert('myFilters set')
+      set() {
+        // alert('sorted')
       }
     },
     myImageData () {
@@ -144,17 +155,23 @@ export default {
       let tmp = extend({}, {val: this.myValue}).val
       this.$emit('input', tmp)
     },
-    onAddFilter: e => {
+    addFilter: e => {
+      let filter = e.clone.obj
+      console.log('Add FILTER!', filter)
       // Rubaxa drop 1 item 
       // var el = e.item;
       // el.parentNode.removeChild(el);
       //alert('Dropped: ' + el.textContent);      
       // Moe...
+  
+      // this.$actions.artwork_addFilter(artworkId, filterId)
+      this.$store.dispatch('entities/artworks/update', {
+        where: this.value.id,
+        data: {}
+      })
 
-      this.$actions.artwork_addFilter(artworkId, filterId)
-
-      let tmp = extend({}, {val: this.myValue}).val
-      tmp.filters = [this.$state.bitmaps[0]]
+      // let tmp = extend({}, {val: this.myValue}).val
+      // tmp.filters = [this.$state.bitmaps[0]]
       // this.$emit('input', tmp)
     },    
     __init() {

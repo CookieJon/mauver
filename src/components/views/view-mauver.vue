@@ -2,28 +2,42 @@
 <!-- root node required -->
 div
 
-  // COLLECTION
-  j-panel(icon='business', title='Sample', :width='300', :height='400', :x='10', :y='10')
-    div.j-panel-toolbar.text-black(slot='toolbar', style='padding:4px;')
-      q-btn(round,primary,small,icon='business', @click='addPalette')
-      q-btn(round,primary,small,icon='business', @click='openFileInput')
-    div.j-tray.area.panel-item-grow(slot='content')
-      j-upload-zone(ref='zone',@select='loadImagesFromFiles')
-        j-collection.frame-type-grid(v-model='palettes', @select='selectPalette')
-    div.j-tray.area.panel-item-grow(slot='content')
-      j-collection.frame-type-grid(v-model='bitmaps', @select='selectBitmap')
-
-  j-panel(icon='business', title='Sample', :width='300', :height='400', :x='410', :y='10')      
+  // TESTING
+  j-panel(icon='business', title='test canvas',
+     :width='300', :height='400', :x='410', :y='510')      
     div.j-tray.area.panel-item-grow(slot='content')
       canvas(ref='testcanvas', :width=256, :height=256)
 
-  // SELECTED 
-  j-panel(v-if='selectedBitmap != null', icon='business', title='Selected', :width='200', :height='300', :x='110', :y='400')
+
+  // COLLECTION
+  j-panel(icon='business', title='Objects', :width='300', :height='700', :x='10', :y='10')
+    div.j-panel-toolbar.text-black(slot='toolbar', style='padding:4px;')
+      q-btn(round,primary,small,icon='art track', @click='addArtwork')
+      q-btn(round,primary,small,icon='satellite', @click='openFileInput')
+      q-btn(round,primary,small,icon='color lens', @click='addPalette')
+    // artworks
+    div.j-tray.area.panel-item-grow(slot='content')
+      j-collection.frame-type-grid(v-model='artworks', @select='selectArtwork')
+    // bitmaps
+    div.j-tray.area.panel-item-grow(slot='content')
+      j-collection.frame-type-grid(v-model='bitmaps', @select='selectBitmap')
+      j-upload-zone(ref='zone',@select='loadImagesFromFiles')
+    // palettes
+    div.j-tray.area.panel-item-grow(slot='content')
+      j-collection.frame-type-grid(v-model='palettes', @select='selectPalette')
+
+  // selectedArtwork (Slider!)
+  j-panel(icon='business', :title='selectedArtwork?selectedArtwork.name:"Art"', :width='600', :height='660', :x='410', :y='10')      
+    div.j-tray.area.panel-item-grow(slot='content')
+      j-artwork(v-if="selectedArtwork", v-model='selectedArtwork')
+
+  // selectedBitmapImageData 
+  j-panel(v-if='selectedBitmapImageData != null', icon='business', title='Selected Bitmap', :width='200', :height='300', :x='110', :y='400')
     div.j-tray.area.panel-item-grow(slot='content')
       j-canvas.frame-type-grid(:image-data='selectedBitmapImageData')
   
-  // SELECTED 
-  j-panel(v-if='selectedPalette != null', icon='business', title='Selected', :width='200', :height='300', :x='10', :y='400')
+  // selectedPaletteImageData 
+  j-panel(v-if='selectedPaletteImageData != null', icon='business', title='Selected Palette', :width='200', :height='300', :x='10', :y='400')
     div.j-tray.area.panel-item-grow(slot='content')
       j-canvas.frame-type-grid(:image-data='selectedPaletteImageData')
 
@@ -46,21 +60,52 @@ import iq from 'image-q'
 export default {
   name: 'view-mauver',
   components: { QBtn},
+  created () {
+    // Here we are stubbing the initial data. In the real world, this
+    // should be the response from the API Backend.
+    const initialData = dataColors
+    console.log('data', dataColors)
+    this.$store.dispatch('entities/colors/create', { data: initialData })
+  },
   data () {
     return {
-      selectedPalette: null,
-      selectedBitmap: null,
+      selectedPaletteId: null,
+      selectedBitmapId: null,
+      selectedArtworkId: null,
       uid: 0
     }
   },
   computed: {
+    selectedArtwork: {
+      get () {
+        let selectedArtwork = this.$store.getters['entities/artworks/find'](this.selectedArtworkId)
+        return selectedArtwork
+      },
+      set (value) {
+        this.selectedArtworkId = value.id
+      }
+    },
+    selectedBitmap: {
+      get () {
+        let selectedBitmap = this.$store.getters['entities/bitmaps/find'](this.selectedBitmapId)
+
+        return selectedBitmap
+      },
+      set (value) {
+        this.selectedBitmapId = value.id
+      }
+    },    
     selectedPaletteImageData () {
-      let selectedPalette = this.$store.getters['entities/palettes/find'](this.selectedPalette)
+      let selectedPalette = this.$store.getters['entities/palettes/find'](this.selectedPaletteId)
       return selectedPalette != null ? selectedPalette.imageData : null
     },
     selectedBitmapImageData () {
-      let selectedBitmap = this.$store.getters['entities/bitmaps/find'](this.selectedBitmap)
+      let selectedBitmap = this.$store.getters['entities/bitmaps/find'](this.selectedBitmapId)
       return selectedBitmap ? selectedBitmap.imageData : null
+    },
+    selectedBitmapPaletteImageData () {
+      let selectedBitmap = this.$store.getters['entities/bitmaps/find'](this.selectedBitmapId)
+      return selectedBitmap && selectedBitmap.palette ? selectedBitmap.palette.imageData : null
     },
     palettes: {
       get () {
@@ -79,16 +124,32 @@ export default {
       set() {
         // alert('sorted')
       }
-    }    
-  },
-  created () {
-    // Here we are stubbing the initial data. In the real world, this
-    // should be the response from the API Backend.
-    const initialData = dataColors
-    console.log('data', dataColors)
-    this.$store.dispatch('entities/colors/create', { data: initialData })
+    },
+    artworks: {
+      get () {
+        // return this.$store.getters['entities/palettes/query']().orderBy('id', 'desc').get()
+        return this.$store.getters['entities/artworks/query']().get()
+      },
+      set() {
+        // alert('sorted')
+      }
+    }      
   },
   methods: {
+
+
+    selectPalette(e) {
+      console.log('selectPalette', e)
+      this.selectedPaletteId = e.item.id
+    },
+    selectBitmap(e) {
+      console.log('selectBitmap', e)
+      this.selectedBitmapId = e.item.id
+    },
+    selectArtwork(e) {
+      console.log('selectArtwork', e)
+      this.selectedArtworkId = e.item.id
+    },    
 
     // 1. Invoked from uploadZone@select
     loadImagesFromFiles(files) {
@@ -164,27 +225,48 @@ export default {
       this.$store.dispatch('entities/bitmaps/insert', {data: bmp})
     },
     addPalette () {
-      console.clear()
+      
       let pal = this.paletteFromPreset('MaterialDefault')
       this.$store.dispatch('entities/palettes/insert', {data: pal})
     },
-    selectPalette (e) {
-      this.selectedPalette = e.item.id
-    },
-    selectBitmap(e) {
-      this.selectedBitmap = e.item.id
+    addArtwork () {
+     
+      let art = {
+        id: this.uid++,
+        name: 'Art '+this.uid,
+        // *artwork's private...'*
+        // final output...
+        pixels: null,
+        palette: null,
+        imageData: null,
+        // 1. artwork components. MUCH TODO:!
+        bitmap: null,
+        pixelmap: null,
+        colormap: null,
+        slider: null
+      }
+      
+      console.log('addArtwork:', art)
+      this.$store.dispatch('entities/artworks/insert', {data: art})
     },
 
-    toggle (todo) {
-      this.$store.dispatch('entities/todos/update', { id: todo.id, done: !todo.done })
-    },
 
-    update (id, title) {
-      this.$store.dispatch('entities/todos/update', { id, title })
-    },
 
-    destroy (id) {
-      this.$store.dispatch('entities/todos/delete', id)
+    // toggle (todo) {
+    //   this.$store.dispatch('entities/todos/update', { id: todo.id, done: !todo.done })
+    // },
+
+    // update (id, title) {
+    //   this.$store.dispatch('entities/todos/update', { id, title })
+    // },
+
+    // destroy (id) {
+    //   this.$store.dispatch('entities/todos/delete', id)
+    // },
+
+    debugColors(colors) {
+      // Debug color list      console.log('Debug colors', colors.length)      let out = '', styles=[]      for (let i=0; i < colors.length; i++) {out += '%c'+i,styles.push('background-color:'+colors[i].hex+';')};console.log("COLORS:");console.log(out, ...styles)
+      console.log('Debug colors', colors.length)
     },
 
     paletteFromPreset(presetId) {
@@ -194,32 +276,18 @@ export default {
       switch(presetId) {
         case 'Empty':
           colors = []
+          break
         case 'MaterialDefault':
         default:
           colors = this.$store.getters['entities/colors/query']().orderBy('id').get()
       }
-      // Debug color list
-      // let out = '', styles=[];for (let i=0; i < colors.length; i++) {out += '%c'+i,styles.push('color:'+colors[i].hex+';')};console.log("COLORS:");console.log(out, ...styles)
+      console.log('paletteFromPreset', presetId)
+      this.debugColors(colors)
 
-      // imageData
-      let imageData = new ImageData(256, 256)
-      let offset = 0
-      let colorIndex = 0    
-      for (let y = 0; y < 16; y++) {
-        for (let x = 0; x < 16; x++) {
-          for (let yy = 0; yy < 16; yy++) {
-            for (let xx = 0; xx < 16; xx++) {
-              offset = (((x * 16) + xx) * 4) +  (((y * 16) + yy) * 256 * 4)
-              imageData.data[offset++] = colors[colorIndex].r
-              imageData.data[offset++] = colors[colorIndex].g //colors[i].g
-              imageData.data[offset++] = colors[colorIndex].b //colors[i].b
-              imageData.data[offset++] = colors[colorIndex].a  
-            }
-          }
-          colorIndex++
-        }
-      }
+      // generate imageData
+      let imageData = this.imageDataFromColors(colors)
 
+      // return palette
       let pal = {
         id: this.uid++,
         colors,
@@ -251,6 +319,7 @@ export default {
       }
 
       // palette
+      let presetColors = this.$store.getters['entities/colors/query']().orderBy('id').get()
       let palette = this.paletteFromPreset('Empty')
       let paletteLength = bitCount === 0 ? 1 << bitCount : usedColors
       let index = 54
@@ -259,15 +328,21 @@ export default {
         let g = dataview.getUint8(index++)
         let r = dataview.getUint8(index++)
         let a = dataview.getUint8(index++)
-        palette.colors.push({r, g, b, a}) // TODO: Make real colors!
+        let col = presetColors.find(c => {
+          return c.r === r && c.g === g && c.b === b
+        })
+        palette.colors.push(col || presetColors[0]) // TODO: Make real colors!
       }
+      this.debugColors(palette.colors)
+      // palette's imagedata
+      palette.imageData = this.imageDataFromColors(palette.colors) 
 
       // b. generate imageData
       let imageData = new ImageData(width, height)
       let data = imageData.data
       let mapToIndex = 0
       for (let i = 0; i < 65535; i++) {
-        let theColor = palette[pixels[i]]
+        let theColor = palette.colors[pixels[i]]
         data[mapToIndex++] = theColor.r
         data[mapToIndex++] = theColor.g
         data[mapToIndex++] = theColor.b
@@ -296,7 +371,12 @@ export default {
       canvas.height = 256
       let ctx = canvas.getContext('2d')
       ctx.drawImage(img, 0, 0, 256, 256)
-      
+
+
+//       let img2 = ctx.drawImage(img, 0, 0, 256, 256)
+//       let inPointContainer2 = iq.utils.PointContainer.fromHTMLImageElement(ctx.drawImage(img, 0, 0, 256, 256))
+//       let inPointContainer = inPointContainer1
+
       // * material colors
       let materialColors = this.$store.getters['entities/colors/query']().orderBy('id').get()
 
@@ -309,8 +389,9 @@ export default {
       // * iq.distance.?
       // iq.distance.Euclidean();Manhattan();IEDE2000(); etc...
       let iqDistance = new iq.distance.EuclideanRgbQuantWOAlpha()
-      let inPointContainer = iq.utils.PointContainer.fromHTMLCanvasElement(canvas)
-      iq.utils.PointContainer.fromHTMLImageElement
+      
+      let inPointContainer = iq.utils.PointContainer.fromHTMLCanvasElement(canvas) // use canvas to scale to 256x256
+
       let iqImage = new iq.image.ErrorDiffusionArray(iqDistance, iq.image.ErrorDiffusionArrayKernel.SierraLite)
       // let iqImage = new iq.image.NearestColor(iqDistance)
 
@@ -332,9 +413,9 @@ export default {
         for (let c=0; c < palette.colors.length; c++) {
           let col = palette.colors[c]
           if (
-            col.r === uint8array[c] &&
-            col.g === uint8array[c+1] &&
-            col.b === uint8array[c+2] 
+            col.r === uint8array[i] &&
+            col.g === uint8array[i+1] &&
+            col.b === uint8array[i+2] 
           ) {
             pixels[pixelIndex++] = c
             break
@@ -351,15 +432,15 @@ export default {
           imageData.data[i] = uint8array[i]
         }
       // From pixels & palette...
-      // let data = imageData.data
-      // let index = 0
-      // for (let i = 0; i < 65535; i++) {
-      //   let theColor = palette.colors[pixels[i]]
-      //   data[index++] = theColor.r
-      //   data[index++] = theColor.g
-      //   data[index++] = theColor.b
-      //   data[index++] = 255
-      // }
+      let data = imageData.data
+      let index = 0
+      for (let i = 0; i < 65535; i++) {
+        let theColor = palette.colors[pixels[i]]
+        data[index++] = theColor.r
+        data[index++] = theColor.g
+        data[index++] = theColor.b
+        data[index++] = 255
+      }
 
       // Return a bitmap
       let ppid = {
@@ -374,8 +455,30 @@ export default {
 
       return imageData
     },
-    imageDataFromPalette() {
-      
+    imageDataFromColors(colors) {
+      // Assumes 256 colors!
+      let imageData = new ImageData(256, 256)
+
+      if (!colors.length) return imageData
+      let offset = 0
+      let colorIndex = 0    
+      for (let y = 0; y < 16; y++) {
+        for (let x = 0; x < 16; x++) {
+          for (let yy = 0; yy < 16; yy++) {
+            for (let xx = 0; xx < 16; xx++) {
+              offset = (((x * 16) + xx) * 4) +  (((y * 16) + yy) * 256 * 4)
+              imageData.data[offset++] = colors[colorIndex].r
+              imageData.data[offset++] = colors[colorIndex].g //colors[i].g
+              imageData.data[offset++] = colors[colorIndex].b //colors[i].b
+              imageData.data[offset++] = colors[colorIndex].a  
+            }
+          }
+          colorIndex++
+        }
+      }
+
+
+      return imageData
 
     }
   }

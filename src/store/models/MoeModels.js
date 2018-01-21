@@ -41,8 +41,8 @@ export class Bitmap extends Model {
       arrayBuffer: this.attr(null),
       dataURL: this.attr(null),
       imageData: this.attr(Object),
-      pixels: this.attr(null)
-      // palette: this.hasOne(Palette, 'id')
+      pixels: this.attr(null),
+      palette: this.hasOne(Palette, 'id')
     }
   }
 }
@@ -52,7 +52,18 @@ export class Artwork extends Model {
   static fields () {
     return {
       id: this.attr(null),
-      name: this.attr('')
+      name: this.attr(''),
+      // *artwork's private...'*
+      // final output...
+      pixels: this.attr(null),
+      palette: this.attr(null),
+      imageData: this.attr(null),
+      // 1. artwork components. MUCH TODO:!
+      filters: this.hasMany(Bitmap, 'id'),
+      bitmap: this.hasOne(Bitmap, 'id'),
+      pixelmap: this.attr(null),
+      colormap: this.attr(null),
+      slider: this.attr(null)
     }
   }
 }

@@ -39,8 +39,8 @@
     computed: {
       myImageData () {
         //this.$refs['jCanvas'].updateImage()
-        console.log('|---j-item computed.myImageData()----------------------> ')
-        console.log(' this.value.imageData.data', this.value.imageData.data)
+        // console.log('|---j-item computed.myImageData()----------------------> ')
+        // console.log(' this.value.imageData.data', this.value.imageData.data)
         // console.log('<---j-item computed.myImageData()----------------------|')
         return this.value ? this.value.imageData : null
       }

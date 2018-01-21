@@ -418,12 +418,11 @@ import { extend, QBtn, QIcon, QPopover, QTooltip } from 'quasar'
     background-color rgba(255, 255, 255, 0.35)
     z-index 0
     padding-top 0
-    xperspective 100px
     xtransform translateX( -100px )
     z-index 9
     background-color rgba(255, 255, 255, 0.1)
     xbackground-color rgba(0, 0, 0, 0.2)
-    background-color rgba(85, 85, 85, .6)
+    xbackground-color rgba(85, 85, 85, .6)
     
 
   .j-panel-content-inner

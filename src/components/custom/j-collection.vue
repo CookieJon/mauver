@@ -1,26 +1,37 @@
 <template>
-    <div
-      ref="container"
-      :class='this.myClass'
-      class='frame'
+    <q-scroll-area
+      style="height: 200px"
+      :thumb-style="{
+        right: '4px',
+        borderRadius: '2px',
+        background: 'black',
+        width: '5px',
+        opacity: 1
+      }"
+      :delay="1500"
     >
-      <j-item
-        v-for='(item, i) in value'
-        :key='item.id'
-        :value='value[i]'
-        @click='onSelect(i, $event)' 
-      ></j-item>
-    
-    </div>
+      <div
+        ref="container"
+        :class='this.myClass'
+        class='frame'
+      >    
+        <j-item
+          v-for='(item, i) in value'
+          :key='item.id'
+          :value='value[i]'
+          @click='onSelect(i, $event)' 
+        ></j-item>
+      </div>
+    </q-scroll-area>
 </template>
 <script>
 /* eslint-disable */
-  import { extend } from 'quasar'
+  import { extend, QScrollArea } from 'quasar'
   import Sortable from 'sortablejs'
  
   export default {
     name: 'j-collection-rubaxax',
-    components: { },
+    components: { QScrollArea },
     props: {
       value: {
         type: [Array]
@@ -31,6 +42,7 @@
       }
     },
     data () {
+      let self = this // <- the j-collection component
       return {
         options: {
           animation: 150,
@@ -41,21 +53,62 @@
             name: 'general', 
             pull: 'clone', 
             revertClone: true 
-          },          
-          onUpdate: e => {
-            console.log('collection onUpdate')
+          },    
+          setData: (dataTransfer, element) => {
+            // ## na ##  
+            // element.objs = self.value // Attach 'myObjs' reference to my Object array
+            // console.log('onClone cloneEl.objs', element.objs)
+          },                
+          onClone:(e) => { 
+            let origEl = e.item;
+            let cloneEl = e.clone;
+            
+            // Manually set new imagedata because that's how it rolls!
+            let fromCanvas = origEl.getElementsByTagName('canvas')[0]
+            let fromCtx = fromCanvas.getContext('2d');
+            let fromImageData = fromCtx.getImageData(0,0,fromCanvas.width, fromCanvas.height)
+            let toCanvas = cloneEl.getElementsByTagName('canvas')[0]
+            let toCtx = toCanvas.getContext('2d');
+            toCtx.putImageData(fromImageData, 0, 0)
+
+            // ## 1 ##    
+            cloneEl.objs = self.value
+            console.log('onClone cloneEl.objs', cloneEl.objs)
+            
+            this.$emit("clone", e)
+          },      
+          onStart: (e) => {
+
+          },
+          onAdd: (e) => {
+            // ## 3 ##  
+            e.clone.obj = e.clone.objs[e.oldIndex] // Attach 'myObjs' reference to my Object array
+            console.log('onAdd e.clone.obj', e.clone.obj)
+            this.$emit('add', e)
+          },     
+          onEnd:(e)=> {
+            console.log(">>>>> onEnd ", e,  self.value)
+          },
+          onUpdate:(e)=> {
+            console.log(">>>>> onUpdate ", e, self.value)
+    
+            // ** ASSOCIATE THE MOE OBJECT WITH DRAGGED HTML **
+            let itemEl = e.item // dragged HTMLElement
+            itemEl.obj = self.value[e.oldIndex]
+            console.log("ENDNEDNDNDND", itemEl.obj)
+            // e.to    // target list
+            // e.from  // previous list
+            // e.oldIndex  // element's old index within old parent
+            // e.newIndex  // element's new index within new parent
+
             // v-model implementation
-            let tmp = extend({}, {val: this.value}).val // ^-Magic!!  ///let tmp = extend({}, this.value)
+            let tmp = extend({}, {val: self.value}).val // ^-Magic!!  ///let tmp = extend({}, this.value)
             tmp.splice(e.newIndex, 0, tmp.splice(e.oldIndex, 1)[0])
             this.$emit('input', tmp)
           },
-          onSort: e=> {
-            console.log('collection onSort')
+          onSort: (e)=> {
+            console.log(">>>>> onSort ", e, self.value)
             this.$emit('sort', e)
-          },
-          onAdd: e => {
-            console.log('collection onAdd', e)
-            this.$emit('add', e)
           }
         },
         sortFromIndex: null,
@@ -64,25 +117,25 @@
     },
     mounted () {
       var me = this
-      Sortable.create(this.$refs.container, this.options)
-          },
+        Sortable.create(this.$refs.container, this.options)
+      },
     methods: {
       // item clicked
       onSelect (index, e) {
         this.$emit("select", {index, item: this.value[index]})
       },
       // Called by any change to the list (add / update / remove)
-      onSort: function (/**Event*/e) {
-        // same properties as onEnd
-        console.log('onSort',e)
-      },
-      // sortablejs events.. 
-      // Element is dropped into the list from another list
-      onAdd: function (/**Event*/e) {
-        console.log('onAdd',e)
-        this.$emit("add", e)
-        // same properties as onEnd
-      },
+      // onSort: function (/**Event*/e) {
+      //   // same properties as onEnd
+      //   console.log('onSort',e)
+      // },
+      // // sortablejs events.. 
+      // // Element is dropped into the list from another list
+      // onAdd: function (/**Event*/e) {
+      //   console.log('onAdd',e)
+      //   this.$emit("add", e)
+      //   // same properties as onEnd
+      // },
       // Changed sorting within list
       // onUpdate: function (/**Event*/e) {
       //   // same properties as onEnd
@@ -96,16 +149,17 @@
         this.$emit("add", e)
       },      
       // Called when creating a clone of element
-      onClone: function (/**Event*/e) {
-        var origEl = e.item;
-        var cloneEl = e.clone;
-        this.$emit("clone", e)
-        console.log('onClone',e)
-      },
+      // onClone: function (/**Event*/e) {
+      //   var origEl = e.item;
+      //   var cloneEl = e.clone;
+      //   this.$emit("clone", e)
+      //   console.log('onClone',e)
+      //   debugger
+      // },
     // Element is chosen
-      onChoose: function (/**Event*/e) {
-        this.$emit("choose", e.oldIndex)// element index within parent
-      }
+      // onChoose: function (/**Event*/e) {
+      //   this.$emit("choose", e.oldIndex)// element index within parent
+      // }
     
     }
   }
@@ -119,8 +173,8 @@
 /* frame-type-grid */
 .frame.frame-type-grid
   padding 5px
-  background-color #f0f0f0
-  min-height 45px
+  background-color rgba(0, 0, 0, 0.3)
+  min-height 445px
   width 100%
   overflow hidden
 
@@ -129,14 +183,14 @@
   width 64px
   xmax-width 240px
   margin 3px
-  height auto
+  height 50%
   position relative
   float left
   min-height 48px
   border 2px solid #333
   //border-left 4px solid #2196F3
   box-shadow 0 3px 6px 3px rgba(1,1,1,0.4)
-  background-color rgba(255, 255, 255, 0.5)
+  background-color rgba(0, 0, 0, 0.3)
   box-shadow 4px 4px 2px rgba(0, 0, 0, 0.3)
   z-index 10
   padding 0px
