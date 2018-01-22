@@ -47,6 +47,18 @@ export class Bitmap extends Model {
   }
 }
 
+export class Filter extends Model {
+  static entity = 'filters'
+  static fields () {
+    return {
+      id: this.attr(null),
+      name: this.attr(''),
+      type: this.attr(''),
+      relatedId: this.attr(null)
+    }
+  }
+}
+
 export class Artwork extends Model {
   static entity = 'artworks'
   static fields () {

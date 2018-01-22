@@ -34,7 +34,7 @@
           //-   }		
           //- ) 
           //- p|x{{myValue.filters}}
-          j-collection.frame-type-grid(v-model='myFilters', @add='addFilter($event)', style='width:80px')
+          j-collection.frame-type-grid(v-model='value.filters', @add='addFilter($event)', style='width:80px')
           //  j-canvas(:image-data='bitmapPreview',width='420px',height="420px") 
           q-select.col(stack-label='Palette', dark, v-model='paletteDDL', :options='paletteOptions')
        
@@ -118,7 +118,6 @@ export default {
 
       slidingAnimId: null,
       slidingStarted: false
-
     }
   },
   computed: {
@@ -140,11 +139,11 @@ export default {
     }
   },  
   watch: {
-    value (old, newValue) {
+    value (newValue, oldValue) {
       console.log("watch new value...", newValue)
       this.myValue = extend({}, {val: newValue}).val
     },
-    paletteDDL(oldValue, newValue) {
+    paletteDDL(newValue, oldValue) {
       var newPalette = ColorUtils.GeneratePaletteColors(newValue)
       console.log('GENERATED:', newPalette)
       this.$state.activeBitmap.palette  = newPalette
@@ -155,19 +154,14 @@ export default {
       let tmp = extend({}, {val: this.myValue}).val
       this.$emit('input', tmp)
     },
-    addFilter: e => {
+    addFilter (e) {
+      
       let filter = e.clone.obj
-      console.log('Add FILTER!', filter)
-      // Rubaxa drop 1 item 
-      // var el = e.item;
-      // el.parentNode.removeChild(el);
-      //alert('Dropped: ' + el.textContent);      
-      // Moe...
-  
-      // this.$actions.artwork_addFilter(artworkId, filterId)
+      this.value.filters.push(filter)
+      let filters = this.value.filters
       this.$store.dispatch('entities/artworks/update', {
         where: this.value.id,
-        data: {}
+        data: {filters}
       })
 
       // let tmp = extend({}, {val: this.myValue}).val
