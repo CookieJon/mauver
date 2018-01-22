@@ -1,47 +1,48 @@
 <template lang="pug">
-  <q-card-media overlay-position="top" color='dark'>
+  q-card-media(overlay-position="top", color='dark')
 
     //- <!-- Notice the slot="overlay" -->
     q-card-title(slot='overlay')
-      //- p.small|VALUE {{value}}
+      |{{value.id}} {{value.name}} - {{value.filters.length}}
       //- p.small|VALUE {{myValue}}{{myValue.filters}}
-      // @xdrag='__dragLever'
+      //- @xdrag='__dragLever'
       span(slot="subtitle")
 
     q-card-main
-      div.row 
-        q-field(
-          icon="satellite",
-          label="Bitmap",
-          dark)
-        
-        q-input.col(stack-label='Sliding Speeds Pattern', dark, v-model='slidingSpeedsPattern')
+      //- div.row 
+      //-   q-field(
+      //-     icon="satellite",
+      //-     label="Bitmap",
+      //-     dark)
+     
       div.row 
         div.col-4
-          j-canvas(:imageData='slidingSpeedsImageData',width="60px",height="60px")
-          //- j-lever(v-model='controlTargetPower', rest='50%', :markers='true', 
-          //-   :labelAlways='true', 
-          //-   @start='__startSliding'
-          //-   @stop='__stopSliding'
-          //-   :range={
-          //-     'min': -10000,
-          //-     '35%': -1200,
-          //-     '45%': -100,
-          //-     '50%': 0,
-          //-     '55%': 100,
-          //-     '65%': 1200,
-          //-     'max': 10000
-          //-   }		
-          //- ) 
-          //- p|x{{myValue.filters}}
-          j-collection.frame-type-grid(v-model='value.filters', @add='addFilter($event)', style='width:80px')
-          //  j-canvas(:image-data='bitmapPreview',width='420px',height="420px") 
-          q-select.col(stack-label='Palette', dark, v-model='paletteDDL', :options='paletteOptions')
-       
+          j-collection.frame-type-grid(v-model='myFilters', @add='addFilter($event)', style='width:80px; height: 400px')
+         
         div.col-8
-          j-canvas(:imageData='slidingImageData',width='420px',height="420px")    
-          q-input.col(stack-label='Sliding Speeds Pattern', dark, v-model='slidingSpeedsPattern')
-      div.row
+          j-canvas(:image-data='bitmapPreview',width='320px',height="320px") 
+          q-select.col(stack-label='Palette', dark, v-model='paletteDDL', :options='paletteOptions')
+
+          j-canvas(:imageData='slidingSpeedsImageData',width="60px",height="60px")
+          j-lever(v-model='controlTargetPower', rest='50%', :markers='true', 
+            :labelAlways='true', 
+            @start='__startSliding'
+            @stop='__stopSliding'
+            :range={
+              'min': -10000,
+              '35%': -1200,
+              '45%': -100,
+              '50%': 0,
+              '55%': 100,
+              '65%': 1200,
+              'max': 10000
+            }		
+          ) 
+
+
+      div.row          
+        j-canvas(:imageData='slidingImageData',width='420px',height="420px")    
+        q-input.col(stack-label='Sliding Speeds Pattern', dark, v-model='slidingSpeedsPattern')
         q-input.col(readonly,stack-label='started', dark, v-model='slidingStarted')
         q-input.col(stack-label='Control Target Power', dark, v-model='controlTargetPower')
       div.row
@@ -124,18 +125,21 @@ export default {
     // https://github.com/SortableJS/Vue.Draggable
     myFilters: {
       get () {
-        // return this.$store.getters['entities/palettes/query']().orderBy('id', 'desc').get()
-        let filters = this.$store.getters['entities/bitmaps/query']().where(bitmap => {
-          return this.value.filters.includes(bitmap.id)
-        }).get()
-        return filters
+        return this.value.filters
       },
       set() {
-        // alert('sorted')
+        //alert('sorted')
       }
     },
     myImageData () {
       return this.value ? this.value.imageData : null
+    },
+    bitmapPreview () {
+      if (this.value.filters.length) {
+        return this.value.filters[0].imageData
+      } else {
+        null
+      }
     }
   },  
   watch: {
@@ -144,29 +148,35 @@ export default {
       this.myValue = extend({}, {val: newValue}).val
     },
     paletteDDL(newValue, oldValue) {
-      var newPalette = ColorUtils.GeneratePaletteColors(newValue)
-      console.log('GENERATED:', newPalette)
-      this.$state.activeBitmap.palette  = newPalette
+      // var newPalette = ColorUtils.GeneratePaletteColors(newValue)
+      // console.log('GENERATED:', newPalette)
+      // this.$state.activeBitmap.palette  = newPalette
     }
   },
   methods: {
-    onUpdate: e => {
+    onUpdate (e) {
       let tmp = extend({}, {val: this.myValue}).val
       this.$emit('input', tmp)
     },
     addFilter (e) {
-      
       let filter = e.clone.obj
-      this.value.filters.push(filter)
-      let filters = this.value.filters
-      this.$store.dispatch('entities/artworks/update', {
-        where: this.value.id,
-        data: {filters}
-      })
+      // 
+      let tmp = extend({}, {val: this.value}).val
+      tmp.filters.push(filter)
+      tmp.imageData = extend({}, {val: filter.imageData}).val
+      tmp.pixels = filter.pixels
+      tmp.palette = filter.palette
 
-      // let tmp = extend({}, {val: this.myValue}).val
-      // tmp.filters = [this.$state.bitmaps[0]]
-      // this.$emit('input', tmp)
+      // Update store from this component.
+      // this.$store.dispatch('entities/artworks/update', {
+      //   where: this.value.id,
+      //   data: {filters}
+      // })
+      
+      // - OR -
+      
+      // Update via parent's "model" directive
+      this.$emit('input', tmp)
     },    
     __init() {
       this.slidingLower = new Array(65536).fill(0)

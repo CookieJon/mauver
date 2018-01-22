@@ -64,26 +64,36 @@
       </div>
 
     </div>
-
+  <!-- <q-scroll-area
+          :thumb-style="{
+            right: '4px',
+            borderRadius: '2px',
+            background: 'black',
+            width: '5px',
+            opacity: 1
+          }"
+          :delay="1500"
+        > -->
     <!-- > J-PANEL-CONTENT -->
     <div
       class='j-panel-content'
       ref="content"
     >
-      <div
+      <!-- <div
         class='j-panel-content-inner scroll'
         ref="content-inner"
-      >
+      > -->
 
    <!--    <pre>{{ state }}</pre> -->
 
 
         <!-- user content -->
-        <slot name="content"></slot>
-
-       </div>
+      
+          <slot name="content"></slot>
+      
+       <!-- </div> -->
     </div>
-
+  <!-- </q-scroll-area> -->
     <!-- j-panel-footer -->
     <div class='j-panel-footer hidden' ref="footer">
 
@@ -100,7 +110,7 @@
 <script>
   /* eslint-disable */
   // import { Utils } from 'quasar'
-import { extend, QBtn, QIcon, QPopover, QTooltip } from 'quasar'
+import { extend, QBtn, QIcon, QPopover, QScrollArea, QTooltip } from 'quasar'
 
   
  var _static = require('./j-panel-static.js')
@@ -119,7 +129,7 @@ import { extend, QBtn, QIcon, QPopover, QTooltip } from 'quasar'
   // require('jquery-ui-touch-punch')
   export default {
     name: 'j-panel',
-    components: {QBtn, QIcon, QPopover, QTooltip},
+    components: {QBtn, QIcon, QPopover, QTooltip, QScrollArea},
     props: {
       value: { default () { return {prop1: 'one', prop2: 'two'} } },
       title: { type: String },

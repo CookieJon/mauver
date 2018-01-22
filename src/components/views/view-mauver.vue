@@ -26,10 +26,10 @@ div
     div.j-tray.area.panel-item-grow(slot='content')
       j-collection.frame-type-grid(v-model='palettes', @select='selectPalette')
 
-  // selectedArtwork (Slider!)
-  j-panel(icon='business', :title='selectedArtwork?selectedArtwork.name:"Art"', :width='600', :height='660', :x='410', :y='10')      
+  // selectedArtwork SLIDER
+  j-panel(v-if='selectedArtwork != null' icon='business', :title='selectedArtwork?selectedArtwork.name:"Art"', :width='600', :height='660', :x='410', :y='10')      
     div.j-tray.area.panel-item-grow(slot='content')
-      j-artwork(v-if="selectedArtwork", v-model='selectedArtwork')
+      j-artwork(v-model='selectedArtwork')
 
   // selectedBitmapImageData 
   j-panel(v-if='selectedBitmapImageData != null', icon='business', title='Selected Bitmap', :width='200', :height='300', :x='110', :y='400')
@@ -82,7 +82,10 @@ export default {
         return selectedArtwork
       },
       set (value) {
-        this.selectedArtworkId = value.id
+        this.$store.dispatch('entities/artworks/update', {
+          where: value.id, // Artwork id
+          data: value
+        })
       }
     },
     selectedBitmap: {
@@ -136,7 +139,6 @@ export default {
     }      
   },
   methods: {
-
 
     selectPalette(e) {
       console.log('selectPalette', e)

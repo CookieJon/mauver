@@ -69,10 +69,12 @@ export default {
       }
       else {
         // draw error on canvas
-        this.ctx.font = '30px Comic Sans MS'
+        this.ctx.fillStyle = 'white'
+        this.ctx.fillRect(0, 0, 256, 256)
         this.ctx.fillStyle = 'red'
+        this.ctx.font = '30px Comic Sans MS'
         this.ctx.textAlign = 'center'
-        this.ctx.fillText((typeof this.imageData) + ' is not ImageData', 128, 128)
+        this.ctx.fillText('No\nImageData', 128, 128)
       }
       // Set local:myImageData
       this.myImageData = this.ctx.getImageData(0, 0, this.pixelWidth, this.pixelHeight)

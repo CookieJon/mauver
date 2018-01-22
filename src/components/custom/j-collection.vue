@@ -81,8 +81,8 @@
 
           },
           onAdd: (e) => {
-            // ## 3 ##  
-            e.clone.obj = e.clone.objs[e.oldIndex] // Attach 'myObjs' reference to my Object array
+            // ## 2 ##  
+            e.clone.obj = e.clone.objs[e.oldIndex] 
             console.log('onAdd e.clone.obj', e.clone.obj)
             this.$emit('add', e)
           },     

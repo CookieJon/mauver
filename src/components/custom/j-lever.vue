@@ -13,8 +13,8 @@
       <div 
         v-if="markers"
         class="q-slider-mark"
-        v-for="n in myRange"
-        :key="n"
+        v-for="(n, i) in myRange"
+        :key="i"
         :style="{left: n.percent * 100 + '%'}">
         <div class="q-slider-value">
           {{ n.value  }}
