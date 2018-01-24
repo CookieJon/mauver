@@ -3,14 +3,15 @@
 div
 
   // TESTING
-  //- j-panel(icon='business', title='test canvas',
-  //-    :width='300', :height='400', :x='410', :y='510')
-  //-   div.j-tray.area.panel-item-grow(slot='content')
-  //-     canvas(ref='testcanvas', :width=256, :height=256)
+  j-panel(icon='business', title='test canvas',
+     :width='300', :height='320', :x='410', :y='510')
+    div.j-tray.area.panel-item-grow(slot='content')
+      // NB: Required at the moment to load bitmaps from IMG. TODO: Fix!
+      canvas(ref='testcanvas', :width=256, :height=256)
 
 
   // COLLECTION
-  j-panel(v-if="1===1", icon='business', title='O', :width='300', :height='700', :x='10', :y='10')
+  j-panel(icon='business', title='O', :width='300', :height='700', :x='10', :y='10')
     div.j-panel-toolbar.text-black(slot='toolbar', style='padding:4px;')
       q-btn(round,primary,small,icon='art track', @click='addArtwork')
       q-btn(round,primary,small,icon='satellite', @click='openFileInput')
@@ -82,22 +83,15 @@ export default {
   computed: {
     selectedArtwork: {
       get () {
-        ////let selectedArtwork = this.$store.getters['entities/artworks/find'](this.selectedArtworkId)
-        ////return selectedArtwork
+        return this.$store.getters.getEntityById('artworks', this.selectedArtworkId)
       },
       set (value) {
-        ////this.$store.dispatch('entities/artworks/update', {
-        //   where: value.id, // Artwork id
-        //   data: value
-        // })
+        this.$store.dispatch('addArtwork', {data: value})
       }
     },
     selectedBitmap: {
       get () {
-        //let selectedBitmap = this.$store.getters['entities/bitmaps/find'](this.selectedBitmapId).with('palettes').get()
-        let selectedBitmap = '1'
-        //alert(1)
-        return selectedBitmap
+        return this.$store.getters.getEntityById('artworks', this.selectedBitmapId)
       },
       set (value) {
         this.selectedBitmapId = value.id
@@ -109,9 +103,8 @@ export default {
     return null
     },
     selectedBitmapImageData () {
-    //  let selectedBitmap = this.$store.getters['entities/bitmaps/find'](this.selectedBitmapId)
-  //    return selectedBitmap ? selectedBitmap.imageData : null
-  return null
+      let selectedBitmap = this.$store.getters.getEntityById('bitmaps', this.selectedBitmapId)
+      return selectedBitmap ? selectedBitmap.imageData : null
     },
     selectedBitmapPaletteImageData () {
    //   let selectedBitmap = this.$store.getters['entities/bitmaps/find'](this.selectedBitmapId)
@@ -121,7 +114,7 @@ export default {
     palettes: {
       get () {
         // return this.$store.getters['entities/palettes/query']().orderBy('id', 'desc').get()
-        return this.$store.getters.entities('palettes')
+        return this.$store.getters.getEntities('palettes')
       },
       set() {
         // alert('sorted')
@@ -129,9 +122,7 @@ export default {
     },
     bitmaps: {
       get () {
-        // return this.$store.getters['entities/palettes/query']().orderBy('id', 'desc').get()
-        // return this.$store.getters['entities/bitmaps/query']().get()
-        return []
+         return this.$store.getters.getEntities('bitmaps')
       },
       set() {
         // alert('sorted')
@@ -139,9 +130,7 @@ export default {
     },
     artworks: {
       get () {
-        // return this.$store.getters['entities/palettes/query']().orderBy('id', 'desc').get()
-        // return this.$store.getters['entities/artworks/query']().get()
-        return []
+        return this.$store.getters.getEntities('artworks')
       },
       set() {
         // alert('sorted')
@@ -163,16 +152,6 @@ export default {
     },
     selectBitmap(e) {
       console.log('selectBitmap', e)
-      this.selectedBitmapId = e.item.id
-
-      let bmpId = this.selectedBitmapId
-      // let bmp = this.$store.getters['entities/bitmaps/query']().with('palettes').get()
-
-      //bmp = this.$store.getters['entities/bitmaps/query']().with('palettes').get()
-
-      console.log('FETCH BMP with ID=' + bmpId)
-      console.log("== ", bmp)
-
       this.selectedBitmapId = e.item.id
     },
     selectArtwork(e) {
@@ -252,18 +231,9 @@ export default {
     addBitmap (bmp) {
       console.log('addBitmap:', bmp)
 
-      // test
-      let pals = this.$store.getters['entities/palettes/query']().get()
-      //bmp = this.$store.getters['entities/bitmaps/query']().with('palettes').get()
+      this.$store.dispatch('addBitmap', {data: bmp})
 
-      bmp.palettes = pals
-
-      console.log('ADD PALS to', bmp)
-      console.log("== ", pals)
-
-
-
-      this.$store.dispatch('entities/bitmaps/insert', {data: bmp})
+      ////this.$store.dispatch('entities/bitmaps/insert', {data: bmp})
     },
     addPalette () {
       let pal = this.paletteFromPreset('MaterialDefault')
@@ -280,6 +250,7 @@ export default {
         pixels: null,
         palette: null,
         imageData: null,
+        filters: [],
         // 1. artwork components. MUCH TODO:!
         bitmap: null,
         pixelmap: null,
@@ -288,7 +259,8 @@ export default {
       }
 
       console.log('addArtwork:', art)
-      this.$store.dispatch('entities/artworks/insert', {data: art})
+      this.$store.dispatch('addArtwork', {data: art})
+        //this.$store.dispatch('entities/artworks/insert', {data: art})
     },
 
 
@@ -421,7 +393,8 @@ export default {
 //       let inPointContainer = inPointContainer1
 
       // * material colors
-      let materialColors = this.$store.getters['entities/colors/query']().orderBy('id').get()
+      // TODO: get from a palette, not raw colors
+      let materialColors = this.$store.getters.getEntities('colors')
 
       // * iq.palette <= material colors
       let iqPalette = new iq.utils.Palette()

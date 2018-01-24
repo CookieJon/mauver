@@ -43,15 +43,16 @@ const Artwork = new schema.Entity('artworks', {
   // id: null,
   // name: null,
   // imageData: null,
-  // filters: [ ],
+  filters: [ Bitmap ],
   bitmap: Bitmap
 })
 
 // MASTER SCHEMA
 const Museum = {
   colors: [ Color ],
+  palettes: [ Palette ],
+  bitmaps: [ Bitmap ],
   artworks: [ Artwork ],
-  palettes: [ Palette ]
 }
 
 
@@ -79,15 +80,30 @@ const store = new Vuex.Store({
     }
   },
   actions: {
-    // addBitmap ({commit, state}, bitmap) {
-    //   nBitmap = normalize(Bitmap, bitmap)
-    //   commit('ADD_BITMAP', nBitmap)
-    // },
+    // GENERIC ACTIONS
+    //
+    mergeEntity({commit, state}, payload) {
+
+    },
+    // Actions
+    addBitmap ({commit, state}, payload) {
+      // @payload - Object|Array of Colors
+      let bitmaps = Array.isArray(payload.data) ? payload.data  : [payload.data]
+      let n = normalize({bitmaps: bitmaps}, Museum )
+      console.log('store.addBitmap', payload, n)
+      commit('ADD_ENTITIES', n.entities)
+    },
+    addArtwork({commit, state}, payload) {
+      // @payload - Object|Array of Colors
+      let artworks = Array.isArray(payload.data) ? payload.data  : [payload.data]
+      let n = normalize({artworks: artworks}, Museum )
+      commit('ADD_ENTITIES', n.entities)
+    },
     addColors ({commit, state}, payload) {
       // @payload - Object|Array of Colors
       let colors = Array.isArray(payload.data) ? payload.data  : [payload.data]
       let n = normalize({colors: colors}, Museum )
-      commit('ADD_COLORS', n.entities)
+      commit('ADD_ENTITIES', n.entities)
     },
     addPalette ({commit, state}, payload) {
       console.log('Action add Palette', payload)
@@ -98,13 +114,8 @@ const store = new Vuex.Store({
   },
   mutations: {
     ADD_ENTITIES: function(state, payload) {
-      // payload = entities: {...}
-      // Merge entities with state.entities
-      console.log("OLD", state.entities)
-      console.log("NEW", payload)
-      //extend({}, state.entities, payload)
+      // @payload = entities: {...}
       let result = extend(true, {}, state.entities, payload)
-      console.log("RESULT", result)
       Vue.set(state, 'entities', result)
     },
 
@@ -116,6 +127,18 @@ const store = new Vuex.Store({
     }
   },
   getters: {
+    // GENERIC GETTERS
+    //
+    getEntities: (state) => (type) => {
+      let ids = Object.keys(state.entities[type])
+      let dn = denormalize({ [type]: ids }, Museum, state.entities)
+      return dn[type]
+    },    
+    getEntityById: (state) => (type, id) => {
+      let dn = denormalize({ [type]: [id] }, Museum,  state.entities)
+      return dn[type][0]
+    },
+    
     // https://github.com/vuejs/vuex/issues/598 - Getters return functions
     getColorById: (state, getters) => (id) => {
       return getters.colors.find(x=> x.id === id)
@@ -133,13 +156,7 @@ const store = new Vuex.Store({
       let ids = Object.keys(state.entities.palettes)
       let dn = denormalize({ palettes: ids }, Museum, state.entities)
       return dn.palettes
-    },
-    // GENERIC!
-    entities: (state) => (type) => {
-      let ids = Object.keys(state.entities[type])
-      let dn = denormalize({ [type]: ids }, Museum, state.entities)
-      return dn[type]
-    },    
+    }
 
   }
 })

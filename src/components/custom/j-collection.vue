@@ -42,12 +42,12 @@
       }
     },
     watch: {
-      // value(newValue, oldValue) {
-      //   let elm = this.$refs.container
-      //   while (elm.hasChildNodes()) {
-      //     elm.removeChild(elm.lastChild);
-      //   }
-      // }
+      value(newValue, oldValue) {
+        let elm = this.$refs.container
+        while (elm.hasChildNodes()) {
+          elm.removeChild(elm.lastChild);
+        }
+      }
     },    
     data () {
       let self = this // <- the j-collection component

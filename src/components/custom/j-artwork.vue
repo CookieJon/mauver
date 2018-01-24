@@ -135,11 +135,7 @@ export default {
       return this.value ? this.value.imageData : null
     },
     bitmapPreview () {
-      if (this.value.filters.length) {
-        return this.value.filters[0].imageData
-      } else {
-        null
-      }
+      return this.value.bitmap ? this.value.bitmap.imageData : null
     }
   },  
   watch: {
@@ -167,11 +163,10 @@ export default {
       tmp.pixels = filter.pixels
       tmp.palette = filter.palette
 
+      tmp.bitmap = filter
+
       // Update store from this component.
-      // this.$store.dispatch('entities/artworks/update', {
-      //   where: this.value.id,
-      //   data: {filters}
-      // })
+      // this.$store.dispatch('addArtwork', {data: tmp})
       
       // - OR -
       
