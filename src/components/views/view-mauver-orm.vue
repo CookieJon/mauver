@@ -3,14 +3,14 @@
 div
 
   // TESTING
-  //- j-panel(icon='business', title='test canvas',
-  //-    :width='300', :height='400', :x='410', :y='510')
-  //-   div.j-tray.area.panel-item-grow(slot='content')
-  //-     canvas(ref='testcanvas', :width=256, :height=256)
+  j-panel(icon='business', title='test canvas',
+     :width='300', :height='400', :x='410', :y='510')      
+    div.j-tray.area.panel-item-grow(slot='content')
+      canvas(ref='testcanvas', :width=256, :height=256)
 
 
   // COLLECTION
-  j-panel(v-if="1===1", icon='business', title='O', :width='300', :height='700', :x='10', :y='10')
+  j-panel(icon='business', title='Objects', :width='300', :height='700', :x='10', :y='10')
     div.j-panel-toolbar.text-black(slot='toolbar', style='padding:4px;')
       q-btn(round,primary,small,icon='art track', @click='addArtwork')
       q-btn(round,primary,small,icon='satellite', @click='openFileInput')
@@ -27,16 +27,16 @@ div
       j-collection.frame-type-grid(v-model='palettes', @select='selectPalette')
 
   // selectedArtwork SLIDER
-  j-panel(v-if='selectedArtwork != null' icon='business', :title='selectedArtwork?selectedArtwork.name:"Art"', :width='600', :height='660', :x='410', :y='10')
+  j-panel(v-if='selectedArtwork != null' icon='business', :title='selectedArtwork?selectedArtwork.name:"Art"', :width='600', :height='660', :x='410', :y='10')      
     div.j-tray.area.panel-item-grow(slot='content')
       j-artwork(v-model='selectedArtwork')
 
-  // selectedBitmapImageData
+  // selectedBitmapImageData 
   j-panel(v-if='selectedBitmapImageData != null', icon='business', title='Selected Bitmap', :width='200', :height='300', :x='110', :y='400')
     div.j-tray.area.panel-item-grow(slot='content')
       j-canvas.frame-type-grid(:image-data='selectedBitmapImageData')
-
-  // selectedPaletteImageData
+  
+  // selectedPaletteImageData 
   j-panel(v-if='selectedPaletteImageData != null', icon='business', title='Selected Palette', :width='200', :height='300', :x='10', :y='400')
     div.j-tray.area.panel-item-grow(slot='content')
       j-canvas.frame-type-grid(:image-data='selectedPaletteImageData')
@@ -64,8 +64,8 @@ export default {
     // Here we are stubbing the initial data. In the real world, this
     // should be the response from the API Backend.
     const initialData = dataColors
-    // console.log('data', dataColors)
-    this.$store.dispatch('addColors', { data: initialData })
+    console.log('data', dataColors)
+    this.$store.dispatch('entities/colors/create', { data: initialData })
   },
   data () {
     return {
@@ -82,46 +82,43 @@ export default {
   computed: {
     selectedArtwork: {
       get () {
-        ////let selectedArtwork = this.$store.getters['entities/artworks/find'](this.selectedArtworkId)
-        ////return selectedArtwork
+        let selectedArtwork = this.$store.getters['entities/artworks/find'](this.selectedArtworkId)
+        return selectedArtwork
       },
       set (value) {
-        ////this.$store.dispatch('entities/artworks/update', {
-        //   where: value.id, // Artwork id
-        //   data: value
-        // })
+        this.$store.dispatch('entities/artworks/update', {
+          where: value.id, // Artwork id
+          data: value
+        })
       }
     },
     selectedBitmap: {
       get () {
-        //let selectedBitmap = this.$store.getters['entities/bitmaps/find'](this.selectedBitmapId).with('palettes').get()
-        let selectedBitmap = '1'
-        //alert(1)
+        let selectedBitmap = this.$store.getters['entities/bitmaps/find'](this.selectedBitmapId).with('palettes').get()
+
+        alert(1)
         return selectedBitmap
       },
       set (value) {
         this.selectedBitmapId = value.id
       }
-    },
+    },    
     selectedPaletteImageData () {
-    //  let selectedPalette = this.$store.getters['entities/palettes/find'](this.selectedPaletteId)
-    //  return selectedPalette != null ? selectedPalette.imageData : null
-    return null
+      let selectedPalette = this.$store.getters['entities/palettes/find'](this.selectedPaletteId)
+      return selectedPalette != null ? selectedPalette.imageData : null
     },
     selectedBitmapImageData () {
-    //  let selectedBitmap = this.$store.getters['entities/bitmaps/find'](this.selectedBitmapId)
-  //    return selectedBitmap ? selectedBitmap.imageData : null
-  return null
+      let selectedBitmap = this.$store.getters['entities/bitmaps/find'](this.selectedBitmapId)
+      return selectedBitmap ? selectedBitmap.imageData : null
     },
     selectedBitmapPaletteImageData () {
-   //   let selectedBitmap = this.$store.getters['entities/bitmaps/find'](this.selectedBitmapId)
-    //  return selectedBitmap && selectedBitmap.palette ? selectedBitmap.palette.imageData : null
-    return null
+      let selectedBitmap = this.$store.getters['entities/bitmaps/find'](this.selectedBitmapId)
+      return selectedBitmap && selectedBitmap.palette ? selectedBitmap.palette.imageData : null
     },
     palettes: {
       get () {
         // return this.$store.getters['entities/palettes/query']().orderBy('id', 'desc').get()
-        return this.$store.getters.entities('palettes')
+        return this.$store.getters['entities/palettes/query']().get()
       },
       set() {
         // alert('sorted')
@@ -130,8 +127,7 @@ export default {
     bitmaps: {
       get () {
         // return this.$store.getters['entities/palettes/query']().orderBy('id', 'desc').get()
-        // return this.$store.getters['entities/bitmaps/query']().get()
-        return []
+        return this.$store.getters['entities/bitmaps/query']().get()
       },
       set() {
         // alert('sorted')
@@ -140,13 +136,12 @@ export default {
     artworks: {
       get () {
         // return this.$store.getters['entities/palettes/query']().orderBy('id', 'desc').get()
-        // return this.$store.getters['entities/artworks/query']().get()
-        return []
+        return this.$store.getters['entities/artworks/query']().get()
       },
       set() {
         // alert('sorted')
       }
-    }
+    }      
   },
   methods: {
 
@@ -155,8 +150,7 @@ export default {
       this.selectedPaletteId = e.item.id
 
       let objId = this.selectedPaletteId
-      //let obj = this.$store.getters['entities/palettes/find'](objId).with('colors')
-      let obj = null
+      let obj = this.$store.getters['entities/palettes/find'](objId).with('colors')
       console.log('FETCH PALETTE with ID=' + objId)
       console.log("== ", obj)
 
@@ -164,10 +158,9 @@ export default {
     selectBitmap(e) {
       console.log('selectBitmap', e)
       this.selectedBitmapId = e.item.id
-
+      
       let bmpId = this.selectedBitmapId
-      // let bmp = this.$store.getters['entities/bitmaps/query']().with('palettes').get()
-
+      let bmp = this.$store.getters['entities/bitmaps/query']().with('palettes').get()
       //bmp = this.$store.getters['entities/bitmaps/query']().with('palettes').get()
 
       console.log('FETCH BMP with ID=' + bmpId)
@@ -178,7 +171,7 @@ export default {
     selectArtwork(e) {
       console.log('selectArtwork', e)
       this.selectedArtworkId = e.item.id
-    },
+    },    
 
     // 1. Invoked from uploadZone@select
     loadImagesFromFiles(files) {
@@ -211,7 +204,7 @@ export default {
             let arrayBuffer = reader.result
             let pixPalImagedata = this.bitmapFromArrayBuffer(arrayBuffer)
             let bmp = {
-              id: this.bmpId++,
+              id: this.bmpId++, 
               ...pixPalImagedata
             }
             resolve(bmp)
@@ -228,14 +221,14 @@ export default {
             img.onload = () => {
               let pixPalImagedata = this.bitmapFromImg(img)
               let bmp = {
-                id: this.bmpId++,
+                id: this.bmpId++, 
                 ...pixPalImagedata
               }
-              resolve(bmp)
+              resolve(bmp)   
             }
             img.src = dataURL
           }
-          reader.readAsDataURL(file) //  for Image() object
+          reader.readAsDataURL(file) //  for Image() object     
         }
         // C. Can't load this file as image
         //
@@ -248,7 +241,7 @@ export default {
     openFileInput() {
       this.$refs.zone.openFileInput()
     },
-
+    
     addBitmap (bmp) {
       console.log('addBitmap:', bmp)
 
@@ -266,12 +259,12 @@ export default {
       this.$store.dispatch('entities/bitmaps/insert', {data: bmp})
     },
     addPalette () {
+      
       let pal = this.paletteFromPreset('MaterialDefault')
-      console.log('vie - addPalette', pal)
-      this.$store.dispatch('addPalette', {data: pal})
+      this.$store.dispatch('entities/palettes/insert', {data: pal})
     },
     addArtwork () {
-
+     
       let art = {
         id: this.artId,
         name: 'Art '+this.artId++,
@@ -286,7 +279,7 @@ export default {
         colormap: null,
         slider: null
       }
-
+      
       console.log('addArtwork:', art)
       this.$store.dispatch('entities/artworks/insert', {data: art})
     },
@@ -320,8 +313,7 @@ export default {
           break
         case 'MaterialDefault':
         default:
-          //colors = this.$store.getters['entities/colors/query']().orderBy('id').get()
-          colors = this.$store.getters.colors
+          colors = this.$store.getters['entities/colors/query']().orderBy('id').get()
       }
       console.log('paletteFromPreset', presetId)
       this.debugColors(colors)
@@ -333,9 +325,9 @@ export default {
       let pal = {
         id: this.palId++,
         colors,
-        imageData
+        imageData 
       }
-      console.log("GENERATED PALETTE", pal)
+      
       return pal
     },
 
@@ -361,8 +353,7 @@ export default {
       }
 
       // palette
-      ////let presetColors = this.$store.getters['entities/colors/query']().orderBy('id').get()
-      let presetColors = this.$store.getters['colors']
+      let presetColors = this.$store.getters['entities/colors/query']().orderBy('id').get()
       let palette = this.paletteFromPreset('Empty')
       let paletteLength = bitCount === 0 ? 1 << bitCount : usedColors
       let index = 54
@@ -378,7 +369,7 @@ export default {
       }
       this.debugColors(palette.colors)
       // palette's imagedata
-      palette.imageData = this.imageDataFromColors(palette.colors)
+      palette.imageData = this.imageDataFromColors(palette.colors) 
 
       // b. generate imageData
       let imageData = new ImageData(width, height)
@@ -432,7 +423,7 @@ export default {
       // * iq.distance.?
       // iq.distance.Euclidean();Manhattan();IEDE2000(); etc...
       let iqDistance = new iq.distance.EuclideanRgbQuantWOAlpha()
-
+      
       let inPointContainer = iq.utils.PointContainer.fromHTMLCanvasElement(canvas) // use canvas to scale to 256x256
 
       let iqImage = new iq.image.ErrorDiffusionArray(iqDistance, iq.image.ErrorDiffusionArrayKernel.SierraLite)
@@ -458,7 +449,7 @@ export default {
           if (
             col.r === uint8array[i] &&
             col.g === uint8array[i+1] &&
-            col.b === uint8array[i+2]
+            col.b === uint8array[i+2] 
           ) {
             pixels[pixelIndex++] = c
             break
@@ -466,7 +457,7 @@ export default {
         }
 
       }
-
+      
 
       // generate imageData
       let imageData = new ImageData(256, 256)
@@ -492,7 +483,7 @@ export default {
         imageData
       }
       return ppid
-    },
+    },    
 
     imageDataFromPixelsAndPalette() {
 
@@ -504,7 +495,7 @@ export default {
 
       if (!colors.length) return imageData
       let offset = 0
-      let colorIndex = 0
+      let colorIndex = 0    
       for (let y = 0; y < 16; y++) {
         for (let x = 0; x < 16; x++) {
           for (let yy = 0; yy < 16; yy++) {
@@ -513,7 +504,7 @@ export default {
               imageData.data[offset++] = colors[colorIndex].r
               imageData.data[offset++] = colors[colorIndex].g //colors[i].g
               imageData.data[offset++] = colors[colorIndex].b //colors[i].b
-              imageData.data[offset++] = colors[colorIndex].a
+              imageData.data[offset++] = colors[colorIndex].a  
             }
           }
           colorIndex++

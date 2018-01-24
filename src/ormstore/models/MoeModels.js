@@ -6,7 +6,6 @@ export class Color extends Model {
     return {
       id: this.attr(null),
       name: this.attr(''),
-      hex: this.attr(''),
       r: this.attr(null),
       g: this.attr(null),
       b: this.attr(null),
@@ -42,7 +41,8 @@ export class Bitmap extends Model {
       dataURL: this.attr(null),
       imageData: this.attr(Object),
       pixels: this.attr(null),
-      palette: this.hasOne(Palette, 'id')
+      palette: this.hasOne(Palette, 'id'),
+      palettes: this.hasManyBy(Palette, 'palettes')
     }
   }
 }

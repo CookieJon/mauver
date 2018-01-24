@@ -41,6 +41,14 @@
         default: 'frame-type-grid'
       }
     },
+    watch: {
+      // value(newValue, oldValue) {
+      //   let elm = this.$refs.container
+      //   while (elm.hasChildNodes()) {
+      //     elm.removeChild(elm.lastChild);
+      //   }
+      // }
+    },    
     data () {
       let self = this // <- the j-collection component
       return {
@@ -59,7 +67,7 @@
             // element.objs = self.value // Attach 'myObjs' reference to my Object array
             // console.log('onClone cloneEl.objs', element.objs)
           },                
-          onClone:(e) => { 
+          onClone: (e) => { 
             let origEl = e.item;
             let cloneEl = e.clone;
             
@@ -86,10 +94,10 @@
             console.log('onAdd e.clone.obj', e.clone.obj)
             this.$emit('add', e)
           },     
-          onEnd:(e)=> {
+          onEnd: (e)=> {
             console.log(">>>>> onEnd ", e,  self.value)
           },
-          onUpdate:(e)=> {
+          onUpdate: (e)=> {
             console.log(">>>>> onUpdate ", e, self.value)
     
             // ** ASSOCIATE THE MOE OBJECT WITH DRAGGED HTML **

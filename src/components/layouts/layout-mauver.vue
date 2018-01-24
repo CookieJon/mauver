@@ -14,8 +14,8 @@
       </q-btn>
 
       <q-toolbar-title>
-        Mauver
-        <div slot="subtitle">Running on Quasar v{{$q.version}}</div>
+        <!-- Mauver
+        <div slot="subtitle">Running on Quasar v{{$q.version}}</div> -->
       </q-toolbar-title>
 
     </q-toolbar>
@@ -143,7 +143,7 @@ export default {
       moveY: 0,
       rotateY: 0,
       rotateX: 0,
-      'selectedBg': '/statics/img/resource/bg/tron/tron1.png',
+      'selectedBg': '',
       'bgs': [
         '',
         '/statics/img/resource/bg/tron/tron1.png',
