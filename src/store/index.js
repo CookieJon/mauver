@@ -57,6 +57,15 @@ const Museum = {
 
 
 
+
+
+
+
+
+
+
+
+
 console.log('................')
 
 
@@ -80,50 +89,41 @@ const store = new Vuex.Store({
     }
   },
   actions: {
-    // GENERIC ACTIONS
-    //
-    mergeEntity({commit, state}, payload) {
-
-    },
-    // Actions
-    addBitmap ({commit, state}, payload) {
-      // @payload - Object|Array of Colors
-      let bitmaps = Array.isArray(payload.data) ? payload.data  : [payload.data]
-      let n = normalize({bitmaps: bitmaps}, Museum )
-      console.log('store.addBitmap', payload, n)
-      commit('ADD_ENTITIES', n.entities)
-    },
-    addArtwork({commit, state}, payload) {
-      // @payload - Object|Array of Colors
-      let artworks = Array.isArray(payload.data) ? payload.data  : [payload.data]
-      let n = normalize({artworks: artworks}, Museum )
-      commit('ADD_ENTITIES', n.entities)
-    },
-    addColors ({commit, state}, payload) {
-      // @payload - Object|Array of Colors
-      let colors = Array.isArray(payload.data) ? payload.data  : [payload.data]
-      let n = normalize({colors: colors}, Museum )
-      commit('ADD_ENTITIES', n.entities)
-    },
-    addPalette ({commit, state}, payload) {
-      console.log('Action add Palette', payload)
-      let palette = Array.isArray(payload.data) ? payload.data  : [payload.data]
-      let n = normalize({palettes: palette}, Museum )
-      commit('ADD_ENTITIES', n.entities)
+    updateEntities({commit, state}, data) {
+      // @data: e.g. {'artworks': [obj, obj]}
+      console.log('updateEntities', data)
+      let n = normalize(data, Museum)
+      commit('UPDATE_ENTITIES', n.entities)
+    },    
+    updateFields({commit, state}, data) {
+      // @data: e.g. {'artworks': [obj]} 
+      console.log('updateFields', data)
+      let entities = normalize(data, Museum).entities
+      commit('UPDATE_FIELDS', {entities, data})
     }
   },
   mutations: {
-    ADD_ENTITIES: function(state, payload) {
-      // @payload = entities: {...}
-      let result = extend(true, {}, state.entities, payload)
-      Vue.set(state, 'entities', result)
+    UPDATE_ENTITIES: function(state, entities) {
+      // @payload = normalized entities: {...}
+      console.log('UPDATE_ENTITIES', entities)
+      for (let type in entities) {
+        for (let entity in entities[type]) {
+          const oldObj = state.entities[type][entity] || {}
+          const newObj = Object.assign(oldObj, entities[type][entity])
+          Vue.set(state.entities[type], entity, newObj)
+        }
+      }
     },
-
-    ADD_COLORS: function(state, payload) {
-      // payload = entities: {...}
-      // Merge entities with state.entities
-      console.log('ADD_COLORS................')
-      extend(state.entities, payload)
+    UPDATE_FIELDS: function(state, {entities, data}) {
+      console.log('UPDATE_FIELDS', {entities, data})
+      for (let type in data) {
+        for (let entity in data[type]) { // NB: This is an array (not a keyed obejct)...
+          const entityId = data[type][entity].id // ... so find the object manually 
+          for (let key in data[type][entity]) {
+            Vue.set (state.entities[type][entityId], key, entities[type][entityId][key])
+          }
+        }
+      }      
     }
   },
   getters: {

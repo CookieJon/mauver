@@ -1,28 +1,14 @@
 <template>
-    <q-scroll-area
-      style="height: 200px"
-      :thumb-style="{
-        right: '4px',
-        borderRadius: '2px',
-        background: 'black',
-        width: '5px',
-        opacity: 1
-      }"
-      :delay="1500"
-    >
-      <div
-        ref="container"
-        :class='this.myClass'
-        class='frame'
-      >    
-        <j-item
-          v-for='(item, i) in value'
-          :key='item.id'
-          :value='value[i]'
-          @click='onSelect(i, $event)' 
-        ></j-item>
-      </div>
-    </q-scroll-area>
+  <div
+    ref="container"
+    class='frame frame-type-droptarget'
+  >  
+    <j-item 
+      v-if='value'
+      :value='value'
+      @click='onSelect(i, $event)' 
+    ></j-item>
+  </div>
 </template>
 <script>
 /* eslint-disable */
@@ -30,11 +16,11 @@
   import Sortable from 'sortablejs'
  
   export default {
-    name: 'j-collection-rubaxax',
+    name: 'j-droptarget',
     components: { QScrollArea },
     props: {
       value: {
-        type: [Array]
+        type: Object
       },
       myClass: {
         type: String,
@@ -50,11 +36,18 @@
       //   }
       // }
     },    
+    computed: {
+      myValue () {
+        this.value ? [this.value] : null
+      }
+    },
     data () {
       let self = this // <- the j-collection component
       return {
         options: {
           animation: 150,
+          sort: false,
+          scroll: false,
           ghostClass: 'sortable-ghost',  // Class name for the drop placeholder
           chosenClass: 'sortable-chosen',  // Class name for the chosen item
           dragClass: 'sortable-drag',  // Class name for the dragging item
@@ -91,6 +84,7 @@
           onAdd: (e) => {
             // ## 2 ##  
             e.clone.obj = e.clone.objs[e.oldIndex] 
+            e.item.remove()
             // console.log('onAdd e.clone.obj', e.clone.obj)
             this.$emit('add', e)
           },     
@@ -130,45 +124,14 @@
     methods: {
       // item clicked
       onSelect (index, e) {
-        this.$emit("select", {index, item: this.value[index]})
+        this.$emit("select", {item: this.value})
       },
-      // Called by any change to the list (add / update / remove)
-      // onSort: function (/**Event*/e) {
-      //   // same properties as onEnd
-      //   // console.log('onSort',e)
-      // },
-      // // sortablejs events.. 
-      // // Element is dropped into the list from another list
-      // onAdd: function (/**Event*/e) {
-      //   // console.log('onAdd',e)
-      //   this.$emit("add", e)
-      //   // same properties as onEnd
-      // },
-      // Changed sorting within list
-      // onUpdate: function (/**Event*/e) {
-      //   // same properties as onEnd
-      //   // this.$emit("add", this.value[index])
-      // },
-
       // Element is removed from the list into another list
       onRemove: function (/**Event*/e) {
         // same properties as onEnd
         // console.log('onRemove',e)
         this.$emit("add", e)
-      },      
-      // Called when creating a clone of element
-      // onClone: function (/**Event*/e) {
-      //   var origEl = e.item;
-      //   var cloneEl = e.clone;
-      //   this.$emit("clone", e)
-      //   // console.log('onClone',e)
-      //   debugger
-      // },
-    // Element is chosen
-      // onChoose: function (/**Event*/e) {
-      //   this.$emit("choose", e.oldIndex)// element index within parent
-      // }
-    
+      }      
     }
   }
 </script>
@@ -179,21 +142,22 @@
   position absolute
 
 /* frame-type-grid */
-.frame.frame-type-grid
+.frame.frame-type-droptarget
   padding 5px
   background-color rgba(0, 0, 0, 0.3)
-  width 100%
+  width 80px
+  max-height 80px
   overflow hidden
 
-.frame.frame-type-grid > .frame
+.frame.frame-type-droptarget > .frame
   width calc(15% - 6px)
   width 64px
-  xmax-width 240px
   margin 3px
-  xheight 50%
+  height 80px
+  max-height 80px
   position relative
   float left
-  xmin-height 48px
+  min-height 48px
   border 2px solid #333
   //border-left 4px solid #2196F3
   box-shadow 0 3px 6px 3px rgba(1,1,1,0.4)
@@ -202,23 +166,23 @@
   z-index 10
   padding 0px
 
-.frame.frame-type-grid > .frame > img
+.frame > .frame > img
   display none
   width 111px
   height 111px
 
-.frame.frame-type-grid > .frame > canvas
+.frame > .frame > canvas
   display inline-block
   margin 0
   padding 0
   width 111px
   height 111px
 
-.frame.frame-type-grid > .frame > canvas.image
+.frame > .frame > canvas.image
   width 111px
   height 111px
 
-.frame.frame-type-grid > .frame > canvas.palette
+.frame > .frame > canvas.palette
   position absolute
   width 14%
   right 6px

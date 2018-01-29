@@ -301,7 +301,9 @@ import { extend, QBtn, QIcon, QPopover, QScrollArea, QTooltip } from 'quasar'
 
   @import '../../themes/app.variables.styl'
 
-  input
+
+
+  input, h1, h2, h3, h4, h5, h6
     color white
 
   .ui-draggable-handle

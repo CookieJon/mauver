@@ -28,7 +28,7 @@ div
       j-collection.frame-type-grid(v-model='palettes', @select='selectPalette')
 
   // selectedArtwork SLIDER
-  j-panel(v-if='selectedArtwork != null' icon='business', :title='selectedArtwork?selectedArtwork.name:"Art"', :width='600', :height='660', :x='410', :y='10')
+  j-panel(v-if='selectedArtwork != null' icon='business', :title='selectedArtwork?selectedArtwork.name:"Art"', :width='800', :height='660', :x='390', :y='10')
     div.j-tray.area.panel-item-grow(slot='content')
       j-artwork(v-model='selectedArtwork')
 
@@ -66,7 +66,8 @@ export default {
     // should be the response from the API Backend.
     const initialData = dataColors
     // console.log('data', dataColors)
-    this.$store.dispatch('addColors', { data: initialData })
+    // this.$store.dispatch('addColors', { data: initialData })
+    this.$store.dispatch('updateEntities', { colors: initialData })
   },
   data () {
     return {
@@ -86,7 +87,7 @@ export default {
         return this.$store.getters.getEntityById('artworks', this.selectedArtworkId)
       },
       set (value) {
-        this.$store.dispatch('addArtwork', {data: value})
+        this.$store.dispatch('updateEntities', {artworks: [value]})
       }
     },
     selectedBitmap: {
@@ -231,14 +232,14 @@ export default {
     addBitmap (bmp) {
       console.log('addBitmap:', bmp)
 
-      this.$store.dispatch('addBitmap', {data: bmp})
-
-      ////this.$store.dispatch('entities/bitmaps/insert', {data: bmp})
+      this.$store.dispatch('updateEntities', {bitmaps: [bmp]} )
+      //this.$store.dispatch('addBitmap', {data: bmp})
+      //this.$store.dispatch('entities/bitmaps/insert', {data: bmp})
     },
     addPalette () {
       let pal = this.paletteFromPreset('MaterialDefault')
       console.log('vie - addPalette', pal)
-      this.$store.dispatch('addPalette', {data: pal})
+      this.$store.dispatch('updateEntities', {palettes: [pal]})
     },
     addArtwork () {
 
@@ -247,9 +248,18 @@ export default {
         name: 'Art '+this.artId++,
         // *artwork's private...'*
         // final output...
-        pixels: null,
-        palette: null,
+        options: {
+          useNewPalette: false,
+          remapBitmapToPalette: false,
+          usePixelmap: false,
+          unusePixelMap: false
+        },
+
+        pixels: Array(65536).fill(120),
+        palette: this.paletteFromPreset('MaterialDefault'),
         imageData: null,
+        slidingCurrent: [],
+
         filters: [],
         // 1. artwork components. MUCH TODO:!
         bitmap: null,
@@ -257,10 +267,11 @@ export default {
         colormap: null,
         slider: null
       }
+      this.$store.dispatch('updateEntities', {artworks: [art]} )
 
-      console.log('addArtwork:', art)
-      this.$store.dispatch('addArtwork', {data: art})
-        //this.$store.dispatch('entities/artworks/insert', {data: art})
+      
+      //this.$store.dispatch('addArtwork', {data: art})
+      //this.$store.dispatch('entities/artworks/insert', {data: art})
     },
 
 
