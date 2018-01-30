@@ -34,7 +34,10 @@
         q-card-title(slot='overlay')
 
           div(slot='subtitle')
-            q-toggle(v-model="myValue.options.useNewPalette", label='Use New Palette')
+            q-toggle(v-model="myValue.options.useNewPalette", label='Bespoke Palette')
+            q-toggle(v-model="myValue.options.remapBitmapToPalette", label='Remap Bitmap')
+
+            
         q-card-main
             div.row
               j-drop-target.frame-type-grid(:value='myPalette', @add='dropPalette($event)')
@@ -69,36 +72,13 @@
               'max': 10000
             }
           )
-      //- // PIXEL MAP
-      //- q-card(overlay-position="top", color='dark')
-      //-   q-card-title(slot='overlay')
-      //-     div(slot='subtitle')|Pixel Map
-      //-   q-card-main
-      //-       div.row
-      //-         j-collection.frame-type-grid(v-model='myPalette', @add='dropPalette($event)', style='width:80px; height: 80px')
-      //-         div
-      //-           q-field(
-      //-             icon="satellite",
-      //-             dark)
-      //-               q-btn(small, push)|Test
-      //- // COLOR MAP
-      //- q-card(overlay-position="top", color='dark')
-      //-   q-card-title(slot='overlay')
-      //-     div(slot='subtitle')|Colour Map
-      //-   q-card-main
-      //-       div.row
-      //-         j-collection.frame-type-grid(v-model='myPalette', @add='dropPalette($event)', style='width:80px; height: 80px')
-      //-         div
-      //-           q-field(
-      //-             icon="satellite",
-      //-             dark)
-      //-               q-btn(small, push)|Test
+    
 
     div.col-8
       // PREVIEW
       q-card(overlay-position="top", color='dark')
-        q-card-title(slot='overlay')
-          div(slot='subtitle')|Preview
+        //- q-card-title(slot='overlay')
+        //-   div(slot='subtitle')|Preview
         q-card-main
           canvas(ref='preview', width='256', height='256', style='width:100%;height:100%;')
 
@@ -258,6 +238,18 @@ export default {
       },
       immediate: true
     },
+   'value.options': {
+      handler: function(val, oldVal) {
+        // let art = this.render()
+        console.log("WATCH ==> artwork.value.options", val, oldVal)
+        let art = {
+          id: this.value.id,
+          options: val
+        }
+        this.$store.dispatch('updateFields', {artworks: [art]} )          
+      },
+      deep: true
+    },
     paletteDDL(newValue, oldValue) {
       // var newPalette = ColorUtils.GeneratePaletteColors(newValue)
       // console.log('GENERATED:', newPalette)
@@ -268,6 +260,11 @@ export default {
     onUpdate (e) {
       let tmp = extend({}, {val: this.myValue}).val
       this.$emit('input', tmp)
+    },
+
+    __updatePreview(imgData) {
+      
+      this.myCtx.putImageData(imgData,0,0)
     },
 
     // RENDER
@@ -283,16 +280,33 @@ export default {
         return
       }
 
-      // PALETTE
+      // PALETTE + PIXELS
       if (v.options.useNewPalette) {
-        v.palette = v.palette
+        // USE PALETTE PALETTE
+        if (v.options.useNewPalette & v.options.remapBitmapToPalette) {
+          // Remap bitmap to palette
+          let bitmapColors = v.bitmap.palette.colors
+          let paletteColors = v.palette.colors
+          let map = bitmapColors.map(b => { 
+            let mapToIndex = paletteColors.findIndex(p => {return p.id === b.id})
+            return mapToIndex > -1 ? mapToIndex : 0
+          })
+          for (let i = 0; i < v.bitmap.pixels.length; i++) {
+            v.pixels[i] = map[v.bitmap.pixels[i]]
+          }
+          
+        } else {
+          v.pixels = v.bitmap.pixels
+        }    
       } else {
-        // Use Bitmap's palette
+        //USE BITMAP PALETTE
         v.palette = v.bitmap.palette
+        v.pixels = v.bitmap.pixels
       }
 
       // PIXELS
-      v.pixels = v.bitmap.pixels
+
+
 
       // SLIDING CURRENT PIXELS
       if (v.slidingCurrent) {
@@ -308,18 +322,24 @@ export default {
       // Preview Image &
       // ImageData
       let imgData = new ImageData(256,256)
-      for (var i=0; i<65536; i++ ) {
-        let mappedIndex = i * 4;
-        let theColor = v.palette.colors[SLIDING_CURRENT[i]]
-        if (!theColor) console.log('NO COLOR @'+i, SLIDING_CURRENT, SLIDING_CURRENT[i], v.palette.colors)
-        imgData.data[mappedIndex] = theColor.r
-        imgData.data[mappedIndex+1] = theColor.g
-        imgData.data[mappedIndex+2] = theColor.b
-        imgData.data[mappedIndex+3] = 255;
+      try {
+        for (var i=0; i<65536; i++ ) {
+          let mappedIndex = i * 4;
+          let theColor = v.palette.colors[SLIDING_CURRENT[i]]
+          if (!theColor) console.log('NO COLOR @'+i, SLIDING_CURRENT, SLIDING_CURRENT[i], v.palette.colors)
+          imgData.data[mappedIndex] = theColor.r
+          imgData.data[mappedIndex+1] = theColor.g
+          imgData.data[mappedIndex+2] = theColor.b
+          imgData.data[mappedIndex+3] = 255;
+        }
+      } catch(e) {
+        console.warn('Render error:', e)
       }
-
       v.imageData = imgData
-      this.myCtx.putImageData(imgData,0,0)
+      this.$nextTick(() => {
+        this.myCtx.putImageData(imgData,0,0)
+      })
+      
 
       // RETURN RENDERED ARTWORK
       return v
@@ -409,9 +429,6 @@ export default {
     },
 
 
-    __updatePreview(imgData) {
-      this.myCtx.putImageData(imgData,0,0)
-    },
     __startSliding() {
 
       ////this.slidingCurrent = this.myValue.slidingCurrent
