@@ -561,10 +561,14 @@ export default class ColorUtils {
       for (var member in materialJSON[group]) {
         var hex = materialJSON[group][member]
         // var rgba = ColorUtils.hexToRgba(hex)
-        var color = ColorUtils.hexToColor(hex)
+        var color = ColorUtils.hexToColor(hex) // <-- Does rgba & hsv
         var name = group + ' ' + member
         color.hex = hex;
-        color.name = name.replace(' ','')
+        // Pack 4x8-bit into 32-bit
+        color.rgba32 = new Uint32Array((new Uint8Array([color.r, color.g, color.b, color.a])).buffer)[0]
+        // Unpack 4x8-bit from 32-bit
+        // new Uint8Array((new Float32Array([f])).buffer);
+        color.name = name.replace(/ /g,'')
         color.id = counter++
         materialColors.push(color)
       }
@@ -648,7 +652,7 @@ export default class ColorUtils {
             }
         }
     }
-    return { h: hue, s: sat, v: val, chroma: chr, luma: luma };
+    return { h: hue.toFixed(2), s: sat.toFixed(2), v: val, chroma: chr, luma: luma.toFixed(2) };
 
   }
 

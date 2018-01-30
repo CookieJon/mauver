@@ -52,11 +52,11 @@ import dataColors from '../../data'
 import iq from 'image-q'
 
 // CREATE INITIAL DATA
-// import colorUtils from 'moe/utils/moe.utils.color.js'
-// let pal = colorUtils.getMaterialColors(0,256)
-// let palObj = {}
-// pal.forEach(v => palObj[v.id] = v)
-// console.log('PALETTE', JSON.stringify(pal))
+import colorUtils from 'moe/utils/moe.utils.color.js'
+let pal = colorUtils.getMaterialColors(0,256)
+let palObj = {}
+pal.forEach(v => palObj[v.id] = v)
+console.log('PALETTE', JSON.stringify(pal))
 
 export default {
   name: 'view-mauver',

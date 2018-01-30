@@ -1,7 +1,7 @@
 <template lang="pug">
 
 
-  div.row 
+  div.row
     //- div.row
       //- h6|Bitmap
       //- j-collection.frame-type-grid(v-model='myFilters', @add='addFilter($event)', style='width:80px; height: 400px')
@@ -13,33 +13,33 @@
         q-card-title
           div(slot='subtitle')|Debug
         q-card-main()
-            div.row 
-              //- |{{this.myValue.options}}   
-              |{{this.myValue.slidingCurrent ? this.myValue.slidingCurrent.slice(-4) : 'no'}}   
-                  
+            div.row
+              //- |{{this.myValue.options}}
+              |{{this.myValue.slidingCurrent ? this.myValue.slidingCurrent.slice(-4) : 'no'}}
+
       // BITMAP
       q-card(color='dark')
         q-card-title
           div(slot='subtitle')|Bitmap
         q-card-main()
-            div.row 
+            div.row
               j-drop-target.frame-type-grid(:value='myBitmap', @add='dropBitmap($event)')
               div
                 q-field(
                   icon="satellite",
-                  dark)  
-                    q-btn(small, push)|Test    
+                  dark)
+                    q-btn(small, push)|Test
       // PALETTE
       q-card(overlay-position="top", color='dark')
         q-card-title(slot='overlay')
-         
+
           div(slot='subtitle')
-            q-toggle(v-model="myValue.options.useNewPalette", label='Use New Palette') 
+            q-toggle(v-model="myValue.options.useNewPalette", label='Use New Palette')
         q-card-main
-            div.row 
+            div.row
               j-drop-target.frame-type-grid(:value='myPalette', @add='dropPalette($event)')
               div
-              q-field(icon="satellite",dark)  
+              q-field(icon="satellite",dark)
                 //- q-toggle(v-model="myValue.options.paletteFromBitmap" label="Palette from Bitmap")
                 //- q-option-group(
                 //-   type="toggle",
@@ -48,15 +48,15 @@
                 //-     {label: 'Palette from Bitmap', value: 'paletteFromBitmap'},
                 //-     {label: 'Remap Bitmap', value: 'remapBitmapToPalette'}
                 //-   ]`)
-              q-field(icon="satellite",dark)  
+              q-field(icon="satellite",dark)
                 q-btn(small, push)|Test
       // SLIDER
       q-card(overlay-position="top", color='dark')
         q-card-title(slot='overlay')
           div(slot='subtitle')|Slider
-        q-card-main    
-          j-lever(v-model='controlTargetPower', rest='50%', :markers='true', 
-            :labelAlways='true', 
+        q-card-main
+          j-lever(v-model='controlTargetPower', rest='50%', :markers='true',
+            :labelAlways='true',
             @start='__startSliding'
             @stop='__stopSliding'
             :range={
@@ -67,47 +67,47 @@
               '55%': 100,
               '65%': 1200,
               'max': 10000
-            }     
-          )                   
+            }
+          )
       //- // PIXEL MAP
       //- q-card(overlay-position="top", color='dark')
       //-   q-card-title(slot='overlay')
       //-     div(slot='subtitle')|Pixel Map
       //-   q-card-main
-      //-       div.row 
+      //-       div.row
       //-         j-collection.frame-type-grid(v-model='myPalette', @add='dropPalette($event)', style='width:80px; height: 80px')
       //-         div
       //-           q-field(
       //-             icon="satellite",
-      //-             dark)  
-      //-               q-btn(small, push)|Test          
+      //-             dark)
+      //-               q-btn(small, push)|Test
       //- // COLOR MAP
       //- q-card(overlay-position="top", color='dark')
       //-   q-card-title(slot='overlay')
       //-     div(slot='subtitle')|Colour Map
       //-   q-card-main
-      //-       div.row 
+      //-       div.row
       //-         j-collection.frame-type-grid(v-model='myPalette', @add='dropPalette($event)', style='width:80px; height: 80px')
       //-         div
       //-           q-field(
       //-             icon="satellite",
-      //-             dark)  
-      //-               q-btn(small, push)|Test                                 
+      //-             dark)
+      //-               q-btn(small, push)|Test
 
     div.col-8
       // PREVIEW
       q-card(overlay-position="top", color='dark')
         q-card-title(slot='overlay')
           div(slot='subtitle')|Preview
-        q-card-main    
+        q-card-main
           canvas(ref='preview', width='256', height='256', style='width:100%;height:100%;')
 
-      
+
       div.row
       q-select.col(stack-label='Palette', dark, v-model='paletteDDL', :options='paletteOptions')
 
 
-      div.row           
+      div.row
         q-input.col(stack-label='Sliding Speeds Pattern', dark, v-model='slidingSpeedsPattern')
         q-input.col(readonly,stack-label='started', dark, v-model='slidingStarted')
         q-input.col(stack-label='Control Target Power', dark, v-model='controlTargetPower')
@@ -138,19 +138,19 @@ import { extend } from 'quasar'
 var crunch = require("number-crunch");
 import ColorUtils from '../../moe/utils/moe.utils.color.js'
 
-let 
-  CURRENT_TIME, 
+let
+  CURRENT_TIME,
   LAST_TIME = Date.now(),
   ELAPSED_TIME
 
-let 
+let
   SLIDING_CURRENT
 
 export default {
   name: "j-artwork",
-  components: { 
-    jCanvas, jLever, jCollection, jDropTarget,  
-    QToggle, QOptionGroup, QBtn, QCard, QCardMain, QCardSeparator, QCardMedia, QCardTitle, QField, QInput, QSelect 
+  components: {
+    jCanvas, jLever, jCollection, jDropTarget,
+    QToggle, QOptionGroup, QBtn, QCard, QCardMain, QCardSeparator, QCardMedia, QCardTitle, QField, QInput, QSelect
   },
   props: {
     value: {
@@ -165,7 +165,7 @@ export default {
 
       // artwork preview image
       myCtx: null,
-      // other contrl previw images... 
+      // other contrl previw images...
       //
       // myImageData - computed.
       // myPaletteImageData - computed.
@@ -185,7 +185,7 @@ export default {
       slidingCurrent: null,
       slidingUpper: [],
 
-      slidingImageData: null, // 
+      slidingImageData: null, //
       slidingSpeedsImageData: null, // Visual representation of the speed.
 
       slidingSpeedsPattern: '1,2,3,2,1,1,1,1,1,2,3,2',
@@ -194,7 +194,7 @@ export default {
       slidingSpeedsGradations: 0,
 
       controlMax: 65536,      // The abs(maximum value of the power?)
-      controlTargetPower: 0,	// Current position of the knob 
+      controlTargetPower: 0,	// Current position of the knob
       controlActualPower: 0,  // Smoothstep power wrt TargetPower
       controlPower: 0,        // Current power. I.e. How many significant digits into the 65536 pixels are changes being applied?
       controlDirection: 0,    // ?? 1=up, -1=down, 0=stopped
@@ -235,7 +235,7 @@ export default {
       set() {
         // alert('sorted!')
       }
-    },    
+    },
     myImageData () {
       // NB. Only used for icon & general. preview imageData is handled manually updating ctx for Art because of fast control, don't  want watchers.
       return this.value ? this.value.imageData : null
@@ -243,21 +243,20 @@ export default {
     myPaletteImageData () {
       return this.value && this.value.palette ? this.value.palette.imageData : null
     }
-  },  
+  },
   watch: {
     value: {
       handler: function (val, oldVal) {
         console.log("WATCH ==> artwork.value", val, oldVal)
         if (!oldVal || val.id != oldVal.id) {
-          console.log('NEW ARTWORK!')
+          console.log('Different artwork.value!')
           let imgData = new ImageData(256,256)
           if (this.myCtx) this.__updatePreview(imgData)
         }
         this.myValue = extend({}, {val}).val
         this.render()
       },
-      immediate: true,
-      deep: true
+      immediate: true
     },
     paletteDDL(newValue, oldValue) {
       // var newPalette = ColorUtils.GeneratePaletteColors(newValue)
@@ -283,7 +282,7 @@ export default {
       if (!v.bitmap) {
         return
       }
-      
+
       // PALETTE
       if (v.options.useNewPalette) {
         v.palette = v.palette
@@ -294,7 +293,7 @@ export default {
 
       // PIXELS
       v.pixels = v.bitmap.pixels
-      
+
       // SLIDING CURRENT PIXELS
       if (v.slidingCurrent) {
         SLIDING_CURRENT = Array.prototype.slice.call(v.slidingCurrent)
@@ -330,7 +329,7 @@ export default {
     configurePalette() {
 
     },
-    dropPalette(e) {     
+    dropPalette(e) {
       e.item.remove() // will be added by v-for instead
       let obj = e.clone.obj
       this.myValue.palette = obj
@@ -338,7 +337,7 @@ export default {
       this.myValue.slidingCurrent = null
       // this.myValue.pixels = null
       // this.myValue.slidingCurrent = null
-      
+
       let art = this.render()
       this.$store.dispatch('updateFields', {artworks: [art]} )
     },
@@ -348,7 +347,7 @@ export default {
       this.myValue.bitmap = obj
       this.myValue.pixels = null
       this.myValue.slidingCurrent = null
-      
+
       let art = this.render()
       this.$store.dispatch('updateFields', {artworks: [art]} )
     },
@@ -362,7 +361,7 @@ export default {
       // c) Update ONLY fields, directly
       let art = {
         // Nonentities (must be extended?)
-        id: this.value.id, 
+        id: this.value.id,
         imageData: extend({}, {val: filter.imageData}).val,
         pixels : extend({}, {val: filter.pixels}).val,
         // Entities
@@ -372,7 +371,7 @@ export default {
       }
       art.filters.push(filter)
       this.$store.dispatch('updateFields', {artworks: [art]} )
- 
+
 
       // a) update entity directly from this component
       // let tmp = extend({}, {val: this.value}).val
@@ -387,9 +386,9 @@ export default {
 
       // or b) Update entity via parent's "model" directive
       // this.$emit('input', tmp)
-    },    
+    },
 
-    // 
+    //
     __init() {
       this.slidingLower = new Array(65536).fill(0)
       //this.slidingCurrent = new Array(65536).fill(0)
@@ -399,7 +398,7 @@ export default {
     },
 
     __populateSlidingSpeeds() {
-      
+
       let speeds = this.slidingSpeedsPattern.split(',')
       this.slidingSpeedsLength = speeds.length
       this.slidingSpeedsGradations = parseInt(65536 / this.slidingSpeedsLength)
@@ -461,23 +460,23 @@ export default {
       // console.log(ELAPSED_TIME, this.controlActualPower, this.controlTargetPower)
       this.__computeSlidingSpeed(this.controlActualPower)
 
-      SLIDING_CURRENT = (this.controlDirection > 0) 
-        ? crunch.add(SLIDING_CURRENT, this.slidingSpeed) 
+      SLIDING_CURRENT = (this.controlDirection > 0)
+        ? crunch.add(SLIDING_CURRENT, this.slidingSpeed)
         : crunch.sub(SLIDING_CURRENT, this.slidingSpeed)
 
       // recCounter++;
       if (SLIDING_CURRENT.length > 65536) {
 
         SLIDING_CURRENT.shift(1);
-        
+
         console.log('too high beep!')
         //oRangeDisplay.val(oRangeDisplay.val() + " \n " + " Stopping @ " + (controlDirection > 0 ? "UPPER":"LOWER") );
         // this.__stopSliding();
-        
-      } 
-    
+
+      }
+
       let theColor, mappedIndex
-      
+
       let tmp = new ImageData(256,256)
       //tmp.data.fill(125)
       for (var i=0; i<65536; i++ ) {
@@ -485,7 +484,7 @@ export default {
         mappedIndex = i * 4;
         try {
           theColor = this.myValue.palette.colors[SLIDING_CURRENT[i]];
-          
+
           tmp.data[mappedIndex] = theColor.r; //*4 =*4 =*4 =*4 = !! NB!!!
           tmp.data[mappedIndex+1] = theColor.g;
           tmp.data[mappedIndex+2] = theColor.b;
@@ -500,7 +499,7 @@ export default {
       // this.slidingImageData = tmp
       // update Preview
       this.__updatePreview(tmp)
-    
+
       // DEBUG
       //
       // var position = "";
@@ -509,7 +508,7 @@ export default {
       // }
       // oRangeDisplay.val(position + "\n Power: " + controlPower + "\nRate: " + slidingSpeedPower); 	// readout
 
-      // 2. Continue @ANIM 
+      // 2. Continue @ANIM
       //
       this.slidingAnimId = requestAnimationFrame(this.__animateSliding);
     },
@@ -517,12 +516,12 @@ export default {
     __computeSlidingSpeed(pow) {
 
 	    // val should be (currently) from -10,000 to +10,000
-	
+
       // 1. Calculate speed
       //
       this.controlDirection = (pow > 0) ? 1 : -1;
       this.controlPower = Math.abs(pow);
-      
+
       // original method:
       //
       // this.slidingSpeedPower = parseInt( ((65536 )*this.controlPower/10000) ) ;
@@ -531,14 +530,14 @@ export default {
       //
       this.slidingSpeedPower = parseInt(this.controlPower/10000 * this.slidingSpeedsGradations) * this.slidingSpeedsLength;
 
-      // record 
+      // record
       //
       // if (slidingSpeedPower!=recLevel) {
       //   recHistory.push([recLevel, recCounter]);
       //   recLevel = slidingSpeedPower;
       //   recCounter=0;
       // }
-	
+
 	    this.slidingSpeed = this.slidingSpeeds.slice(0, this.slidingSpeedPower); // GOOD METHOD (but Remember the better one you thought of!!!)
 
       // Visualisation
@@ -550,14 +549,14 @@ export default {
         tmp.data[inset++] = this.slidingSpeed[i]
         tmp.data[inset++] = 255
       }
-      this.slidingSpeedsImageData = tmp    
+      this.slidingSpeedsImageData = tmp
     }
 
 
   },
   mounted () {
     this.myCtx = this.$refs.preview.getContext('2d')
-    
+
   },
   created () {
     this.__init()
@@ -568,5 +567,5 @@ export default {
 </script>
 <style lang="stylus">
   .dark-example
-    background #333 
+    background #333
 </style>
