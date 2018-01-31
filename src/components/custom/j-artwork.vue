@@ -36,7 +36,6 @@
           div(slot='subtitle')
             q-toggle(v-model="myValue.options.useNewPalette", label='Bespoke Palette')
             q-toggle(v-model="myValue.options.remapBitmapToPalette", label='Remap Bitmap')
-            q-btn(small, push, @click='render')|Render
 
 
         q-card-main
@@ -126,7 +125,8 @@ let
   ELAPSED_TIME
 
 let
-  SLIDING_CURRENT
+  SLIDING_PIXELS,
+  SLIDING_COLORS
 
 export default {
   name: "j-artwork",
@@ -143,7 +143,7 @@ export default {
     return {
       paletteOptions: ColorUtils.presetPalettes.map(v=>{return {'label':v, 'value':v}}),
       paletteDDL: null,
-      myValue: null,
+      // myValue: null,
 
       // artwork preview image
       myCtx: null,
@@ -158,7 +158,7 @@ export default {
       bitmap: null,
       palette: null,
       pixels: null,
-      imageData: null,
+      // imageData: null,
 
       sliderInterval: 10,         // Timeout for continuous press
 
@@ -242,7 +242,7 @@ export default {
     // ===>>
     paletteFilterOutput () {
 
-      const input = this.bitmapFilterOutput
+      const input = extend(true, {},this.bitmapFilterOutput)
 
       const oUseNewPalette = this.value.options.useNewPalette
       const oRemapBitmapToPalette = this.value.options.remapBitmapToPalette
@@ -272,9 +272,18 @@ export default {
       return input
     },
     // ===>>
+    sliderFilterOutput() {
+      
+      const input = extend(true, {},this.paletteFilterOutput)
+      if (input.pixels.length != 65536) alert(input.pixels.length)
+      return input
+
+    },
+
+    // ===>> BITMAP ==> PALETTE ===> 
     filterFinalImageData() {
 
-      let input = this.paletteFilterOutput
+      const input = extend(true, {},this.paletteFilterOutput)
 
       // Preview Image &
       // ImageData
@@ -283,7 +292,7 @@ export default {
         for (var i=0; i<65536; i++ ) {
           let mappedIndex = i * 4;
           let theColor = input.colors[input.pixels[i]]
-          // if (!theColor) console.log('NO COLOR @'+i, SLIDING_CURRENT, SLIDING_CURRENT[i], v.palette.colors)
+          // if (!theColor) console.log('NO COLOR @'+i, SLIDING_PIXELS, SLIDING_PIXELS[i], v.palette.colors)
           imgData.data[mappedIndex] = theColor.r
           imgData.data[mappedIndex+1] = theColor.g
           imgData.data[mappedIndex+2] = theColor.b
@@ -295,27 +304,43 @@ export default {
 
       console.log("COMPUTED filterFinalImageData")
       this.$nextTick(() => {
-        this.myCtx.putImageData(imgData,0,0)
+      //  this.myCtx.putImageData(imgData,0,0)
       })
+      
+      // this.$emit('input', this.myValue)
       return imgData
 
+    },
+
+    
+
+    imageData() {
+      console.log("COMPUTED imageData")
+      // this.$emit('input', this.myValue)
+      let a = this.filterFinalImageData
+      return a
+    },
+    myValue() {
+      let val = extend({}, {val: this.value}).val
+      return val
     }
+
 
   },
   watch: {
-    value: {
-      handler: function (val, oldVal) {
-        console.log("WATCH ==> artwork.value", val, oldVal)
-        if (!oldVal || val.id != oldVal.id) {
-          console.log('Different artwork.value!')
-          let imgData = new ImageData(256,256)
-          if (this.myCtx) this.__updatePreview(imgData)
-        }
-        this.myValue = extend({}, {val}).val
-        this.render()
-      },
-      immediate: true
-    },
+    // value: {
+    //   handler: function (val, oldVal) {
+    //     console.log("WATCH ==> artwork.value", val, oldVal)
+    //     if (!oldVal || val.id != oldVal.id) {
+    //       console.log('Different artwork.value!')
+    //       let imgData = new ImageData(256,256)
+    //       if (this.myCtx) this.__updatePreview(imgData)
+    //     }
+    //     this.myValue = extend({}, {val}).val
+    //     this.render()
+    //   },
+    //   immediate: true
+    // },
    'value.options': {
       handler: function(val, oldVal) {
         // let art = this.render()
@@ -345,107 +370,27 @@ export default {
       this.myCtx.putImageData(imgData,0,0)
     },
 
-    // RENDER
-    //
-    render() {
-      console.log('RENDER!')
-      return
-      let v = this.myValue
-      // FIX ALL THIS SPAGHETTI WITH FILTERS!
-      // TODO: Design
-
-      if (!v.bitmap) {
-        return
-      }
-
-      // PALETTE + PIXELS
-      if (v.options.useNewPalette) {
-        // USE PALETTE PALETTE
-        if (v.options.useNewPalette & v.options.remapBitmapToPalette) {
-          // Remap bitmap to palette
-          let bitmapColors = v.bitmap.palette.colors
-          let paletteColors = v.palette.colors
-          let map = bitmapColors.map(b => {
-            let m2 = paletteColors.findIndex(p => {return p.id === b.id})
-            return m2 > -1 ? m2 : 0
-          })
-          console.log('MAP =>', map)
-          for (let i = 0; i < v.bitmap.pixels.length; i++) {
-            v.pixels[i] = map[v.bitmap.pixels[i]]
-          }
-
-        } else {
-          v.pixels = v.bitmap.pixels
-        }
-      } else {
-        //USE BITMAP PALETTE
-        v.palette = v.bitmap.palette
-        v.pixels = v.bitmap.pixels
-      }
-
-      // PIXELS
-
-
-
-      // SLIDING CURRENT PIXELS
-      if (v.slidingCurrent) {
-        SLIDING_CURRENT = Array.prototype.slice.call(v.slidingCurrent)
-      }
-      else if (v.pixels) {
-        SLIDING_CURRENT = Array.prototype.slice.call(v.pixels)
-      }
-      else {
-        SLIDING_CURRENT = Array(65536).fill(0)
-      }
-
-      // Preview Image &
-      // ImageData
-      let imgData = new ImageData(256,256)
-      try {
-        for (var i=0; i<65536; i++ ) {
-          let mappedIndex = i * 4;
-          let theColor = v.palette.colors[SLIDING_CURRENT[i]]
-          if (!theColor) console.log('NO COLOR @'+i, SLIDING_CURRENT, SLIDING_CURRENT[i], v.palette.colors)
-          imgData.data[mappedIndex] = theColor.r
-          imgData.data[mappedIndex+1] = theColor.g
-          imgData.data[mappedIndex+2] = theColor.b
-          imgData.data[mappedIndex+3] = 255;
-        }
-      } catch(e) {
-        console.warn('Render error:', e)
-      }
-      v.imageData = imgData
-      this.$nextTick(() => {
-        this.myCtx.putImageData(imgData,0,0)
-      })
-
-
-      // RETURN RENDERED ARTWORK
-      return v
-
-    },
 
     configurePalette() {
 
     },
     dropPalette(e) {
+      console.log('dropPalette')
       e.item.remove() // will be added by v-for instead
-      let obj = e.clone.obj
-      this.myValue.palette = obj
-      this.myValue.slidingCurrent = null
-
-      let art = this.render()
-      this.$store.dispatch('updateFields', {artworks: [this.myValue]} )
+      let art = {
+        id: this.value.id,
+        palette: e.clone.obj
+      }
+      this.$store.dispatch('updateFields', {artworks: [art]} )
     },
     dropBitmap(e) {
-      console.log('dropBitmap MY VALUE', this.myValue)
+      console.log('dropBitmap')
       e.item.remove() // will be added by v-for instead
-      let obj = e.clone.obj
-      this.myValue.bitmap = obj
-      this.myValue.slidingCurrent = null
-
-      let art = this.render()
-      this.$store.dispatch('updateFields', {artworks: [this.myValue]} )
+      let art = {
+        id: this.value.id,
+        bitmap:  e.clone.obj
+      }
+      this.$store.dispatch('updateFields', {artworks: [art]} )
     },
     //
     addFilter (e) {
@@ -468,20 +413,6 @@ export default {
       art.filters.push(filter)
       this.$store.dispatch('updateFields', {artworks: [art]} )
 
-
-      // a) update entity directly from this component
-      // let tmp = extend({}, {val: this.value}).val
-      // tmp.filters.push(filter)
-      // tmp.imageData = extend({}, {val: filter.imageData}).val
-      // tmp.pixels = filter.pixels
-      // tmp.palette = filter.palette
-      // tmp.bitmap = filter
-      // this.$store.dispatch('updateEntities', {artworks: [tmp]} )
-      // // update Preview
-      // this.__updatePreview(tmp.imageData)
-
-      // or b) Update entity via parent's "model" directive
-      // this.$emit('input', tmp)
     },
 
     //
@@ -507,7 +438,8 @@ export default {
 
     __startSliding() {
 
-      ////this.slidingCurrent = this.myValue.slidingCurrent
+      SLIDING_PIXELS = this.sliderFilterOutput.pixels
+      SLIDING_COLORS = this.sliderFilterOutput.colors
 
       this.__populateSlidingSpeeds()
 
@@ -518,6 +450,7 @@ export default {
 
       this.slidingStarted = true
       this.slidingAnimId = requestAnimationFrame(this.__animateSliding)
+      
     },
 
     __stopSliding() {
@@ -528,7 +461,7 @@ export default {
       let art = {
         rem: 'Stop Sliding',
         id: this.myValue.id,
-        slidingCurrent: SLIDING_CURRENT
+        slidingCurrent: SLIDING_PIXELS
       }
       this.$store.dispatch('updateFields', {artworks: [art]} )
       //this.myValue.slidingCurrent = this.slidingCurrent
@@ -553,14 +486,16 @@ export default {
       // console.log(ELAPSED_TIME, this.controlActualPower, this.controlTargetPower)
       this.__computeSlidingSpeed(this.controlActualPower)
 
-      SLIDING_CURRENT = (this.controlDirection > 0)
-        ? crunch.add(SLIDING_CURRENT, this.slidingSpeed)
-        : crunch.sub(SLIDING_CURRENT, this.slidingSpeed)
+      SLIDING_PIXELS = (this.controlDirection > 0)
+        ? crunch.add(SLIDING_PIXELS, this.slidingSpeed)
+        : crunch.sub(SLIDING_PIXELS, this.slidingSpeed)
+
+      console.log("SLIDING_PIX", SLIDING_PIXELS.length)
 
       // recCounter++;
-      if (SLIDING_CURRENT.length > 65536) {
+      if (SLIDING_PIXELS.length > 65536) {
 
-        SLIDING_CURRENT.shift(1);
+        SLIDING_PIXELS.shift(1);
 
         console.log('too high beep!')
         //oRangeDisplay.val(oRangeDisplay.val() + " \n " + " Stopping @ " + (controlDirection > 0 ? "UPPER":"LOWER") );
@@ -576,15 +511,15 @@ export default {
         //  mappedIndex = (slidingMap[i*2] + 256*slidingMap[i*2+1]) *4 ;  // *2=x,y *4 = R,G,B,A
         mappedIndex = i * 4;
         try {
-          theColor = this.myValue.palette.colors[SLIDING_CURRENT[i]];
+          theColor = SLIDING_COLORS[SLIDING_PIXELS[i]];
 
           tmp.data[mappedIndex] = theColor.r; //*4 =*4 =*4 =*4 = !! NB!!!
           tmp.data[mappedIndex+1] = theColor.g;
           tmp.data[mappedIndex+2] = theColor.b;
           tmp.data[mappedIndex+3] = 255;
         } catch(e) {
-          console.log('error', this.myValue.palette.colors, theColor, SLIDING_CURRENT[i], i)
-          console.log(i, SLIDING_CURRENT[i], SLIDING_CURRENT.length);
+          console.log('error', SLIDING_COLORS, theColor, SLIDING_PIXELS[i], i)
+          console.log(i, SLIDING_PIXELS[i], SLIDING_PIXELS.length);
           this.__stopSliding()
           return;
         }

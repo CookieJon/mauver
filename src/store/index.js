@@ -96,8 +96,11 @@ const store = new Vuex.Store({
       commit('UPDATE_ENTITIES', n.entities)
     },    
     updateFields({commit, state}, data) {
-      // @data: e.g. {'artworks': [obj]} 
-      console.log('updateFields', data)
+      console.log('--------------------------------------')
+      console.log('--------------------------------------')
+      console.log('--------------------------------------')
+      console.log('--------------------------------------')
+      console.log('updateFields', Object.keys(data))
       let entities = normalize(data, Museum).entities
       commit('UPDATE_FIELDS', {entities, data})
     }
@@ -115,11 +118,12 @@ const store = new Vuex.Store({
       }
     },
     UPDATE_FIELDS: function(state, {entities, data}) {
-      console.log('UPDATE_FIELDS', {entities, data})
+      //console.log('UPDATE_FIELDS', {entities, data})
       for (let type in data) {
         for (let entity in data[type]) { // NB: This is an array (not a keyed obejct)...
           const entityId = data[type][entity].id // ... so find the object manually 
           for (let key in data[type][entity]) {
+            console.log("UPDATE_FIELD:", type+'.'+entityId+'.'+key)
             Vue.set (state.entities[type][entityId], key, entities[type][entityId][key])
           }
         }
@@ -130,11 +134,13 @@ const store = new Vuex.Store({
     // GENERIC GETTERS
     //
     getEntities: (state) => (type) => {
+      console.log("STORE GETTER.getEntities", type)
       let ids = Object.keys(state.entities[type])
       let dn = denormalize({ [type]: ids }, Museum, state.entities)
       return dn[type]
     },    
     getEntityById: (state) => (type, id) => {
+      console.log("STORE GETTER.getEntityById", type)
       let dn = denormalize({ [type]: [id] }, Museum,  state.entities)
       return dn[type][0]
     },
