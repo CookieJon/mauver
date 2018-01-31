@@ -36,8 +36,9 @@
           div(slot='subtitle')
             q-toggle(v-model="myValue.options.useNewPalette", label='Bespoke Palette')
             q-toggle(v-model="myValue.options.remapBitmapToPalette", label='Remap Bitmap')
+            q-btn(small, push, @click='render')|Render
 
-            
+
         q-card-main
             div.row
               j-drop-target.frame-type-grid(:value='myPalette', @add='dropPalette($event)')
@@ -72,7 +73,7 @@
               'max': 10000
             }
           )
-    
+
 
     div.col-8
       // PREVIEW
@@ -80,6 +81,7 @@
         //- q-card-title(slot='overlay')
         //-   div(slot='subtitle')|Preview
         q-card-main
+          j-canvas.frame-type-grid(:image-data='filterFinalImageData')
           canvas(ref='preview', width='256', height='256', style='width:100%;height:100%;')
 
 
@@ -222,7 +224,83 @@ export default {
     },
     myPaletteImageData () {
       return this.value && this.value.palette ? this.value.palette.imageData : null
+    },
+
+
+    // COMPUTED PROPS ON THE FLY: READ  https://jsfiddle.net/Linusborg/3p4kpz1t/
+    //
+    bitmapFilterOutput () {
+
+      let output = {
+        pixels: this.value.bitmap ? this.value.bitmap.pixels.slice() : Array(65536).fill(0),
+        colors: this.value.bitmap ? this.value.bitmap.palette.colors.slice() : [{r:255, g:255, b:255, a:255}]
+      }
+
+      console.log("COMPUTED bitmapOutput")
+      return output
+    },
+    // ===>>
+    paletteFilterOutput () {
+
+      const input = this.bitmapFilterOutput
+
+      const oUseNewPalette = this.value.options.useNewPalette
+      const oRemapBitmapToPalette = this.value.options.remapBitmapToPalette
+
+      if (!oUseNewPalette) {
+        return input
+      }
+
+      input.colors = this.value.palette.colors.slice()
+
+      if (oRemapBitmapToPalette) {
+        // Remap bitmap to palette
+        let bitmapColors = input.colors
+        let paletteColors = input.colors
+        let map = bitmapColors.map(b => {
+          let m2 = paletteColors.findIndex(p => {return p.id === b.id})
+          return m2 > -1 ? m2 : 0
+        })
+        console.log('MAP =>', map)
+        for (let i = 0; i < input.pixels.length; i++) {
+          input.pixels[i] = map[input.pixels[i]]
+        }
+
+      }
+
+      console.log("COMPUTED paletteOutput")
+      return input
+    },
+    // ===>>
+    filterFinalImageData() {
+
+      let input = this.paletteFilterOutput
+
+      // Preview Image &
+      // ImageData
+      let imgData = new ImageData(256,256)
+      try {
+        for (var i=0; i<65536; i++ ) {
+          let mappedIndex = i * 4;
+          let theColor = input.colors[input.pixels[i]]
+          // if (!theColor) console.log('NO COLOR @'+i, SLIDING_CURRENT, SLIDING_CURRENT[i], v.palette.colors)
+          imgData.data[mappedIndex] = theColor.r
+          imgData.data[mappedIndex+1] = theColor.g
+          imgData.data[mappedIndex+2] = theColor.b
+          imgData.data[mappedIndex+3] = 255;
+        }
+      } catch(e) {
+        console.warn('Render error:', e)
+      }
+
+      console.log("COMPUTED filterFinalImageData")
+      this.$nextTick(() => {
+        this.myCtx.putImageData(imgData,0,0)
+      })
+      return imgData
+
     }
+
   },
   watch: {
     value: {
@@ -246,7 +324,7 @@ export default {
           id: this.value.id,
           options: val
         }
-        this.$store.dispatch('updateFields', {artworks: [art]} )          
+        this.$store.dispatch('updateFields', {artworks: [art]} )
       },
       deep: true
     },
@@ -263,7 +341,7 @@ export default {
     },
 
     __updatePreview(imgData) {
-      
+
       this.myCtx.putImageData(imgData,0,0)
     },
 
@@ -271,7 +349,7 @@ export default {
     //
     render() {
       console.log('RENDER!')
-
+      return
       let v = this.myValue
       // FIX ALL THIS SPAGHETTI WITH FILTERS!
       // TODO: Design
@@ -287,17 +365,18 @@ export default {
           // Remap bitmap to palette
           let bitmapColors = v.bitmap.palette.colors
           let paletteColors = v.palette.colors
-          let map = bitmapColors.map(b => { 
-            let mapToIndex = paletteColors.findIndex(p => {return p.id === b.id})
-            return mapToIndex > -1 ? mapToIndex : 0
+          let map = bitmapColors.map(b => {
+            let m2 = paletteColors.findIndex(p => {return p.id === b.id})
+            return m2 > -1 ? m2 : 0
           })
+          console.log('MAP =>', map)
           for (let i = 0; i < v.bitmap.pixels.length; i++) {
             v.pixels[i] = map[v.bitmap.pixels[i]]
           }
-          
+
         } else {
           v.pixels = v.bitmap.pixels
-        }    
+        }
       } else {
         //USE BITMAP PALETTE
         v.palette = v.bitmap.palette
@@ -339,7 +418,7 @@ export default {
       this.$nextTick(() => {
         this.myCtx.putImageData(imgData,0,0)
       })
-      
+
 
       // RETURN RENDERED ARTWORK
       return v
@@ -353,23 +432,20 @@ export default {
       e.item.remove() // will be added by v-for instead
       let obj = e.clone.obj
       this.myValue.palette = obj
-      this.myValue.pixels = null
       this.myValue.slidingCurrent = null
-      // this.myValue.pixels = null
-      // this.myValue.slidingCurrent = null
 
       let art = this.render()
-      this.$store.dispatch('updateFields', {artworks: [art]} )
+      this.$store.dispatch('updateFields', {artworks: [this.myValue]} )
     },
     dropBitmap(e) {
+      console.log('dropBitmap MY VALUE', this.myValue)
       e.item.remove() // will be added by v-for instead
       let obj = e.clone.obj
       this.myValue.bitmap = obj
-      this.myValue.pixels = null
       this.myValue.slidingCurrent = null
 
       let art = this.render()
-      this.$store.dispatch('updateFields', {artworks: [art]} )
+      this.$store.dispatch('updateFields', {artworks: [this.myValue]} )
     },
     //
     addFilter (e) {
