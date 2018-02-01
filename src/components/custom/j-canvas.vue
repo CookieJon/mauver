@@ -1,12 +1,15 @@
+
 <template>
 <div :style="styleComponent">
-  <canvas ref="canvas" :width='pixelWidth' :height='pixelHeight'></canvas>
+  <canvas ref="canvas" :width='myPixelWidth' :height='myPixelHeight'></canvas>
   <!-- // {{ imageData.data.length }} -->
 </div>
 </template>
 
 <script>
+/* eslint-disable */
 import { extend } from 'quasar'
+import MoeUtils from '../../moe/utils/moe.utils.js'
 
 export default {
   name: 'j-canvas',
@@ -30,6 +33,15 @@ export default {
     imageData: {
       type: ImageData
     },
+    // OR
+    bitmap: {
+      type: Object
+    },
+    showPalette: {
+      type: Boolean,
+      default: false
+    },
+    // OR
     image: {
       type: Image
     }
@@ -39,25 +51,45 @@ export default {
     styleComponent () {
       return {
         width: this.width,
-        height: this.height
+        height:  this.showPalette ? this.height * 2 : this.height
       }
+    },
+    myPixelHeight () {
+      return this.showPalette ? 512 : 256
     }
   },
   watch: {
-    imageData (oldVal, newVal) {
+    imageData (newVal, oldVal) {
       console.log('** canvas watch imageData **', newVal)
-      this.updateImage()
-      // this.$nextTick(function () {
-      //   this.updateImage()
-      //   // console.log(this.$el.textContent) // => 'updated'
-      // })
+      this.$nextTick(function () {
+        this.updateImage()
+      })
+    },
+    bitmap (newVal) {
+      // {pixels: [], colors: []}
+      console.log('** canvas watch bitmap **', newVal)
+      const imgData = MoeUtils.imageDataFromPixelsAndColors(newVal)
+      if (this.showPalette) {
+        const imgDataPalette = MoeUtils.imageDataFromColors(newVal.colors)
+        this.$nextTick(function () {
+          this.ctx.putImageData(imgData, 0, 0)
+          this.ctx.putImageData(imgDataPalette, 0,256)
+        })        
+      }
+      else {
+        this.$nextTick(function () {
+          this.ctx.putImageData(imgData, 0, 0)
+        })
+      }
+
     }
   },
   data () {
     return {
       myImageData: extend({}, this.imageData),
       ctx: null,
-      id: 'j-canvas-1'
+      id: 'j-canvas-1',
+      myPixelWidth: 256
     }
   },
   methods: {
