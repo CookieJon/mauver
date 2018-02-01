@@ -1,11 +1,9 @@
 <template lang="pug">
 
-
   div.row
     //- div.row
       //- h6|Bitmap
       //- j-collection.frame-type-grid(v-model='myFilters', @add='addFilter($event)', style='width:80px; height: 400px')
-
 
     div.col-4
       // DEBUG
@@ -14,8 +12,9 @@
           div(slot='subtitle')|Debug
         q-card-main()
             div.row
+              || {{this.debug}}
               //- |{{this.myValue.options}}
-              |{{this.myValue.slidingCurrent ? this.myValue.slidingCurrent.slice(-4) : 'no'}}
+              //- |{{this.myValue.slidingCurrent ? this.myValue.slidingCurrent.slice(-4) : 'no'}}
 
       // BITMAP
       q-card(color='dark')
@@ -188,6 +187,15 @@ export default {
     }
   },
   computed: {
+    debug () {
+      try {
+        let a = ' '
+        return this.myValue.bitmap.pixels.slice(-8)
+      } catch(e) {
+        return 'not defined'
+      }
+
+    },
     // https://github.com/SortableJS/Vue.Draggable
     myFilters: {
       get () {
@@ -232,7 +240,7 @@ export default {
     bitmapFilterOutput () {
 
       let output = {
-        pixels: this.value.bitmap ? this.value.bitmap.pixels.slice() : Array(65536).fill(0),
+        pixels: this.value.bitmap ? Array.prototype.slice.call(this.value.bitmap.pixels) : Array(65536).fill(0),
         colors: this.value.bitmap ? this.value.bitmap.palette.colors.slice() : [{r:255, g:255, b:255, a:255}]
       }
 
@@ -251,16 +259,18 @@ export default {
         return input
       }
 
+      let bitmapColors = input.colors // Just in case
       input.colors = this.value.palette.colors.slice()
 
       if (oRemapBitmapToPalette) {
         // Remap bitmap to palette
-        let bitmapColors = input.colors
         let paletteColors = input.colors
         let map = bitmapColors.map(b => {
           let m2 = paletteColors.findIndex(p => {return p.id === b.id})
           return m2 > -1 ? m2 : 0
         })
+        console.log('MAP =>', bitmapColors.map(c=>c.name))
+        console.log('MAP =>', paletteColors.map(c=>c.name))
         console.log('MAP =>', map)
         for (let i = 0; i < input.pixels.length; i++) {
           input.pixels[i] = map[input.pixels[i]]
@@ -268,19 +278,20 @@ export default {
 
       }
 
+
       console.log("COMPUTED paletteOutput")
       return input
     },
     // ===>>
     sliderFilterOutput() {
-      
+
       const input = extend(true, {},this.paletteFilterOutput)
       if (input.pixels.length != 65536) alert(input.pixels.length)
       return input
 
     },
 
-    // ===>> BITMAP ==> PALETTE ===> 
+    // ===>> BITMAP ==> PALETTE ===>
     filterFinalImageData() {
 
       const input = extend(true, {},this.paletteFilterOutput)
@@ -306,13 +317,13 @@ export default {
       this.$nextTick(() => {
       //  this.myCtx.putImageData(imgData,0,0)
       })
-      
+
       // this.$emit('input', this.myValue)
       return imgData
 
     },
 
-    
+
 
     imageData() {
       console.log("COMPUTED imageData")
@@ -441,6 +452,8 @@ export default {
       SLIDING_PIXELS = this.sliderFilterOutput.pixels
       SLIDING_COLORS = this.sliderFilterOutput.colors
 
+      console.log("__startSliding()>>", SLIDING_PIXELS.length, SLIDING_COLORS.length)
+
       this.__populateSlidingSpeeds()
 
       // LAST_TIME = Date.now()
@@ -450,7 +463,7 @@ export default {
 
       this.slidingStarted = true
       this.slidingAnimId = requestAnimationFrame(this.__animateSliding)
-      
+
     },
 
     __stopSliding() {
@@ -489,8 +502,6 @@ export default {
       SLIDING_PIXELS = (this.controlDirection > 0)
         ? crunch.add(SLIDING_PIXELS, this.slidingSpeed)
         : crunch.sub(SLIDING_PIXELS, this.slidingSpeed)
-
-      console.log("SLIDING_PIX", SLIDING_PIXELS.length)
 
       // recCounter++;
       if (SLIDING_PIXELS.length > 65536) {

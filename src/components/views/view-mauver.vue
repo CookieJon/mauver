@@ -9,13 +9,12 @@ div
       // NB: Required at the moment to load bitmaps from IMG. TODO: Fix!
       canvas(ref='testcanvas', :width=256, :height=256)
 
-
   // COLLECTION
   j-panel(icon='business', title='O', :width='300', :height='700', :x='10', :y='10')
     div.j-panel-toolbar.text-black(slot='toolbar', style='padding:4px;')
-      q-btn(round,primary,small,icon='art track', @click='addArtwork')
-      q-btn(round,primary,small,icon='satellite', @click='openFileInput')
-      q-btn(round,primary,small,icon='color lens', @click='addPalette')
+      q-btn(small,push,icon='art track', @click='addArtwork')
+      q-btn(small,push,icon='satellite', @click='openFileInput')
+      q-btn(small,push,icon='color lens', @click='addPalette')
     // artworks
     div.j-tray.area.panel-item-grow(slot='content')
       j-collection.frame-type-grid(v-model='artworks', @select='selectArtwork')
