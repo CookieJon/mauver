@@ -1,99 +1,93 @@
 <template lang="pug">
 
-  div.row
-    //- div.row
-      //- h6|Bitmap
-      //- j-collection.frame-type-grid(v-model='myFilters', @add='addFilter($event)', style='width:80px; height: 400px')
 
-    div.col-4
-      // DEBUG
-      q-card(color='dark')
-        q-card-title
-          div(slot='subtitle')|Debug
-        q-card-main()
-            div.row
-              || {{this.debug}}
-              //- |{{this.myValue.options}}
-              //- |{{this.myValue.slidingCurrent ? this.myValue.slidingCurrent.slice(-4) : 'no'}}
+  div.row
+
+    div.col-5
+
+      //- // DEBUG
+      //- q-card(color='dark')
+      //-   q-card-title
+      //-     div(slot='subtitle')|Debug
+      //-   q-card-main()
+      //-       div.row
+      //-         //- |{{this.myValue.options}}
+      //-         |{{this.myValue.slidingCurrent ? this.myValue.slidingCurrent.slice(-4) : 'no'}}
 
       // BITMAP
       q-card(color='dark')
         q-card-title
           div(slot='subtitle')|Bitmap
-        q-card-main()
-            div.row
+        q-card-main
+          div.row
+            div.col-9
               j-drop-target.frame-type-grid(:value='myBitmap', @add='dropBitmap($event)')
-              div
-                q-field(
-                  icon="satellite",
-                  dark)
-                    q-btn(small, push)|Test
+            div.col-3
+              j-canvas.frame-type-grid(:bitmap='bitmapFilterOutput', show-palette, :pixelHeight="40", :pixelWidth="40")
+
       // PALETTE
       q-card(overlay-position="top", color='dark')
-        q-card-title(slot='overlay')
-
-          div(slot='subtitle')
-            q-toggle(v-model="myValue.options.useNewPalette", label='Bespoke Palette')
-            q-toggle(v-model="myValue.options.remapBitmapToPalette", label='Remap Bitmap')
-
-
+        q-card-title
+          div(slot='subtitle')|Palette      
         q-card-main
-            div.row
-              j-drop-target.frame-type-grid(:value='myPalette', @add='dropPalette($event)')
-              div
-              q-field(icon="satellite",dark)
-                //- q-toggle(v-model="myValue.options.paletteFromBitmap" label="Palette from Bitmap")
-                //- q-option-group(
-                //-   type="toggle",
-                //-   v-model="myOptions",
-                //-   :options=`[
-                //-     {label: 'Palette from Bitmap', value: 'paletteFromBitmap'},
-                //-     {label: 'Remap Bitmap', value: 'remapBitmapToPalette'}
-                //-   ]`)
-              q-field(icon="satellite",dark)
-                q-btn(small, push)|Test
+          div.row
+            div.col-9
+              q-select.col(dark, v-model='paletteDDL', :options='paletteOptions')    
+              j-drop-target(:value='myPalette', @add='dropPalette($event)')  
+              br
+              q-toggle(v-model="myValue.options.useNewPalette", label='Active')
+              br
+              q-toggle(v-model="myValue.options.remapBitmapToPalette", label='Remap Bitmap')
+            div.col-3
+              j-canvas.frame-type-grid(:bitmap='paletteFilterOutput', show-palette, :pixelHeight="40", :pixelWidth="40")
+
       // SLIDER
       q-card(overlay-position="top", color='dark')
         q-card-title(slot='overlay')
           div(slot='subtitle')|Slider
         q-card-main
-          j-lever(v-model='controlTargetPower', rest='50%', :markers='true',
-            :labelAlways='true',
-            @start='__startSliding'
-            @stop='__stopSliding'
-            :range={
-              'min': -10000,
-              '35%': -1200,
-              '45%': -100,
-              '50%': 0,
-              '55%': 100,
-              '65%': 1200,
-              'max': 10000
-            }
-          )
+          div.row
+            div.col-9
+              j-lever(v-model='controlTargetPower', rest='50%', :markers='true',
+                :labelAlways='true',
+                @start='__startSliding'
+                @stop='__stopSliding'
+                :range={
+                  'min': -10000,
+                  '35%': -1200,
+                  '45%': -100,
+                  '50%': 0,
+                  '55%': 100,
+                  '65%': 1200,
+                  'max': 10000
+                }
+              )
+              div.row
+                q-input.col(stack-label='Sliding Speeds Pattern', dark, v-model='slidingSpeedsPattern')
+                q-input.col(readonly,stack-label='started', dark, v-model='slidingStarted')
+                q-input.col(stack-label='Control Target Power', dark, v-model='controlTargetPower')
+              div.row
+                q-input.col(stack-label='Control Power', dark, v-model='controlPower')
+                q-input.col(stack-label='Sliding Speed Power', dark, v-model='slidingSpeedPower')      
+            div.col-3
+              j-canvas.frame-type-grid(:bitmap='paletteFilterOutput', show-palette, :pixelHeight="40", :pixelWidth="40")
+   
 
 
-    div.col-8
+    div.col-7
       // PREVIEW
       q-card(overlay-position="top", color='dark')
         //- q-card-title(slot='overlay')
         //-   div(slot='subtitle')|Preview
         q-card-main
-          j-canvas.frame-type-grid(:image-data='filterFinalImageData')
           canvas(ref='preview', width='256', height='256', style='width:100%;height:100%;')
+          // j-canvas.frame-type-grid(:image-data='filterFinalImageData')
 
 
-      div.row
-      q-select.col(stack-label='Palette', dark, v-model='paletteDDL', :options='paletteOptions')
 
 
-      div.row
-        q-input.col(stack-label='Sliding Speeds Pattern', dark, v-model='slidingSpeedsPattern')
-        q-input.col(readonly,stack-label='started', dark, v-model='slidingStarted')
-        q-input.col(stack-label='Control Target Power', dark, v-model='controlTargetPower')
-      div.row
-        q-input.col(stack-label='Control Power', dark, v-model='controlPower')
-        q-input.col(stack-label='Sliding Speed Power', dark, v-model='slidingSpeedPower')
+
+
       //- <p>$・Italian, Cafe</p>
       //- <p class="text">Small plates, salads & sandwiches in an intimate setting.</p>
     </q-card-main>
@@ -117,6 +111,9 @@ import Sortable from 'sortablejs'
 import { extend } from 'quasar'
 var crunch = require("number-crunch");
 import ColorUtils from '../../moe/utils/moe.utils.color.js'
+import MoeUtils from '../../moe/utils/moe.utils.js'
+
+let UID = 10
 
 let
   CURRENT_TIME,
@@ -187,7 +184,7 @@ export default {
     }
   },
   computed: {
-    debug () {
+        debug () {
       try {
         let a = ' '
         return this.myValue.bitmap.pixels.slice(-8)
@@ -239,7 +236,7 @@ export default {
     //
     bitmapFilterOutput () {
 
-      let output = {
+     let output = {
         pixels: this.value.bitmap ? Array.prototype.slice.call(this.value.bitmap.pixels) : Array(65536).fill(0),
         colors: this.value.bitmap ? this.value.bitmap.palette.colors.slice() : [{r:255, g:255, b:255, a:255}]
       }
@@ -258,7 +255,6 @@ export default {
       if (!oUseNewPalette) {
         return input
       }
-
       let bitmapColors = input.colors // Just in case
       input.colors = this.value.palette.colors.slice()
 
@@ -278,20 +274,18 @@ export default {
 
       }
 
-
       console.log("COMPUTED paletteOutput")
       return input
     },
     // ===>>
     sliderFilterOutput() {
-
+      
       const input = extend(true, {},this.paletteFilterOutput)
       if (input.pixels.length != 65536) alert(input.pixels.length)
       return input
-
     },
 
-    // ===>> BITMAP ==> PALETTE ===>
+    // ===>> BITMAP ==> PALETTE ===> 
     filterFinalImageData() {
 
       const input = extend(true, {},this.paletteFilterOutput)
@@ -317,13 +311,13 @@ export default {
       this.$nextTick(() => {
       //  this.myCtx.putImageData(imgData,0,0)
       })
-
+      
       // this.$emit('input', this.myValue)
       return imgData
 
     },
 
-
+    
 
     imageData() {
       console.log("COMPUTED imageData")
@@ -364,10 +358,30 @@ export default {
       },
       deep: true
     },
-    paletteDDL(newValue, oldValue) {
-      // var newPalette = ColorUtils.GeneratePaletteColors(newValue)
-      // console.log('GENERATED:', newPalette)
-      // this.$state.activeBitmap.palette  = newPalette
+    // paletteDDL(newValue, oldValue) {
+    //   // var newPalette = ColorUtils.GeneratePaletteColors(newValue)
+    //   // console.log('GENERATED:', newPalette)
+    //   // this.$state.activeBitmap.palette  = newPalette
+    // },
+    paletteDDL(newValue) {
+      const colors = ColorUtils.GeneratePaletteColors(newValue)
+      
+      //this.debugColors(colors)
+
+      // generate imageData
+      let imageData =  MoeUtils.imageDataFromColors(colors)
+
+      // return palette
+      let pal = {
+        id: UID++,
+        colors,
+        imageData
+      }
+      let art = {
+        id: this.value.id,
+        palette: pal
+      }      
+      this.$store.dispatch('updateFields', {artworks: [art]} )
     }
   },
   methods: {
@@ -452,8 +466,6 @@ export default {
       SLIDING_PIXELS = this.sliderFilterOutput.pixels
       SLIDING_COLORS = this.sliderFilterOutput.colors
 
-      console.log("__startSliding()>>", SLIDING_PIXELS.length, SLIDING_COLORS.length)
-
       this.__populateSlidingSpeeds()
 
       // LAST_TIME = Date.now()
@@ -463,7 +475,7 @@ export default {
 
       this.slidingStarted = true
       this.slidingAnimId = requestAnimationFrame(this.__animateSliding)
-
+      
     },
 
     __stopSliding() {
@@ -502,6 +514,7 @@ export default {
       SLIDING_PIXELS = (this.controlDirection > 0)
         ? crunch.add(SLIDING_PIXELS, this.slidingSpeed)
         : crunch.sub(SLIDING_PIXELS, this.slidingSpeed)
+
 
       // recCounter++;
       if (SLIDING_PIXELS.length > 65536) {
