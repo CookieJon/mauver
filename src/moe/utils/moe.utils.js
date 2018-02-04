@@ -2,11 +2,33 @@
 export default class MoeUtils {
 	constructor () {
 	}
-  
-	static imageDataFromPixelsAndColors({pixels, colors}) {
 
-      // ImageData
-      let imgData = new ImageData(256,256)
+	static imageDataEmpty() {
+		let imgData = new ImageData(256, 256)
+		for (let i=0; i< 65536; i++) {
+			let mappedIndex = i * 4
+			let rgb = i % 2 ? 2 : 100
+			imgData.data[mappedIndex] = rgb
+			imgData.data[mappedIndex+1] = rgb
+			imgData.data[mappedIndex+2] = rgb
+			imgData.data[mappedIndex+3] = 255;			
+		}
+		return imgData
+	}
+
+
+	static imageDataFromBitmap(bitmap) {
+		if (!bitmap || !bitmap.palette || !bitmap.palette.colors) {
+			return
+		}
+		return MoeUtils.imageDataFromPixelsAndColors({
+			pixels: bitmap.pixels, 
+			colors: bitmap.palette.colors
+		})
+	}
+
+	static imageDataFromPixelsAndColors({pixels, colors}) {
+      let imgData = MoeUtils.imageDataEmpty()
       try {
         for (var i=0; i<65536; i++ ) {
           let mappedIndex = i * 4;
@@ -25,10 +47,12 @@ export default class MoeUtils {
 	static imageDataFromColors(colors) {
 		// Assumes 256 colors!
 		let imageData = new ImageData(256, 256)
-  
-		if (!colors.length) return imageData
+		
+		let l = colors.length
+		if (!l) return imageData
 		let offset = 0
 		let colorIndex = 0
+		iterateColors:
 		for (let y = 0; y < 16; y++) {
 		  for (let x = 0; x < 16; x++) {
 			for (let yy = 0; yy < 16; yy++) {
@@ -41,6 +65,7 @@ export default class MoeUtils {
 			  }
 			}
 			colorIndex++
+			if (colorIndex >= l) break iterateColors
 		  }
 		}
 		return imageData

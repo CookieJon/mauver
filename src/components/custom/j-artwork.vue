@@ -16,30 +16,26 @@
 
       // BITMAP
       q-card(color='dark')
-        q-card-title
-          div(slot='subtitle')|Bitmap
-        q-card-main
-          div.row
-            div.col-9
-              j-drop-target.frame-type-grid(:value='myBitmap', @add='dropBitmap($event)')
-            div.col-3
-              j-canvas.frame-type-grid(:bitmap='bitmapFilterOutput', show-palette, :pixelHeight="40", :pixelWidth="40")
-
-      // PALETTE
-      q-card(overlay-position="top", color='dark')
-        q-card-title
-          div(slot='subtitle')|Palette      
-        q-card-main
-          div.row
-            div.col-9
-              q-select.col(dark, v-model='paletteDDL', :options='paletteOptions')    
-              j-drop-target(:value='myPalette', @add='dropPalette($event)')  
-              br
-              q-toggle(v-model="myValue.options.useNewPalette", label='Active')
-              br
-              q-toggle(v-model="myValue.options.remapBitmapToPalette", label='Remap Bitmap')
-            div.col-3
-              j-canvas.frame-type-grid(:bitmap='paletteFilterOutput', show-palette, :pixelHeight="40", :pixelWidth="40")
+          q-card-main
+            div.row
+              div.col
+                |BITMAP
+                div.row.no-wrap
+                  // Bitmap
+                  j-drop-target(:value='myBitmap', @add='dropBitmap($event)', style='width:80px;height:80px;')
+                  j-canvas(:value='bitmapFilterOutput.colors', style='width:80px;height:80px;')
+            
+              div.col
+                |PALETTE
+                div.row.no-wrap
+                  // Art Palette
+                  j-drop-target(:value='myPalette', @add='dropPalette($event)', style='width:80px;height:80px;')                
+                  j-canvas(:value='paletteFilterOutput', style='width:80px;height:80px;')                
+            div.row
+              div.col-6
+                q-select(dark, v-model='paletteDDL', :options='paletteOptions')    
+                q-toggle(v-model="myValue.options.useNewPalette", label='Active')
+                q-toggle(v-model="myValue.options.remapBitmapToPalette", label='Remap Bitmap')
 
       // SLIDER
       q-card(overlay-position="top", color='dark')
@@ -63,6 +59,7 @@
                 }
               )
               div.row
+                q-select(dark, v-model='slidingSpeedsPattern', :options='presetSlidingSpeedOptions')    
                 q-input.col(stack-label='Sliding Speeds Pattern', dark, v-model='slidingSpeedsPattern')
                 q-input.col(readonly,stack-label='started', dark, v-model='slidingStarted')
                 q-input.col(stack-label='Control Target Power', dark, v-model='controlTargetPower')
@@ -70,7 +67,7 @@
                 q-input.col(stack-label='Control Power', dark, v-model='controlPower')
                 q-input.col(stack-label='Sliding Speed Power', dark, v-model='slidingSpeedPower')      
             div.col-3
-              j-canvas.frame-type-grid(:bitmap='paletteFilterOutput', show-palette, :pixelHeight="40", :pixelWidth="40")
+              j-canvas.frame-type-grid(:value='sliderFilterOutput', show-palette, :pixelHeight="40", :pixelWidth="40")
    
 
 
@@ -138,6 +135,13 @@ export default {
   data () {
     return {
       paletteOptions: ColorUtils.presetPalettes.map(v=>{return {'label':v, 'value':v}}),
+      presetSlidingSpeedOptions: [
+        '1,2,3,4,5,6,7,8,9,8,7,6,5,4,3,2',
+        '1,2,2,4,4,4,4,4,4,4,4,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8',
+        '1,2,3,4,3,5,6,7,8,9,10,9,8,7,6,5,4,5,6,7,8,9,8,7,6,7,8,9,10,11,12,13,14,15'
+      ].map(v=>{return {label:v.slice(0,30), value:v}}),
+
+
       paletteDDL: null,
       // myValue: null,
 
@@ -235,10 +239,10 @@ export default {
     // COMPUTED PROPS ON THE FLY: READ  https://jsfiddle.net/Linusborg/3p4kpz1t/
     //
     bitmapFilterOutput () {
-
-     let output = {
-        pixels: this.value.bitmap ? Array.prototype.slice.call(this.value.bitmap.pixels) : Array(65536).fill(0),
-        colors: this.value.bitmap ? this.value.bitmap.palette.colors.slice() : [{r:255, g:255, b:255, a:255}]
+      
+      let output = {
+        pixels: this.value.bitmap ? Array.prototype.slice.call(this.value.bitmap.pixels) : undefined,
+        colors: this.value.bitmap ? this.value.bitmap.palette.colors.slice() : undefined
       }
 
       console.log("COMPUTED bitmapOutput")
@@ -246,43 +250,54 @@ export default {
     },
     // ===>>
     paletteFilterOutput () {
+      const input = this.bitmapFilterOutput
 
-      const input = extend(true, {},this.bitmapFilterOutput)
+      let output = {
+        pixels: input.pixels ? Array.prototype.slice.call(input.pixels) : undefined,
+        colors: input.colors ? input.colors.slice() : undefined
+      }
+
 
       const oUseNewPalette = this.value.options.useNewPalette
       const oRemapBitmapToPalette = this.value.options.remapBitmapToPalette
 
-      if (!oUseNewPalette) {
-        return input
-      }
-      let bitmapColors = input.colors // Just in case
-      input.colors = this.value.palette.colors.slice()
+      if (oUseNewPalette) {
 
-      if (oRemapBitmapToPalette) {
-        // Remap bitmap to palette
-        let paletteColors = input.colors
-        let map = bitmapColors.map(b => {
-          let m2 = paletteColors.findIndex(p => {return p.id === b.id})
-          return m2 > -1 ? m2 : 0
-        })
-        console.log('MAP =>', bitmapColors.map(c=>c.name))
-        console.log('MAP =>', paletteColors.map(c=>c.name))
-        console.log('MAP =>', map)
-        for (let i = 0; i < input.pixels.length; i++) {
-          input.pixels[i] = map[input.pixels[i]]
+        let bitmapColors = input.colors // Just in case
+        
+        ////output.colors =   Array.prototype.slice.call(this.value.palette.colors)
+        output.colors = JSON.parse(JSON.stringify(this.value.palette.colors))
+
+        if (oRemapBitmapToPalette) {
+          // Remap bitmap to palette
+          let paletteColors = output.colors
+          let map = bitmapColors.map(b => {
+            let m2 = paletteColors.findIndex(p => {return p.id === b.id})
+            return m2 > -1 ? m2 : 0
+          })
+          console.log('MAP =>', bitmapColors.map(c=>c.name))
+          console.log('MAP =>', paletteColors.map(c=>c.name))
+          console.log('MAP =>', map)
+          for (let i = 0; i < input.pixels.length; i++) {
+            output.pixels[i] = map[input.pixels[i]]
+          }
+
         }
 
       }
 
-      console.log("COMPUTED paletteOutput")
-      return input
+      console.log("COMPUTED paletteFilterOutput", output)
+      output.id = this.uid++
+      return output
     },
     // ===>>
     sliderFilterOutput() {
       
       const input = extend(true, {},this.paletteFilterOutput)
+      console.log("SLIDER INPUT WAS", input)
       if (input.pixels.length != 65536) alert(input.pixels.length)
       return input
+      
     },
 
     // ===>> BITMAP ==> PALETTE ===> 

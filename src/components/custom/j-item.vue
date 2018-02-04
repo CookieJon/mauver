@@ -3,7 +3,7 @@
   <!-- item is just "Bitmap" at the moment... make generic later -->
   <div class='frame' @click="onClick($event)">
     <div class='item-label'>{{value.id}} {{value.name}}</div>
-    <j-canvas ref="jCanvas" :image-data='myImageData'></j-canvas>
+    <j-canvas ref="jCanvas" :value='value'></j-canvas>
     <!-- <j-canvas ref="jCanvas" :width='256' :height='256' :imageData='myImageData'></j-canvas>-->
     <!--   <j-debug :value="value.imageData"></j-debug> -->
     <!-- -->
@@ -27,7 +27,7 @@
       }
     },
     watch: {
-      value (oldValue, newValue) {
+      'value' (oldValue, newValue) {
         
         // this.$nextTick(function () {
           

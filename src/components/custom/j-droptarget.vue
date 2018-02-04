@@ -143,18 +143,14 @@
 
 /* frame-type-grid */
 .frame.frame-type-droptarget
-  padding 5px
-  background-color rgba(0, 0, 0, 0.3)
-  width 80px
-  max-height 80px
-  overflow hidden
+  // padding 5px
+  // background-color rgba(0, 0, 0, 0.3)
+  width 100px
+  height 100px
+  // overflow hidden
 
 .frame.frame-type-droptarget > .frame
-  width calc(15% - 6px)
-  width 64px
-  margin 3px
-  height 80px
-  max-height 80px
+
   position relative
   float left
   min-height 48px
@@ -191,32 +187,6 @@
 
 
 
-.frame.frame-type-list > .frame
-  width 100%
-  height 180px
-  margin 6px
-  position relative
-  border-left 4px solid #2196F3
-  box-shadow 0 3px 6px 3px rgba(1,1,1,0.4)
-  background-color rgba(33, 150, 243, 0)
-  background-color white
-  box-shadow 4px 4px 2px rgba(0, 0, 0, 0.3)
-  z-index 10
-  padding 0px
-
-.frame.frame-type-list > .frame > img
-  display none
-  height 11px
-.frame.frame-type-list > .frame > canvas
-  height 180px
-  position relative
-  border-left 6px solid #2196F3
-  background-color white
-  z-index 10
-  padding 0px
-.frame.frame-type-list > .frame > canvas.palette
-  display none
-
 .item-label
   position absolute
   height 16px
@@ -228,12 +198,6 @@
   background-color  rgba(0, 0, 0, .47)
   z-index 12
 
-.frame.frame-type-list > .frame > .item-label
-  height 80px
-  width 180px
-  padding 2px
-  margin-left 6px
-  margin-top -80px
 
 .sortable-ghost
   opacity 0.4
