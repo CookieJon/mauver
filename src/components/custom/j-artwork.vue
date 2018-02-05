@@ -24,18 +24,43 @@
                   // Bitmap
                   j-drop-target(:value='myBitmap', @add='dropBitmap($event)', style='width:80px;height:80px;')
                   j-canvas(:value='bitmapFilterOutput.colors', style='width:80px;height:80px;')
-            
+
               div.col
                 |PALETTE
                 div.row.no-wrap
                   // Art Palette
-                  j-drop-target(:value='myPalette', @add='dropPalette($event)', style='width:80px;height:80px;')                
-                  j-canvas(:value='paletteFilterOutput', style='width:80px;height:80px;')                
+                  j-drop-target(:value='myPalette', @add='dropPalette($event)', style='width:80px;height:80px;')
+                  j-canvas(:value='paletteFilterOutput', style='width:80px;height:80px;')
             div.row
               div.col-6
-                q-select(dark, v-model='paletteDDL', :options='paletteOptions')    
+                q-select(dark, v-model='paletteDDL', :options='paletteOptions')
                 q-toggle(v-model="myValue.options.useNewPalette", label='Active')
                 q-toggle(v-model="myValue.options.remapBitmapToPalette", label='Remap Bitmap')
+            div.col
+              |SPEEDMAP
+              div.row
+                div.col-9
+                  div.row
+                    q-btn(ref='target')
+                      q-popover(ref='popover')
+                        q-list(separator,link,style="min-width: 100px")
+                          q-item(
+                            v-for="(n, i) in presetSlidingSpeedOptions", 
+                            :key=i,
+                            @click='slidingSpeedsPattern=presetSlidingSpeedOptions[i],$refs.popover.close()')
+                            q-item-main(label='label')
+                
+                    //- q-select(dark, v-model='slidingSpeedsPattern', :options='presetSlidingSpeedOptions')
+                    q-input.col(stack-label='Sliding Speeds Pattern', dark, v-model='slidingSpeedsPattern')
+                    q-input.col(readonly,stack-label='started', dark, v-model='slidingStarted')
+                    q-input.col(stack-label='Control Target Power', dark, v-model='controlTargetPower')
+                div.row
+                  q-input.col(stack-label='Control Power', dark, v-model='controlPower')
+                  q-input.col(stack-label='Sliding Speed Power', dark, v-model='slidingSpeedPower')
+                div.col-3
+                  j-canvas(:value='paletteFilterOutput', style='width:80px;height:80px;')
+
+
 
       // SLIDER
       q-card(overlay-position="top", color='dark')
@@ -58,17 +83,7 @@
                   'max': 10000
                 }
               )
-              div.row
-                q-select(dark, v-model='slidingSpeedsPattern', :options='presetSlidingSpeedOptions')    
-                q-input.col(stack-label='Sliding Speeds Pattern', dark, v-model='slidingSpeedsPattern')
-                q-input.col(readonly,stack-label='started', dark, v-model='slidingStarted')
-                q-input.col(stack-label='Control Target Power', dark, v-model='controlTargetPower')
-              div.row
-                q-input.col(stack-label='Control Power', dark, v-model='controlPower')
-                q-input.col(stack-label='Sliding Speed Power', dark, v-model='slidingSpeedPower')      
-            div.col-3
-              j-canvas.frame-type-grid(:value='sliderFilterOutput', show-palette, :pixelHeight="40", :pixelWidth="40")
-   
+
 
 
     div.col-7
@@ -239,7 +254,7 @@ export default {
     // COMPUTED PROPS ON THE FLY: READ  https://jsfiddle.net/Linusborg/3p4kpz1t/
     //
     bitmapFilterOutput () {
-      
+
       let output = {
         pixels: this.value.bitmap ? Array.prototype.slice.call(this.value.bitmap.pixels) : undefined,
         colors: this.value.bitmap ? this.value.bitmap.palette.colors.slice() : undefined
@@ -264,7 +279,7 @@ export default {
       if (oUseNewPalette) {
 
         let bitmapColors = input.colors // Just in case
-        
+
         ////output.colors =   Array.prototype.slice.call(this.value.palette.colors)
         output.colors = JSON.parse(JSON.stringify(this.value.palette.colors))
 
@@ -286,21 +301,28 @@ export default {
 
       }
 
-      console.log("COMPUTED paletteFilterOutput", output)
       output.id = this.uid++
+      console.log("COMPUTED paletteFilterOutput", output)
       return output
     },
     // ===>>
     sliderFilterOutput() {
-      
-      const input = extend(true, {},this.paletteFilterOutput)
+      // 2. Sliding Progress
+      // 3. 
+      const input = this.paletteFilterOutput
+
+      let output = {
+        pixels: input.pixels ? Array.prototype.slice.call(input.pixels) : undefined,
+        colors: input.colors ? input.colors.slice() : undefined
+      }
+
       console.log("SLIDER INPUT WAS", input)
       if (input.pixels.length != 65536) alert(input.pixels.length)
       return input
-      
+
     },
 
-    // ===>> BITMAP ==> PALETTE ===> 
+    // ===>> BITMAP ==> PALETTE ===>
     filterFinalImageData() {
 
       const input = extend(true, {},this.paletteFilterOutput)
@@ -326,13 +348,13 @@ export default {
       this.$nextTick(() => {
       //  this.myCtx.putImageData(imgData,0,0)
       })
-      
+
       // this.$emit('input', this.myValue)
       return imgData
 
     },
 
-    
+
 
     imageData() {
       console.log("COMPUTED imageData")
@@ -380,7 +402,7 @@ export default {
     // },
     paletteDDL(newValue) {
       const colors = ColorUtils.GeneratePaletteColors(newValue)
-      
+
       //this.debugColors(colors)
 
       // generate imageData
@@ -395,7 +417,7 @@ export default {
       let art = {
         id: this.value.id,
         palette: pal
-      }      
+      }
       this.$store.dispatch('updateFields', {artworks: [art]} )
     }
   },
@@ -490,7 +512,7 @@ export default {
 
       this.slidingStarted = true
       this.slidingAnimId = requestAnimationFrame(this.__animateSliding)
-      
+
     },
 
     __stopSliding() {
@@ -590,11 +612,8 @@ export default {
       this.controlPower = Math.abs(pow);
 
       // original method:
-      //
       // this.slidingSpeedPower = parseInt( ((65536 )*this.controlPower/10000) ) ;
-      //
       // new method:
-      //
       this.slidingSpeedPower = parseInt(this.controlPower/10000 * this.slidingSpeedsGradations) * this.slidingSpeedsLength;
 
       // record

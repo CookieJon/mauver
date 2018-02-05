@@ -107,10 +107,16 @@ export default {
           imgData = MoeUtils.imageDataFromBitmap(newVal)
         }
 
-        // colors
+        // Colors Only (render palette preview)
         else if (newVal.colors) {
           msg = '.colors'
           imgData = MoeUtils.imageDataFromColors(newVal.colors)
+        }
+
+        // Pixels Only (render pixels in greyscale)
+        else if (newVal.pixels) {
+          msg = '.pixels'
+          imgData = MowUtils.imageDataFromPixels(newVal.pixels)
         }
 
         // unknown 

@@ -27,7 +27,7 @@ div
       j-collection.frame-type-grid(v-model='palettes', @select='selectPalette')
 
   // selectedArtwork SLIDER
-  j-panel(v-if='selectedArtwork != null' icon='business', :title='selectedArtwork?selectedArtwork.name:"Art"', 
+  j-panel(v-if='selectedArtwork != null' icon='business', :title='selectedArtwork?selectedArtwork.name:"Art"',
     :width='900', :height='800', :x='350', :y='10')
     div.j-tray.area.panel-item-grow(slot='content')
       j-artwork(v-model='selectedArtwork')
@@ -269,7 +269,7 @@ export default {
       }
       this.$store.dispatch('updateEntities', {artworks: [art]} )
 
-      
+
       //this.$store.dispatch('addArtwork', {data: art})
       //this.$store.dispatch('entities/artworks/insert', {data: art})
     },

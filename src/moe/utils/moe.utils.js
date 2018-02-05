@@ -11,7 +11,7 @@ export default class MoeUtils {
 			imgData.data[mappedIndex] = rgb
 			imgData.data[mappedIndex+1] = rgb
 			imgData.data[mappedIndex+2] = rgb
-			imgData.data[mappedIndex+3] = 255;			
+			imgData.data[mappedIndex+3] = 255;
 		}
 		return imgData
 	}
@@ -22,7 +22,7 @@ export default class MoeUtils {
 			return
 		}
 		return MoeUtils.imageDataFromPixelsAndColors({
-			pixels: bitmap.pixels, 
+			pixels: bitmap.pixels,
 			colors: bitmap.palette.colors
 		})
 	}
@@ -44,10 +44,28 @@ export default class MoeUtils {
       return imgData
 	}
 
+	static imageDataFromPixels({pixels, colors}) {
+		// Render as greyscale
+		let imgData = new ImageData(256, 256)
+		try {
+			for (var i=0; i<65536; i++ ) {
+				let mappedIndex = i * 4;
+				let theColor = pixels[i]
+				imgData.data[mappedIndex] = theColor
+				imgData.data[mappedIndex+1] = theColor
+				imgData.data[mappedIndex+2] = theColor
+				imgData.data[mappedIndex+3] = 255;
+			}
+		} catch(e) {
+			console.warn('imageDataFromPixels => Render error:', e)
+		}
+		return imgData
+	}
+
 	static imageDataFromColors(colors) {
 		// Assumes 256 colors!
 		let imageData = new ImageData(256, 256)
-		
+
 		let l = colors.length
 		if (!l) return imageData
 		let offset = 0
