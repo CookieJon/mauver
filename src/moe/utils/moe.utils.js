@@ -3,6 +3,11 @@ export default class MoeUtils {
 	constructor () {
 	}
 
+
+
+
+	// ImageData
+	//
 	static imageDataEmpty() {
 		let imgData = new ImageData(256, 256)
 		for (let i=0; i< 65536; i++) {
@@ -15,7 +20,6 @@ export default class MoeUtils {
 		}
 		return imgData
 	}
-
 
 	static imageDataFromBitmap(bitmap) {
 		if (!bitmap || !bitmap.palette || !bitmap.palette.colors) {

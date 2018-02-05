@@ -36,12 +36,16 @@
                 q-select(dark, v-model='paletteDDL', :options='paletteOptions')
                 q-toggle(v-model="myValue.options.useNewPalette", label='Active')
                 q-toggle(v-model="myValue.options.remapBitmapToPalette", label='Remap Bitmap')
+      // SPEEDMAP
+      q-card(color='dark')
+        q-card-main
+          div.row                
             div.col
               |SPEEDMAP
               div.row
                 div.col-9
                   div.row
-                    q-btn(ref='target')
+                    q-btn.col-1(ref='target')
                       q-popover(ref='popover')
                         q-list(separator,link,style="min-width: 100px")
                           q-item(
@@ -51,18 +55,19 @@
                             q-item-main(label='label')
                 
                     //- q-select(dark, v-model='slidingSpeedsPattern', :options='presetSlidingSpeedOptions')
-                    q-input.col(stack-label='Sliding Speeds Pattern', dark, v-model='slidingSpeedsPattern')
-                    q-input.col(readonly,stack-label='started', dark, v-model='slidingStarted')
-                    q-input.col(stack-label='Control Target Power', dark, v-model='controlTargetPower')
-                div.row
-                  q-input.col(stack-label='Control Power', dark, v-model='controlPower')
-                  q-input.col(stack-label='Sliding Speed Power', dark, v-model='slidingSpeedPower')
-                div.col-3
-                  j-canvas(:value='paletteFilterOutput', style='width:80px;height:80px;')
+                    q-input.col-8(stack-label='Sliding Speeds Pattern', dark, v-model='slidingSpeedsPattern')
+                    q-toggle.col-3(v-model="myValue.options.slidingLocked", label='Lock')
+                //-     q-input.col(readonly,stack-label='started', dark, v-model='slidingStarted')
+                //-     q-input.col(stack-label='Control Target Power', dark, v-model='controlTargetPower')
+                //- div.row
+                //-   q-input.col(stack-label='Control Power', dark, v-model='controlPower')
+                //-   q-input.col(stack-label='Sliding Speed Power', dark, v-model='slidingSpeedPower')
+                //- div.col-3
+                //-   j-canvas(:value='paletteFilterOutput', style='width:80px;height:80px;')
 
 
 
-      // SLIDER
+      // SLIDERS
       q-card(overlay-position="top", color='dark')
         q-card-title(slot='overlay')
           div(slot='subtitle')|Slider
@@ -87,12 +92,12 @@
 
 
     div.col-7
-      // PREVIEW
+      // OUTPUT / PREVIEW
       q-card(overlay-position="top", color='dark')
         //- q-card-title(slot='overlay')
         //-   div(slot='subtitle')|Preview
         q-card-main
-          canvas(ref='preview', width='256', height='256', style='width:100%;height:100%;')
+          canvas(ref='preview', @click='clickPreview' width='256', height='256', style='width:100%;height:100%;')
           // j-canvas.frame-type-grid(:image-data='filterFinalImageData')
 
 
@@ -151,6 +156,7 @@ export default {
     return {
       paletteOptions: ColorUtils.presetPalettes.map(v=>{return {'label':v, 'value':v}}),
       presetSlidingSpeedOptions: [
+        '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,40,39,38,37,,36,35,34,33,32,31,30,29,28,,27,26,25,24,23,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1',
         '1,2,3,4,5,6,7,8,9,8,7,6,5,4,3,2',
         '1,2,2,4,4,4,4,4,4,4,4,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8',
         '1,2,3,4,3,5,6,7,8,9,10,9,8,7,6,5,4,5,6,7,8,9,8,7,6,7,8,9,10,11,12,13,14,15'
@@ -256,8 +262,8 @@ export default {
     bitmapFilterOutput () {
 
       let output = {
-        pixels: this.value.bitmap ? Array.prototype.slice.call(this.value.bitmap.pixels) : undefined,
-        colors: this.value.bitmap ? this.value.bitmap.palette.colors.slice() : undefined
+        pixels: this.value.bitmap && this.value.bitmap.pixels ? Array.prototype.slice.call(this.value.bitmap.pixels) : new Array(65536).fill(222),
+        colors: this.value.bitmap && this.value.bitmap.palette ? this.value.bitmap.palette.colors.slice() : ColorUtils.paletteFromPreset('raw')
       }
 
       console.log("COMPUTED bitmapOutput")
@@ -268,8 +274,8 @@ export default {
       const input = this.bitmapFilterOutput
 
       let output = {
-        pixels: input.pixels ? Array.prototype.slice.call(input.pixels) : undefined,
-        colors: input.colors ? input.colors.slice() : undefined
+        pixels: input.pixels ? Array.prototype.slice.call(input.pixels) : new Array(65536).fill(0),
+        colors: input.colors ? input.colors : ColorUtils.paletteFromPreset('raw')
       }
 
 
@@ -422,6 +428,16 @@ export default {
     }
   },
   methods: {
+
+    clickPreview(e) {
+
+      // 
+      let x = parseInt(e.offsetX / e.target.clientWidth * 256)
+      let y = parseInt(e.offsetY / e.target.clientHeight * 256)
+      console.log(`CLICK PREVIEW: ${x}, ${y}`)
+    },
+
+
     onUpdate (e) {
       let tmp = extend({}, {val: this.myValue}).val
       this.$emit('input', tmp)
@@ -611,10 +627,16 @@ export default {
       this.controlDirection = (pow > 0) ? 1 : -1;
       this.controlPower = Math.abs(pow);
 
-      // original method:
-      // this.slidingSpeedPower = parseInt( ((65536 )*this.controlPower/10000) ) ;
-      // new method:
-      this.slidingSpeedPower = parseInt(this.controlPower/10000 * this.slidingSpeedsGradations) * this.slidingSpeedsLength;
+      if (this.value.options.slidingLocked) {
+        console.log(111)
+        this.slidingSpeedPower = parseInt(this.controlPower/10000 * this.slidingSpeedsGradations) * this.slidingSpeedsLength;
+      } else {
+        this.slidingSpeedPower = parseInt( ((65536 )*this.controlPower/10000) ) ;
+      }
+      // Freeflow gradations:
+      // 
+      // Locked gradations:
+      
 
       // record
       //

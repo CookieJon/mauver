@@ -52,7 +52,7 @@ import dataColors from '../../data'
 import iq from 'image-q'
 
 // CREATE INITIAL DATA
-// import colorUtils from 'moe/utils/moe.utils.color.js'
+import ColorUtils from 'moe/utils/moe.utils.color.js'
 // let pal = colorUtils.getMaterialColors(0,256)
 // let palObj = {}
 // pal.forEach(v => palObj[v.id] = v)
@@ -237,7 +237,7 @@ export default {
       //this.$store.dispatch('entities/bitmaps/insert', {data: bmp})
     },
     addPalette () {
-      let pal = this.paletteFromPreset('MaterialDefault')
+      let pal = ColorUtils.paletteFromPreset('raw')
       console.log('vie - addPalette', pal)
       this.$store.dispatch('updateEntities', {palettes: [pal]})
     },
@@ -250,22 +250,23 @@ export default {
         // final output...
         options: {
           useNewPalette: false,
-          remapBitmapToPalette: false,
+          remapBitmapToPalette: true,
+          slidingLocked: true,
           usePixelmap: false,
           unusePixelMap: false
         },
 
         pixels: Array(65536).fill(120),
-        palette: this.paletteFromPreset('MaterialDefault'),
+        palette: ColorUtils.paletteFromPreset('raw'),
         imageData: null,
         slidingCurrent: [],
-
         filters: [],
         // 1. artwork components. MUCH TODO:!
-        bitmap: null,
+        bitmap: undefined,
         pixelmap: null,
         colormap: null,
-        slider: null
+        slider: null,
+        gobo: null
       }
       this.$store.dispatch('updateEntities', {artworks: [art]} )
 
@@ -293,34 +294,7 @@ export default {
       console.log('Debug colors', colors.length)
     },
 
-    paletteFromPreset(presetId) {
 
-      // Get the colors
-      let colors
-      switch(presetId) {
-        case 'Empty':
-          colors = []
-          break
-        case 'MaterialDefault':
-        default:
-          //colors = this.$store.getters['entities/colors/query']().orderBy('id').get()
-          colors = this.$store.getters.colors
-      }
-      console.log('paletteFromPreset', presetId)
-      this.debugColors(colors)
-
-      // generate imageData
-      let imageData = this.imageDataFromColors(colors)
-
-      // return palette
-      let pal = {
-        id: this.palId++,
-        colors,
-        imageData
-      }
-      console.log("GENERATED PALETTE", pal)
-      return pal
-    },
 
     bitmapFromArrayBuffer (srcArrayBuffer) {
       // a. Parse arrayBuffer
@@ -345,8 +319,10 @@ export default {
 
       // palette
       ////let presetColors = this.$store.getters['entities/colors/query']().orderBy('id').get()
-      let presetColors = this.$store.getters['colors']
-      let palette = this.paletteFromPreset('Empty')
+      
+      let palette = ColorUtils.paletteFromPreset('raw')
+      let presetColors = palette.colors.slice()
+      palette.colors = []
       let paletteLength = bitCount === 0 ? 1 << bitCount : usedColors
       let index = 54
       for (let i = 0; i < paletteLength; i++) {
@@ -427,7 +403,7 @@ export default {
 
 
       // palette
-      let palette = this.paletteFromPreset('MaterialDefault')
+      let palette = ColorUtils.paletteFromPreset('MaterialDefault')
 
       // pixels
       let pixels = Array(65536).fill(0) // default all to 0
