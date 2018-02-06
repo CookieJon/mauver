@@ -9,6 +9,8 @@
 
 export default Artwork
 
+import Bitmap from 'moe/moe.objet.js'
+
 function Artwork (options) {
   options = Object.assign({
     // defaults go here
