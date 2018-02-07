@@ -116,7 +116,7 @@ export default {
         // Pixels Only (render pixels in greyscale)
         else if (newVal.pixels) {
           msg = '.pixels'
-          imgData = MowUtils.imageDataFromPixels(newVal.pixels)
+          imgData = MoeUtils.imageDataFromPixels(newVal.pixels)
         }
 
         // unknown 

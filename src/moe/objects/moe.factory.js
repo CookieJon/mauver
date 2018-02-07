@@ -27,7 +27,8 @@ export default class Factory {
 
     // return palette
     let pal = {
-      id: this.palId++,
+      id: 'PAL'+ UID++,
+      name: 'Default',
       colors: ColorUtils.GeneratePaletteColors(presetId || 'raw')
     }
 
@@ -38,11 +39,10 @@ export default class Factory {
   // ARTWORK
   //
 	static createArtwork(oBitmap, oPalette) {
-
+    let id= 'ART'+UID++
     let art = {
-      id: this.artId,
-      name: 'Art '+UID++,
-
+      id: id,
+      name: id,
       options: {
         useNewPalette: false,
         remapBitmapToPalette: true,
@@ -52,12 +52,12 @@ export default class Factory {
       },
 
       pixels: Array(65536).fill(120),
-      palette: ColorUtils.paletteFromPreset('raw'),
+      bitmap: oBitmap,
+      palette: oPalette,
       imageData: null,
       slidingCurrent: [],
       filters: [],
       // 1. artwork components. MUCH TODO:!
-      bitmap: undefined,
       pixelmap: null,
       colormap: null,
       slider: null,
@@ -71,7 +71,7 @@ export default class Factory {
 
   // BITMAP
   //
-  static createBitmap() {
+  static createBitmap(payload) {
 
   }
 
@@ -87,10 +87,10 @@ export default class Factory {
         console.log("ERROR!", err)
       })
     }
-  },
+  }
 
   // 2. Invoked from loadImagesFromFiles
-  static loadImageFromFile(file) {
+  static createBitmapFromFile(file) {
     // One file at a time, please!
     console.log('loadImageFromFile:', file)
     return new Promise((resolve, reject) => {
@@ -137,7 +137,7 @@ export default class Factory {
       }
 
     })
-  },
+  }
 
 
   static bitmapFromArrayBuffer (srcArrayBuffer) {
@@ -161,7 +161,7 @@ export default class Factory {
       }
     }
 
-    let palette = ColorUtils.paletteFromPreset('raw')
+    let palette = Factory.createPalette('raw')
     let presetColors = palette.colors.slice()
     palette.colors = []
     let paletteLength = bitCount === 0 ? 1 << bitCount : usedColors
@@ -199,7 +199,7 @@ export default class Factory {
       imageData
     }
     return ppid
-  },
+  }
 
   static bitmapFromImg (img) {
     // NB: IMAGE must have loaded by this  time.
@@ -209,25 +209,26 @@ export default class Factory {
     // use dataURL for imgSrc so far
     // * scale img to 256x256 via canvas
     let canvas = document.createElement('canvas')
-    canvas = this.$refs.testcanvas
+    // canvas = this.$refs.testcanvas
     canvas.width = 256
     canvas.height = 256
     let ctx = canvas.getContext('2d')
     ctx.drawImage(img, 0, 0, 256, 256)
 
 
-//       let img2 = ctx.drawImage(img, 0, 0, 256, 256)
-//       let inPointContainer2 = iq.utils.PointContainer.fromHTMLImageElement(ctx.drawImage(img, 0, 0, 256, 256))
-//       let inPointContainer = inPointContainer1
+        // OR
+    // palette
+    let palette
+    
+    palette = Factory.createPalette('raw')
+    // palette = Factory.createPalette('bichromal')
 
-    // * material colors
-    // TODO: get from a palette, not raw colors
-    let materialColors = this.$store.getters.getEntities('colors')
+    let colors = palette.colors 
 
     // * iq.palette <= material colors
     let iqPalette = new iq.utils.Palette()
-    for (let j = 0, l = materialColors.length; j < l; j++) {
-      let color = materialColors[j]
+    for (let j = 0, l = colors.length; j < l; j++) {
+      let color = colors[j]
       iqPalette.add(iq.utils.Point.createByRGBA(color.r, color.g, color.b, color.a))
     }
     // * iq.distance.?
@@ -243,8 +244,7 @@ export default class Factory {
     let uint8array = outPointContainer.toUint8Array() // <- imagedata data
 
 
-    // palette
-    let palette = ColorUtils.paletteFromPreset('MaterialDefault')
+
 
     // pixels
     let pixels = Array(65536).fill(0) // default all to 0

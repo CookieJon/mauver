@@ -82,6 +82,7 @@ export default class ColorUtils {
         return paletteTo
 
       case "bichromal":
+        paletteTo = paletteTo.concat(groups.black).concat(groups.white)
         return paletteTo
 
       // Experimental

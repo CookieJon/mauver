@@ -21,7 +21,7 @@ div
     // bitmaps
     div.j-tray.area.panel-item-grow(slot='content')
       j-collection.frame-type-grid(v-model='bitmaps', @select='selectBitmap')
-      j-upload-zone(ref='zone',@select='loadImagesFromFiles')
+      j-upload-zone(ref='zone',@select='addBitmapsFromFiles')
     // palettes
     div.j-tray.area.panel-item-grow(slot='content')
       j-collection.frame-type-grid(v-model='palettes', @select='selectPalette')
@@ -48,6 +48,7 @@ div
 /* eslint-disable */
 import { dom, event, openURL, QLayout, QToolbar, QToolbarTitle, QBtn, QIcon, QList, QListHeader, QItem, QItemSide, QItemMain, QSlider} from 'quasar'
 import MoeObjects from '../../moe/objects'
+import Factory from '../../moe/objects/moe.factory.js'
 import dataColors from '../../data'
 import iq from 'image-q'
 
@@ -66,17 +67,16 @@ export default {
     //
     var defaultPalette = Factory.createPalette('raw') 
     var defaultBitmap = Factory.createBitmap('raw', defaultPalette)
-    
-    
-    
 
+    this.$store.dispatch('updateEntities', { palettes: defaultPalette, bitmaps: defaultBitmap })
+    
 
     // Here we are stubbing the initial data. In the real world, this
     // should be the response from the API Backend.
-    const initialData = dataColors
+    // const initialData = dataColors
     // console.log('data', dataColors)
     // this.$store.dispatch('addColors', { data: initialData })
-    this.$store.dispatch('updateEntities', { colors: initialData })
+    //this.$store.dispatch('updateEntities', { colors: initialData })
   },
   data () {
     return {
@@ -173,13 +173,18 @@ export default {
       this.$refs.zone.openFileInput()
     },
 
-    addBitmap (bmp) {
-      console.log('addBitmap:', bmp)
-
-      this.$store.dispatch('updateEntities', {bitmaps: [bmp]} )
+    addBitmapsFromFiles (files) {
+      for (let i = 0; i < files.length; i++) {
+        let file = files[i]
+        Factory.createBitmapFromFile(file).then((bmp) => {
+          this.$store.dispatch('updateEntities', {bitmaps: [bmp]} )
+        }).catch((err) => {
+          console.log("ERROR in 'addBitmapsFromFiles'", err)
+        })
+      }
     },
     addPalette () {
-      let pal = Factorhy.createPalette('raw')
+      let pal = Factory.createPalette('raw')
       this.$store.dispatch('updateEntities', {palettes: [pal]})
     },
     addArtwork () {
