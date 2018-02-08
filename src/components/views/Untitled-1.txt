@@ -1,0 +1,63 @@
+
+
+
+https://online-tst.training.nsw.gov.au/rtow/testBackDoor?legalOrgId=2007
+
+
+
+(1) RTOW https://online-tst.training.nsw.gov.au/rtow/apl/enrolmentEnquiry.do?method=goToStudentInformation&rtoAsCourseSiteAlloId=662118
+
+
+> Insert BEFORE "Is the student still at school?" ...
+
+    Is the student being enrolled under a government strategy/initiative? *  [ ] Yes   [ ] No
+
+    [if YES]
+    Government strategy/initiative? *   [ Select... ]
+                                        [ Small Business - Collaroy Council ]
+                                        [ Small Business - Pitwater Council ]
+                                        [ Agriculture ]
+                                        [ Energy Conservation - Solar Heating ]
+                                        [ Energy Conservation - Wind Power ]
+    [If NO]
+    Nothing!
+
+[OR]
+
+    Is the student being enrolled under a government strategy/initiative? *  N/A
+
+
+
+(2) VIP NEW screen:  (similar to tasks/ provider Contract Management /. Waiver Strategies )
+
+Government Strategies/Initiatives - Search
+
+    Search Criteria:
+
+        Government Strategy/Initiative Code: [      ]       Government Strategy/Initiative Name: [      ] 
+        Effective Start Date: [-date-]                      Active only [ ]
+        Program Stream(s): [ select one  ]                  AQF Level(s) [ select one ]
+
+        [ btn: ADD NEW ]
+
+    Search Results:
+
+        | Strategy/Initiative Code 
+        | Strategy/Initiative Name 
+        | Sub-strategies [ code + name ]
+        | Effective Start Date 
+        | Effective End Date 
+        | Max. Priorities per Student  [#]
+        | Voucher Applicable  [Yes/No]
+        | Active [Yes/No]
+        | Programs  [comma-delimited list]
+        | AQF Levels [comma-delimited list]
+        | Action
+
+
+(3) As per Waiver Strategy details screen.  Change as applicable: 
+
+    - Replace "Fee Waiver Type" => "Voucher Applicable": [ ] Yes   [ ] No
+    - Replace "Eligibility Exemptions" => "Sub-strategies:": [Add New] [Remove Existing] (a la Quals/ Providers in Fewe/Waiver)
+
+

@@ -51,7 +51,7 @@ export default class Factory {
         unusePixelMap: false
       },
 
-      pixels: Array(65536).fill(120),
+      pixels: Array(65536).fill(244),
       bitmap: oBitmap,
       palette: oPalette,
       imageData: null,

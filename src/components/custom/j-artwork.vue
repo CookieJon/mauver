@@ -117,7 +117,10 @@
         //- q-card-title(slot='overlay')
         //-   div(slot='subtitle')|Preview
         q-card-main
-          canvas(ref='preview', width='256', height='256', style='width:100%;height:100%;')
+          canvas(ref='preview', 
+            @click="clickPreview"
+            width='256', height='256', 
+            style='width:100%;height:100%;')
           // j-canvas.frame-type-grid(:image-data='filterFinalImageData')
 
 
@@ -447,6 +450,15 @@ export default {
     }
   },
   methods: {
+    clickPreview(e) {
+      let 
+        x = parseInt(e.offsetX / e.target.offsetWidth * 256),
+        y = parseInt(e.offsetY / e.target.offsetHeight * 256) 
+
+      console.log('Clicky ' + x + ', ' + y)
+
+    },
+
     changePeriod(amt) {
       let pattern = this.slidingSpeedsPattern.split(',')
       pattern = pattern.reduce(function(result, element, i) {
@@ -462,8 +474,19 @@ export default {
       }, [])
       this.slidingSpeedsPattern = pattern.join(',')
     },
-    changeAmpliutude(amt) {
-
+    changeAmplitude(amt) {
+      let pattern = this.slidingSpeedsPattern.split(',')
+      pattern = pattern.reduce(function(result, element, i) {
+        if (amt===1) {
+          result.push(element*2)
+        } else {
+          if (i%2==0) {
+            result.push(parseInt(element/2))
+          }
+        }
+        return result
+      }, [])
+      this.slidingSpeedsPattern = pattern.join(',')
     },
 
     onUpdate (e) {
@@ -656,7 +679,7 @@ export default {
       this.controlPower = Math.abs(pow);
 
 
-      if (this.value.options.slidingLocked) {
+      if (!this.value.options.slidingLocked) {
         this.slidingSpeedPower = parseInt( ((65536 )*this.controlPower/10000) ) ;
       } else {
         this.slidingSpeedPower = parseInt(this.controlPower/10000 * this.slidingSpeedsGradations) * this.slidingSpeedsLength;
