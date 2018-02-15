@@ -352,12 +352,13 @@ export default {
 
 
       // UNMAP PIXEL MAP!     
-      if (this.value.options.unmapPixelMap & output.pixels) {
+      if (this.value.options.unmapPixelMap && output.pixels) {
         let tmpPixels = output.pixels.slice()
 
         for (var i=0; i<65536; i++ ) {
           output.pixels[i] = tmpPixels[this.value.pixelmap[i*2]+256*this.value.pixelmap[i*2+1]];
         }
+
       }
 
       output.id = this.uid++
