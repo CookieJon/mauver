@@ -23,7 +23,7 @@ export default class ColorUtils {
 	// Palette
 	//
 
-  
+
   //  ColorUtils.GeneratePaletteColors()
 
   static GeneratePaletteColors(id) {
@@ -32,7 +32,7 @@ export default class ColorUtils {
     var groups = {}
     var colors = ["red","pink","purple","deepPurple","indigo","blue","lightBlue","cyan", "teal","green","lightGreen","lime","yellow","amber","orange","deepOrange"]
     var greys = ["brown", "grey", "blueGrey"]
-    
+
     // original palette
     var paletteFrom = Array.from(ColorUtils.getMaterialColors())
     var paletteTo = []
@@ -40,7 +40,7 @@ export default class ColorUtils {
     // 1. Black & White
     groups["black"] = paletteFrom[0]
     groups["white"] = paletteFrom[255]
-    
+
     // 2. Color Groups
     for (var i = 0; i < colors.length; i++) {
         groups[colors[i]] = paletteFrom.slice((i * 14) + 1, (i * 14) + 15)
@@ -76,9 +76,20 @@ export default class ColorUtils {
       //     return getPaletteSuperColor
 
       case "empty":
-          return []
+        return []
 
       case "greyscale":
+        let counter = 0
+        for (let i=0; i<256; i++) {
+          let hexpart = ("0" + (i).toString(16)).slice(-2)
+          let hex = '#' + hexpart + hexpart + hexpart
+          let color = ColorUtils.hexToColor(hex) // <-- Does rgba & hsv
+          var name = 'greyscale' + i
+          color.hex = hex;
+          color.rgba32 = new Uint32Array((new Uint8Array([color.r, color.g, color.b, color.a])).buffer)[0]
+          color.id = counter++
+          paletteTo.push(color)
+        }
         return paletteTo
 
       case "bichromal":
@@ -215,7 +226,7 @@ export default class ColorUtils {
         .concat(groups.white)
         return paletteTo
     }
-  }  
+  }
 
 
   // Material Design color defaults

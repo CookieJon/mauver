@@ -47,8 +47,8 @@ export default class Factory {
         useNewPalette: false,
         remapBitmapToPalette: true,
         slidingLocked: true,
-        usePixelmap: false,
-        unusePixelMap: false
+        unmapPixelMap: true,
+        mapPixelMap: true
       },
 
       pixels: Array(65536).fill(244),
@@ -176,9 +176,9 @@ export default class Factory {
       })
       palette.colors.push(col || presetColors[0]) // TODO: Make real colors!
     }
-    this.debugColors(palette.colors)
+    // this.debugColors(palette.colors)
     // palette's imagedata
-    palette.imageData = this.imageDataFromColors(palette.colors)
+    palette.imageData = MoeUtils.imageDataFromColors(palette.colors)
 
     // b. generate imageData
     let imageData = new ImageData(width, height)

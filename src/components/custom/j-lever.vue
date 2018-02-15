@@ -6,11 +6,11 @@
     @touchstart.prevent="__setActive"
     @touchend.prevent="__end"
     @touchmove.prevent="__update"
-  > 
+  >
   <div>
     <div ref="handle" class="q-slider-handle-container">
       <div class="q-slider-track"></div>
-      <div 
+      <div
         v-if="markers"
         class="q-slider-mark"
         v-for="(n, i) in myRange"
@@ -18,7 +18,7 @@
         :style="{left: n.percent * 100 + '%'}">
         <div class="q-slider-value">
           {{ n.value  }}
-        </div>  
+        </div>
       </div>
       <div
         class="q-slider-track active-track"
@@ -29,7 +29,7 @@
         class="q-slider-track value-track"
         :style="style_ValueTrack"
         :class="{'no-transition': dragging, 'handle-at-minimum': value === min}"
-      ></div-->      
+      ></div-->
       <div
         class="q-slider-handle"
         :style="{left: dragPercent * 100 +'%'}"
@@ -42,7 +42,7 @@
         >{{ dragPercent }}</div>
       </div>
     </div>
-   
+
   </div>
 </div>
 </template>
@@ -84,7 +84,7 @@ export default {
   data () {
     return {
       number: 0,
-      animatedNumber: 0,   
+      animatedNumber: 0,
       dragging: false,
       min: 0,
       max: 10,
@@ -93,12 +93,12 @@ export default {
       myRestPercent: parseInt(this.rest,10)/100,
       dragPercent: 0,
       segmentPercent: 0,
-      myValue: null      
+      myValue: null
     }
   },
   computed: {
     style_ActiveTrack () {
-      let 
+      let
         rest = parseInt(this.rest),
         drag = this.dragPercent * 100
       return {
@@ -107,14 +107,14 @@ export default {
       }
     },
     style_ValueTrack () {
-      let 
+      let
         rest = parseInt(this.rest),
         drag = this.valuePercent * 100
       return {
         left: Math.min( rest, drag ) + '%',
         width: Math.abs( rest - drag ) + '%'
       }
-    },    
+    },
     myRange () {
       // Array of range segments: percentages for each value waypoint
       // Prop in: {'min': 0, '20%': 99, 'max': 250}
@@ -123,12 +123,12 @@ export default {
         if (v === 'min') {
           this.min = this.range[v]
           return { percent: 0, value: this.min }
-        } 
+        }
         else if (v === 'max') {
           this.max = this.range[v]
           return { percent: 1, value: this.max }
-        } 
-        else { 
+        }
+        else {
           return { percent: parseInt(v) / 100, value: this.range[v] }
         }
       })
@@ -141,7 +141,7 @@ export default {
     //   }
     //   return 100 * this.currentPercent + '%'
     // }
-  },  
+  },
   watch: {
     dragPercent () {
 
@@ -157,18 +157,18 @@ export default {
     //         return 0.0f;
     //     if(x >= b)
     //         return 1.0f;
-    
+
     //     x = (x - a)/(b - a); //normalizes x
     //     return (x*x * (3 - 2*x));
     // },
-    // SmoothMove() 
-    // { 
+    // SmoothMove()
+    // {
     //   let startspot, endspot
-      
+
     //   function Start () {
     //       SmoothMove(startspot.position, endspot.position, 5.0);
     //   }
-      
+
     //   function SmoothMove (startpos : Vector3, endpos : Vector3, seconds : float) {
     //       var t = 0.0;
     //       while (t <= 1.0) {
@@ -181,7 +181,7 @@ export default {
       if (this.disable) {
         return
       }
-    
+
       let container = this.$refs.handle
 
       this.dragging = {
@@ -197,8 +197,13 @@ export default {
     __updateUsingDragPercent ( dragPercent ) {
       // dragPercent: 0...1
       // If dragPercent out of segment's percent range, set new segment & ranges
+      if (!this.currentSegmentMin) {
+        alert('no seg')
+        return
+      }
+
       if (dragPercent < this.currentSegmentMin.percent || dragPercent > this.currentSegmentMax.percent) {
-        
+
         let i = this.myRange.findIndex(v => {
           return v.percent > dragPercent
         })
@@ -215,7 +220,7 @@ export default {
 
       let modulo = (value - this.currentSegmentMin.value) % this.step
 
-      this.dragPercent = dragPercent 
+      this.dragPercent = dragPercent
       this.segmentPercent = segmentPercent
       this.myValue = value
       this.$emit('input', Math.floor(this.myValue))

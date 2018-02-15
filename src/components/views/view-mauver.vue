@@ -2,10 +2,28 @@
 <!-- root node required -->
 div
 
+
+  
   // TESTING
   j-panel(icon='business', title='test canvas',
-     :width='300', :height='320', :x='410', :y='510')
+     :width='300', :height='320', :x='410', :y='10')
     div.j-tray.area.panel-item-grow(slot='content')
+      br
+      br
+      br
+      j-lever(v-model='leverTest', rest='50%', :markers='true',
+                    :labelAlways='true',
+                    orientation='vertical',
+                    :range={
+                      'min': -10000,
+                      '35%': -1200,
+                      '45%': -100,
+                      '50%': 0,
+                      '55%': 100,
+                      '65%': 1200,
+                      'max': 10000
+                    }
+                  )
       // NB: Required at the moment to load bitmaps from IMG. TODO: Fix!
       canvas(ref='testcanvas', :width=256, :height=256)
 
@@ -87,7 +105,8 @@ export default {
       artId: 0,
       palId: 10,
       bmpId: 0,
-      colId: 0
+      colId: 0,
+      leverTest: 0
     }
   },
   computed: {
@@ -188,7 +207,7 @@ export default {
       this.$store.dispatch('updateEntities', {palettes: [pal]})
     },
     addArtwork () {
-      let art = Factory.createArtwork()
+      let art = Factory.createArtwork(null, Factory.createPalette('b_rbgy12_rgby34_g123_w_lumaUndulating'))
       this.$store.dispatch('updateEntities', {artworks: [art]} )
     },
 

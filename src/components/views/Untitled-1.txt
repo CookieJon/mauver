@@ -11,7 +11,7 @@ https://online-tst.training.nsw.gov.au/rtow/testBackDoor?legalOrgId=2007
 > Insert BEFORE "Is the student still at school?" ...
 
     Is the student being enrolled under a government strategy/initiative? *  [ ] Yes   [ ] No
-
+**A
     [if YES]
     Government strategy/initiative? *   [ Select... ]
                                         [ Small Business - Collaroy Council ]
@@ -19,6 +19,12 @@ https://online-tst.training.nsw.gov.au/rtow/testBackDoor?legalOrgId=2007
                                         [ Agriculture ]
                                         [ Energy Conservation - Solar Heating ]
                                         [ Energy Conservation - Wind Power ]
+**A
+    [if YES]
+    Voucher Number? *                   [  ]
+
+
+
     [If NO]
     Nothing!
 
@@ -48,7 +54,7 @@ Government Strategies/Initiatives - Search
         | Effective Start Date 
         | Effective End Date 
         | Max. Priorities per Student  [#]
-        | Voucher Applicable  [Yes/No]
+        | Voucher Applicable  [Yes/No]  <---- *** INSERT
         | Active [Yes/No]
         | Programs  [comma-delimited list]
         | AQF Levels [comma-delimited list]

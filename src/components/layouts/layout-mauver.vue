@@ -45,19 +45,19 @@
       ></q-select>
 
 
-    <div slot="left">
+    <!-- <div slot="left"> -->
       <!--
         Use <q-side-link> component 
         instead of <q-item> for 
         internal vue-router navigation
       -->
-      <div class='j-tray.area.panel-item-grow' slot='content'>
+      <!-- <div class='j-tray.area.panel-item-grow' slot='content'>
 
-      </div>      
+      </div>       -->
       <!-- <j-panel icon='business' title='debug'>
 
       </j-panel> -->
-    </div>
+    <!-- </div> -->
 
     <!--
       Replace following <div> with
