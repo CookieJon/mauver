@@ -139,7 +139,7 @@ export default {
     //
     imageData: {
       handler (newVal) {
-        console.log("watch CANVAS imageData->", newVal)
+        //console.log("watch CANVAS imageData->", newVal)
         //this.updateImage(newVal)
       },
       immediate: false
@@ -149,7 +149,7 @@ export default {
 
     updateImage (imgData) {
       // const imageData = this.myImageData
-      console.log('UPDATE IMAGEDATA', imgData)
+      // console.log('UPDATE IMAGEDATA', imgData)
       if (imgData instanceof ImageData) {
         this.ctx.putImageData(imgData, 0, 0)
         // this.myImageData = this.ctx.getImageData(0, 0, this.pixelWidth, this.pixelHeight)

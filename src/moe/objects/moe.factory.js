@@ -47,8 +47,12 @@ export default class Factory {
         useNewPalette: false,
         remapBitmapToPalette: true,
         slidingLocked: true,
-        unmapPixelMap: true,
-        mapPixelMap: true
+
+        unmapPixelMap: true,  // Apply the pixelmap to the bitmap?
+        mapPixelMap: true,
+        unmapPixelMapSpeed: true, // Apply the pixelmap to the sliding speeds?
+        mapPixelMapSpeed: true
+
       },
 
       pixels: Array(65536).fill(244),

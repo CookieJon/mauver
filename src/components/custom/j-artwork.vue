@@ -101,9 +101,12 @@
                     j-drop-target(:value='pixelMapInput', @add='dropPixelMapInput($event)', style='width:80px;height:80px;')
                     //- j-drop-target(:value='goboFrame', @add='dropGoboFrame($event)', style='width:80px;height:80px;')
                     //- j-canvas(:value='bitmapFilterOutput.colors', style='width:80px;height:80px;')
-                  div.col-6
+                  div.col-3
                     q-toggle(v-model="myValue.options.unmapPixelMap", label='Unmap')
                     q-toggle(v-model="myValue.options.mapPixelMap", label='Map')
+                  div.col-3
+                    q-toggle(v-model="myValue.options.unmapPixelMapSpeed", label='Unmap Speed')
+                    q-toggle(v-model="myValue.options.mapPixelMapSpeed", label='Map Speed')                    
 
       // GOBO
       q-card(color='dark')
@@ -620,7 +623,19 @@ export default {
         this.slidingSpeeds[i] =  parseInt(speeds[i%speeds.length]);
       }
 
+      // pixelmap => Sliding speeds
+      if (this.value.options.mapPixelMapSpeeds) {
+        let tmp = []
+        for (let i=0; i < 65536; i++) {
+          tmp.push (this.slidingSpeeds[i*2] + 256 * [i*2+1])
+        }
+        this.slidingSpeeds = tmp
+      }
+
+
+
     },
+
 
 
     __startSliding() {
