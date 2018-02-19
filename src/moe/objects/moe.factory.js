@@ -51,7 +51,9 @@ export default class Factory {
         unmapPixelMap: true,  // Apply the pixelmap to the bitmap?
         mapPixelMap: true,
         unmapPixelMapSpeed: true, // Apply the pixelmap to the sliding speeds?
-        mapPixelMapSpeed: true
+        mapPixelMapSpeed: true,
+        frame: 'picture-frame-modern'
+
 
       },
 

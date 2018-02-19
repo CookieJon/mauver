@@ -1,5 +1,19 @@
 
 
+ReportAction.java
+ReportBD.java 
+    > getReportCriteria()
+
+
+MODULE: "SM"
+databaseUsername: "MAYJO"
+SUMMIT's REPORTID= 7561
+
+
+
+
+
+
 SECURITY PROFILE:
 
 Id: VIP_PCM_ADMIN:  Name: "PCM Admin"
@@ -23,14 +37,6 @@ MenuItem  Task:VIP_PCM_GOVT_STRATEGY_DETAIL    ParentMenu:VIP_PCM_GOVT_STRATEGY_
 
 
 --------------------------------------------------------------------
-
-
-
-
-
-
-
-
 
 
 

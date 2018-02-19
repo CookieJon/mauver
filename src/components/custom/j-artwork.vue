@@ -34,6 +34,8 @@
                 }
               )
             div.row
+              q-select(dark, v-model='myValue.options.frame', :options='frameOptions')
+            div.row
               div.col
                 |BITMAP
                 div.row.no-wrap
@@ -106,7 +108,7 @@
                     q-toggle(v-model="myValue.options.mapPixelMap", label='Map')
                   div.col-3
                     q-toggle(v-model="myValue.options.unmapPixelMapSpeed", label='Unmap Speed')
-                    q-toggle(v-model="myValue.options.mapPixelMapSpeed", label='Map Speed')                    
+                    q-toggle(v-model="myValue.options.mapPixelMapSpeed", label='Map Speed')
 
       // GOBO
       q-card(color='dark')
@@ -138,11 +140,14 @@
         //- q-card-title(slot='overlay')
         //-   div(slot='subtitle')|Preview
         q-card-main
-          canvas(ref='preview',
-            @click="clickPreview"
-            width='256', height='256',
-            style='width:100%;height:100%;')
-          // j-canvas.frame-type-grid(:image-data='filterFinalImageData')
+          div(:class='value.options.frame')
+            div.picture-mat
+              div.picture-art
+                canvas(ref='preview',
+                  @click="clickPreview"
+                  width='256', height='256',
+                  style='width:100%;height:100%;')
+                // j-canvas.frame-type-grid(:image-data='filterFinalImageData')
 
 
 
@@ -199,13 +204,17 @@ export default {
   data () {
     return {
       paletteOptions: ColorUtils.presetPalettes.map(v=>{return {'label':v, 'value':v}}),
+      frameOptions: [
+        {label: 'Classic', value:'picture-frame-classic'},
+        {label: 'Modern', value:'picture-frame-modern'}
+      ],
       presetSlidingSpeedOptions: [
         '1,2,3,4,5,6,7,8,9,8,7,6,5,4,3,2',
         '1,2,2,4,4,4,4,4,4,4,4,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8',
         '1,2,3,4,3,5,6,7,8,9,10,9,8,7,6,5,4,5,6,7,8,9,8,7,6,7,8,9,10,11,12,13,14,15'
       ].map(v=>{return {label:v.slice(0,30), value:v}}),
 
-
+      frameDDL: null,
       paletteDDL: null,
       // myValue: null,
 
@@ -354,7 +363,7 @@ export default {
       }
 
 
-      // UNMAP PIXEL MAP!     
+      // UNMAP PIXEL MAP!
       if (this.value.options.unmapPixelMap && output.pixels) {
         let tmpPixels = output.pixels.slice()
 
@@ -695,7 +704,7 @@ export default {
 
 
       // mappedIndex = (slidingMap[i*2] + 256*slidingMap[i*2+1]) *4 ;  // *2=x,y *4 = R,G,B,A
-        
+
       // try {
       //   theColor = theBitmap.palette[slidingCurrent[i]];
       //   slidingImageData.data[mappedIndex] = theColor.blue; //*4 =*4 =*4 =*4 = !! NB!!!
@@ -819,4 +828,100 @@ export default {
 <style lang="stylus">
   .dark-example
     background #333
+
+// html
+//   background-image linear-gradient(#eee, #aaa)
+//   height 100%
+
+
+
+  // *****  FRAME CLASSIC  https //codepen.io/chris22smith/pen/PbBwjp
+  .picture-frame-classic
+    background-color #ddc
+    border solid 5vmin #eee
+    border-bottom-color #fff
+    border-left-color #eee
+    border-radius 2px
+    border-right-color #eee
+    border-top-color #ddd
+    box-shadow 0 0 5px 0 rgba(0,0,0,.25) inset, 0 5px 10px 5px rgba(0,0,0,.25)
+    box-sizing border-box
+    display inline-block
+    width  100%
+    padding 5vmin
+    position relative
+    text-align center
+    & before
+      border-radius 2px
+      bottom -2vmin
+      box-shadow 0 2px 5px 0 rgba(0,0,0,.25) inset
+      content ""
+      left -2vmin
+      position absolute
+      right -2vmin
+      top -2vmin
+
+    & after
+      border-radius 2px
+      bottom -2.5vmin
+      box-shadow  0 2px 5px 0 rgba(0,0,0,.25)
+      content ""
+      left -2.5vmin
+      position absolute
+      right -2.5vmin
+      top -2.5vmin
+
+  .picture-frame-classic > picture-mat
+    border solid 2px
+    border-bottom-color #ffe
+    border-left-color #eed
+    border-right-color #eed
+    border-top-color #ccb
+    max-height 100%
+    max-width 100%
+  .picture-frame-classic > picture-mat > picture-art
+    width 100%
+    height 100%
+
+
+
+
+
+
+  // *****  FRAME MODERN   https //thinkux.ca/blog/Creating-Framed-Matted-Pictures-Using-CSS/
+.picture-frame-modern {
+  position: relative;
+  width: 100%;
+  padding-bottom: 82.5%;
+  background: black;
+  box-shadow: 0 10px 7px -5px rgba(0, 0, 0, 0.3);
+}
+
+.picture-frame-modern .picture-mat {
+  position: absolute;
+  background: white;
+  top: 3.0303%; bottom: 3.0303%; left: 2.5%; right: 2.5%;
+  box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.5) inset;
+}
+
+.picture-frame-modern .picture-art {
+  position: absolute;
+  top: 16.129%; bottom: 16.129%; left: 13.158%; right: 13.158%;
+}
+
+.picture-frame-modern canvas {
+  width: 100%;
+}
+
+.picture-frame-modern .picture-art:after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.5) inset;
+}
+
+
 </style>
