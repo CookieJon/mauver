@@ -198,7 +198,8 @@ export default {
       // dragPercent: 0...1
       // If dragPercent out of segment's percent range, set new segment & ranges
       if (!this.currentSegmentMin) {
-        alert('no seg')
+        console.warn('J-LEVER NO SEGMENT ERROR')
+        //alert('no seg')
         return
       }
 

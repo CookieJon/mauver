@@ -5,15 +5,6 @@
 
     div.col-5
 
-      //- // DEBUG
-      //- q-card(color='dark')
-      //-   q-card-title
-      //-     div(slot='subtitle')|Debug
-      //-   q-card-main()
-      //-       div.row
-      //-         //- |{{this.myValue.options}}
-      //-         |{{this.myValue.slidingCurrent ? this.myValue.slidingCurrent.slice(-4) : 'no'}}
-
       // BITMAP
       q-card(color='dark')
           q-card-main
@@ -206,10 +197,15 @@ export default {
       paletteOptions: ColorUtils.presetPalettes.map(v=>{return {'label':v, 'value':v}}),
       frameOptions: [
         {label: 'Classic', value:'picture-frame-classic'},
-        {label: 'Modern', value:'picture-frame-modern'}
+        {label: 'Modern', value:'picture-frame-modern'},
+        {label: 'Minimal', value:'picture-frame-minimal'},
+        {label: 'None', value:'picture-frame-none'},
       ],
       presetSlidingSpeedOptions: [
+        '1,2,3,2,1,1,1,1,1,2,3,2',
+        '1,1,1,1,1,1,1,1,1,1,1,2,3,4,5,4,3,2,3,4,5,6,7,6,5,4,3,4,5,6,5,4,3,2',
         '1,2,3,4,5,6,7,8,9,8,7,6,5,4,3,2',
+        '1,2,3,2,1,2,3,4,5,4,3,2,1,2,3,4,5,6,7,8,9,8,7,6,5,6,7,8,9,10,11,12,13,14,13,12,11,10,9,8,9,10,11,12,11,10,9,8,9,10,11,10,9,8,7,6,7,8,9,8,7,6,5,6,7,8,9,8,7,6,5,4,3,4,5,6,7,8,7,6,5,4,5,6,7,6,5,4,3,2,1',
         '1,2,2,4,4,4,4,4,4,4,4,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8',
         '1,2,3,4,3,5,6,7,8,9,10,9,8,7,6,5,4,5,6,7,8,9,8,7,6,7,8,9,10,11,12,13,14,15'
       ].map(v=>{return {label:v.slice(0,30), value:v}}),
@@ -889,6 +885,43 @@ export default {
 
 
   // *****  FRAME MODERN   https //thinkux.ca/blog/Creating-Framed-Matted-Pictures-Using-CSS/
+.picture-frame-modern {
+  position: relative;
+  width: 100%;
+  padding-bottom: 82.5%;
+  background: black;
+  box-shadow: 0 10px 7px -5px rgba(0, 0, 0, 0.3);
+}
+
+.picture-frame-modern .picture-mat {
+  position: absolute;
+  background: white;
+  top: 3.0303%; bottom: 3.0303%; left: 2.5%; right: 2.5%;
+  box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.5) inset;
+}
+
+.picture-frame-modern .picture-art {
+  position: absolute;
+  top: 16.129%; bottom: 16.129%; left: 13.158%; right: 13.158%;
+}
+
+.picture-frame-modern canvas {
+  width: 100%;
+}
+
+.picture-frame-modern .picture-art:after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.5) inset;
+}
+
+
+
+  // *****  FRAME MINIMAL   https //thinkux.ca/blog/Creating-Framed-Matted-Pictures-Using-CSS/
 .picture-frame-modern {
   position: relative;
   width: 100%;

@@ -4,45 +4,45 @@ div
 
 
   
-  // TESTING
-  j-panel(icon='business', title='test canvas',
-     :width='300', :height='320', :x='410', :y='10')
-    div.j-tray.area.panel-item-grow(slot='content')
-      br
-      br
-      br
-      j-lever(v-model='leverTest', rest='50%', :markers='true',
-                    :labelAlways='true',
-                    orientation='vertical',
-                    :range={
-                      'min': -10000,
-                      '35%': -1200,
-                      '45%': -100,
-                      '50%': 0,
-                      '55%': 100,
-                      '65%': 1200,
-                      'max': 10000
-                    }
-                  )
-      // NB: Required at the moment to load bitmaps from IMG. TODO: Fix!
-      canvas(ref='testcanvas', :width=256, :height=256)
+  //- // TESTING
+  //- j-panel(icon='business', title='test canvas',
+  //-    :width='300', :height='320', :x='410', :y='10')
+  //-   div.j-tray.area.panel-item-grow(slot='content')
+  //-     br
+  //-     br
+  //-     br
+  //-     j-lever(v-model='leverTest', rest='50%', :markers='true',
+  //-                   :labelAlways='true',
+  //-                   orientation='vertical',
+  //-                   :range={
+  //-                     'min': -10000,
+  //-                     '35%': -1200,
+  //-                     '45%': -100,
+  //-                     '50%': 0,
+  //-                     '55%': 100,
+  //-                     '65%': 1200,
+  //-                     'max': 10000
+  //-                   }
+  //-                 )
+  //-     // NB: Required at the moment to load bitmaps from IMG. TODO: Fix!
+  //-     canvas(ref='testcanvas', :width=256, :height=256)
 
+  j-upload-zone(ref='zone',@select='addBitmapsFromFiles')
   // COLLECTION
   j-panel(icon='business', title='O', :width='300', :height='700', :x='10', :y='10')
     div.j-panel-toolbar.text-black(slot='toolbar', style='padding:4px;')
       q-btn(small,push,icon='art track', @click='addArtwork')
       q-btn(small,push,icon='satellite', @click='openFileInput')
-      q-btn(small,push,icon='color lens', @click='addPalette')
+      //- q-btn(small,push,icon='color lens', @click='addPalette')
     // artworks
     div.j-tray.area.panel-item-grow(slot='content')
       j-collection.frame-type-grid(v-model='artworks', @select='selectArtwork')
     // bitmaps
     div.j-tray.area.panel-item-grow(slot='content')
       j-collection.frame-type-grid(v-model='bitmaps', @select='selectBitmap')
-      j-upload-zone(ref='zone',@select='addBitmapsFromFiles')
-    // palettes
-    div.j-tray.area.panel-item-grow(slot='content')
-      j-collection.frame-type-grid(v-model='palettes', @select='selectPalette')
+    //- palettes
+    //- div.j-tray.area.panel-item-grow(slot='content')
+    //-   j-collection.frame-type-grid(v-model='palettes', @select='selectPalette')
 
   // selectedArtwork SLIDER
   j-panel(v-if='selectedArtwork != null' icon='business', :title='selectedArtwork?selectedArtwork.name:"Art"',
