@@ -26,6 +26,7 @@
               )
             div.row
               q-select(dark, v-model='myValue.options.frame', :options='frameOptions')
+              q-select(dark, v-model='myValue.options.aspect', :options='aspectOptions')
             div.row
               div.col
                 |BITMAP
@@ -199,8 +200,13 @@ export default {
         {label: 'Classic', value:'picture-frame-classic'},
         {label: 'Modern', value:'picture-frame-modern'},
         {label: 'Minimal', value:'picture-frame-minimal'},
-        {label: 'None', value:'picture-frame-none'},
+        {label: 'None', value:'picture-frame-none'}
       ],
+      aspectOptions: [
+        {label: 'Square', value:'picture-aspect-square'},
+        {label: 'Portrait', value:'picture-aspect-portrait'},
+        {label: 'Landscape', value:'picture-aspect-landscape'}
+      ],      
       presetSlidingSpeedOptions: [
         '1,2,3,2,1,1,1,1,1,2,3,2',
         '1,1,1,1,1,1,1,1,1,1,1,2,3,4,5,4,3,2,3,4,5,6,7,6,5,4,3,4,5,6,5,4,3,2',
@@ -922,7 +928,7 @@ export default {
 
 
   // *****  FRAME MINIMAL   https //thinkux.ca/blog/Creating-Framed-Matted-Pictures-Using-CSS/
-.picture-frame-modern {
+.picture-frame-minimal {
   position: relative;
   width: 100%;
   padding-bottom: 82.5%;
@@ -930,23 +936,23 @@ export default {
   box-shadow: 0 10px 7px -5px rgba(0, 0, 0, 0.3);
 }
 
-.picture-frame-modern .picture-mat {
+.picture-frame-minimal .picture-mat {
   position: absolute;
   background: white;
   top: 3.0303%; bottom: 3.0303%; left: 2.5%; right: 2.5%;
   box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.5) inset;
 }
 
-.picture-frame-modern .picture-art {
+.picture-frame-minimal .picture-art {
   position: absolute;
   top: 16.129%; bottom: 16.129%; left: 13.158%; right: 13.158%;
 }
 
-.picture-frame-modern canvas {
+.picture-frame-minimal canvas {
   width: 100%;
 }
 
-.picture-frame-modern .picture-art:after {
+.picture-frame-minimal .picture-art:after {
   content: '';
   display: block;
   position: absolute;

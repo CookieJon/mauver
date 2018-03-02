@@ -52,7 +52,7 @@ export default class Factory {
         unmapPixelMapSpeed: true, // Apply the pixelmap to the sliding speeds?
         mapPixelMapSpeed: true,
         frame: 'picture-frame-minimal',
-        aspect: 'square' // square | portrait | landscape
+        aspect: 'picture-aspect-square' // square | portrait | landscape
       },
 
       pixels: Array(65536).fill(244),
