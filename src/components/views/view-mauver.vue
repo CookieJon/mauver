@@ -3,31 +3,13 @@
 div
 
 
-  
-  //- // TESTING
-  //- j-panel(icon='business', title='test canvas',
-  //-    :width='300', :height='320', :x='410', :y='10')
-  //-   div.j-tray.area.panel-item-grow(slot='content')
-  //-     br
-  //-     br
-  //-     br
-  //-     j-lever(v-model='leverTest', rest='50%', :markers='true',
-  //-                   :labelAlways='true',
-  //-                   orientation='vertical',
-  //-                   :range={
-  //-                     'min': -10000,
-  //-                     '35%': -1200,
-  //-                     '45%': -100,
-  //-                     '50%': 0,
-  //-                     '55%': 100,
-  //-                     '65%': 1200,
-  //-                     'max': 10000
-  //-                   }
-  //-                 )
-  //-     // NB: Required at the moment to load bitmaps from IMG. TODO: Fix!
-  //-     canvas(ref='testcanvas', :width=256, :height=256)
+  //- selectedArtwork SLIDER
+  div(v-if='selectedArtwork != null')
+    j-artwork(v-model='selectedArtwork')
 
-  j-upload-zone(ref='zone',@select='addBitmapsFromFiles')
+
+
+  j-upload-zone(ref='zone',@select='addBitmapsFromFiles') <!-- do not delete! -->
   // COLLECTION
   j-panel(icon='business', title='O', :width='300', :height='700', :x='10', :y='10')
     div.j-panel-toolbar.text-black(slot='toolbar', style='padding:4px;')
@@ -44,18 +26,13 @@ div
     //- div.j-tray.area.panel-item-grow(slot='content')
     //-   j-collection.frame-type-grid(v-model='palettes', @select='selectPalette')
 
-  // selectedArtwork SLIDER
-  j-panel(v-if='selectedArtwork != null' icon='business', :title='selectedArtwork?selectedArtwork.name:"Art"',
-    :width='900', :height='800', :x='350', :y='10')
-    div.j-tray.area.panel-item-grow(slot='content')
-      j-artwork(v-model='selectedArtwork')
 
-  // selectedBitmapImageData
+  //- selectedBitmapImageData
   j-panel(v-if='selectedBitmapImageData != null', icon='business', title='Selected Bitmap', :width='200', :height='300', :x='110', :y='400')
     div.j-tray.area.panel-item-grow(slot='content')
       j-canvas.frame-type-grid(:image-data='selectedBitmapImageData')
 
-  // selectedPaletteImageData
+  //- selectedPaletteImageData
   j-panel(v-if='selectedPaletteImageData != null', icon='business', title='Selected Palette', :width='200', :height='300', :x='10', :y='400')
     div.j-tray.area.panel-item-grow(slot='content')
       j-canvas.frame-type-grid(:image-data='selectedPaletteImageData')

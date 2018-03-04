@@ -1,153 +1,134 @@
 <template lang="pug">
 
-
-  div.row
-
-    div.col-5
-
-      // BITMAP
-      q-card(color='dark')
-          q-card-main
-            div.row
-              j-lever(v-model='controlTargetPower', rest='50%', :markers='true',
-                :labelAlways='true',
-                orientation='vertical',
-                @start='__startSliding',
-                @stop='__stopSliding',
-                :range={
-                  'min': -10000,
-                  '35%': -1200,
-                  '45%': -100,
-                  '50%': 0,
-                  '55%': 100,
-                  '65%': 1200,
-                  'max': 10000
-                }
-              )
-            div.row
-              q-select(dark, v-model='myValue.options.frame', :options='frameOptions')
-              q-select(dark, v-model='myValue.options.aspect', :options='aspectOptions')
-            div.row
-              div.col
-                |BITMAP
-                div.row.no-wrap
-                  // Bitmap
-                  j-drop-target(:value='myBitmap', @add='dropBitmap($event)', style='width:80px;height:80px;')
-                  j-canvas(:value='bitmapFilterOutput.colors', style='width:80px;height:80px;')
-
-              div.col
-                |PALETTE
-                div.row.no-wrap
-                  // Art Palette
-                  j-drop-target(:value='myPalette', @add='dropPalette($event)', style='width:80px;height:80px;')
-                  j-canvas(:value='paletteFilterOutput', style='width:80px;height:80px;')
-            div.row
-              div.col-6
-                q-select(dark, v-model='paletteDDL', :options='paletteOptions')
-                q-toggle(v-model="myValue.options.useNewPalette", label='Active')
-                q-toggle(v-model="myValue.options.remapBitmapToPalette", label='Remap Bitmap')
-
-      // SPEEDMAP
-      q-card(color='dark')
-          q-card-main
-            div.col
-              |SPEEDMAP
-
-              div.row
-                div.col-9
-                  div.row
-                    div.col
-                      //- q-select(dark, v-model='slidingSpeedsPattern', :options='presetSlidingSpeedOptions')
-                      q-input.col(stack-label='Sliding Speeds Pattern', dark, v-model='slidingSpeedsPattern')
-                    div.col
-
-                      q-btn(small,push,ref='target')|?
-                        q-popover(ref='popover')
-                          q-list(separator,link,style="min-width: 100px")
-                            q-item(
-                              v-for="(n, i) in presetSlidingSpeedOptions",
-                              :key='i',
-                              @click='slidingSpeedsPattern=presetSlidingSpeedOptions[i].value,$refs.popover.close()')
-                              q-item-main(:label='n.label')
-                  div.row
-                    q-toggle(v-model="myValue.options.slidingLocked", label='Lock')
-                    q-btn(small,push,ref='target',@click='changePeriod(-1)')|<
-                    q-btn(small,push,ref='target',@click='changePeriod(1)')|>
-                    q-btn(small,push,ref='target',@click='changeAmplitude(1)')|+
-                    q-btn(small,push,ref='target',@click='changeAmplitude(-1)')|-
-                    //- q-input.col(readonly,stack-label='started', dark, v-model='slidingStarted')
-                    //- q-input.col(stack-label='Control Target Power', dark, v-model='controlTargetPower')
-                //- div.row
-                //-   q-input.col(stack-label='Control Power', dark, v-model='controlPower')
-                //-   q-input.col(stack-label='Sliding Speed Power', dark, v-model='slidingSpeedPower')
-                div.col-3
-                  j-canvas(:value='paletteFilterOutput', style='width:80px;height:80px;')
-
-      // PXL MAP
-      q-card(color='dark')
-          q-card-main
-            div.row
-              div.col
-                |PIXELMAP
-                div.row.no-wrap
-                  div.col-3
-                    // pixelMapInput
-                    j-drop-target(:value='pixelMapInput', @add='dropPixelMapInput($event)', style='width:80px;height:80px;')
-                    //- j-drop-target(:value='goboFrame', @add='dropGoboFrame($event)', style='width:80px;height:80px;')
-                    //- j-canvas(:value='bitmapFilterOutput.colors', style='width:80px;height:80px;')
-                  div.col-3
-                    q-toggle(v-model="myValue.options.unmapPixelMap", label='Unmap')
-                    q-toggle(v-model="myValue.options.mapPixelMap", label='Map')
-                  div.col-3
-                    q-toggle(v-model="myValue.options.unmapPixelMapSpeed", label='Unmap Speed')
-                    q-toggle(v-model="myValue.options.mapPixelMapSpeed", label='Map Speed')
-
-      // GOBO
-      q-card(color='dark')
-          q-card-main
-            div.row
-              div.col
-                |GOBO
-                div.row.no-wrap
-                  // Bitmap
-                  //- j-drop-target(:value='gobo', @add='dropGobo($event)', style='width:80px;height:80px;')
-                  //- j-drop-target(:value='goboFrame', @add='dropGoboFrame($event)', style='width:80px;height:80px;')
-                  //- j-canvas(:value='bitmapFilterOutput.colors', style='width:80px;height:80px;')
-
-
-      // SLIDER
-      q-card(overlay-position="top", color='dark')
-        q-card-title(slot='overlay')
-          div(slot='subtitle')|Slider
-        q-card-main
-          div.row
-            div.col-9
-
-
-
-
-    div.col-7
-      // PREVIEW
-      q-card(overlay-position="top", color='dark')
-        //- q-card-title(slot='overlay')
-        //-   div(slot='subtitle')|Preview
-        q-card-main
+  div
+    //- PREVIEW
+    j-panel(icon='business', :title='selectedArtwork?selectedArtwork.name:"Art"', :width='900', :height='800', :x='350', :y='10')
+      div.j-tray.area.panel-item-grow(slot='content')
+        div.row
           div(:class='value.options.frame')
             div.picture-mat
               div.picture-art
-                canvas(ref='preview',
-                  @click="clickPreview"
-                  width='256', height='256',
-                  style='width:100%;height:100%;')
-                // j-canvas.frame-type-grid(:image-data='filterFinalImageData')
+                canvas(ref='preview', @click="clickPreview", width='256', height='256', style='width:100%;height:100%;')
+                //- j-canvas.frame-type-grid(:image-data='filterFinalImageData')
+
+    //- SETTINGS
+    j-panel(icon='business', :title='selectedArtwork?selectedArtwork.name:"Art"',
+      :width='900', :height='800', :x='350', :y='10')
+      div.j-tray.area.panel-item-grow(slot='content')
+        div.row
+
+          div.col
+
+            // BITMAP
+            q-card(color='dark')
+                q-card-main
+                  div.row
+                    j-lever(v-model='controlTargetPower', rest='50%', :markers='true',
+                      :labelAlways='true',
+                      orientation='vertical',
+                      @start='__startSliding',
+                      @stop='__stopSliding',
+                      :range={
+                        'min': -10000,
+                        '35%': -1200,
+                        '45%': -100,
+                        '50%': 0,
+                        '55%': 100,
+                        '65%': 1200,
+                        'max': 10000
+                      }
+                    )
+                  div.row
+                    div.col
+                      |BITMAP
+                      div.row.no-wrap
+                        // Bitmap
+                        j-drop-target(:value='myBitmap', @add='dropBitmap($event)', style='width:80px;height:80px;')
+                        //- j-canvas(:value='bitmapFilterOutput.colors', style='width:80px;height:80px;')
+
+                    div.col
+                      |PALETTE
+                      div.row.no-wrap
+                        // Art Palette
+                        j-drop-target(:value='myPalette', @add='dropPalette($event)', style='width:80px;height:80px;')
+                        j-canvas(:value='paletteFilterOutput', style='width:80px;height:80px;')
+                  div.row.gutter-xs
+                    div.col-6
+                      q-select(dark, v-model='paletteDDL', :options='paletteOptions')
+                      q-toggle(v-model="myValue.options.useNewPalette", label='Active')
+                      q-toggle(v-model="myValue.options.remapBitmapToPalette", label='Remap Bitmap')
+                    div.col-6
+                      q-select(dark, v-model='myValue.options.frame', :options='frameOptions')
+                      q-select(dark, v-model='myValue.options.aspect', :options='aspectOptions')
+
+            // SPEEDMAP
+            q-card(color='dark')
+                q-card-main
+                  div.col
+                    |SPEEDMAP
+
+                    div.row
+                      div.col-9
+                        div.row
+                          div.col
+                            //- q-select(dark, v-model='slidingSpeedsPattern', :options='presetSlidingSpeedOptions')
+                            q-input.col(stack-label='Sliding Speeds Pattern', dark, v-model='slidingSpeedsPattern')
+                          div.col
+
+                            q-btn(small,push,ref='target')|?
+                              q-popover(ref='popover')
+                                q-list(separator,link,style="min-width: 100px")
+                                  q-item(
+                                    v-for="(n, i) in presetSlidingSpeedOptions",
+                                    :key='i',
+                                    @click='slidingSpeedsPattern=presetSlidingSpeedOptions[i].value,$refs.popover.close()')
+                                    q-item-main(:label='n.label')
+                        div.row
+                          q-toggle(v-model="myValue.options.slidingLocked", label='Lock')
+                          q-btn(small,push,ref='target',@click='changePeriod(-1)')|<
+                          q-btn(small,push,ref='target',@click='changePeriod(1)')|>
+                          q-btn(small,push,ref='target',@click='changeAmplitude(1)')|+
+                          q-btn(small,push,ref='target',@click='changeAmplitude(-1)')|-
+                          //- q-input.col(readonly,stack-label='started', dark, v-model='slidingStarted')
+                          //- q-input.col(stack-label='Control Target Power', dark, v-model='controlTargetPower')
+                      //- div.row
+                      //-   q-input.col(stack-label='Control Power', dark, v-model='controlPower')
+                      //-   q-input.col(stack-label='Sliding Speed Power', dark, v-model='slidingSpeedPower')
+                      div.col-3
+                        j-canvas(:value='paletteFilterOutput', style='width:80px;height:80px;')
+
+            // PXL MAP
+            q-card(color='dark')
+                q-card-main
+                  div.row
+                    div.col
+                      |PIXELMAP
+                      div.row.no-wrap
+                        div.col-3
+                          // pixelMapInput
+                          j-drop-target(:value='pixelMapInput', @add='dropPixelMapInput($event)', style='width:80px;height:80px;')
+                          //- j-drop-target(:value='goboFrame', @add='dropGoboFrame($event)', style='width:80px;height:80px;')
+                          //- j-canvas(:value='bitmapFilterOutput.colors', style='width:80px;height:80px;')
+                        div.col-3
+                          q-toggle(v-model="myValue.options.unmapPixelMap", label='Unmap')
+                          q-toggle(v-model="myValue.options.mapPixelMap", label='Map')
+                        div.col-3
+                          q-toggle(v-model="myValue.options.unmapPixelMapSpeed", label='Unmap Speed')
+                          q-toggle(v-model="myValue.options.mapPixelMapSpeed", label='Map Speed')
+
+            // GOBO
+            q-card(color='dark')
+                q-card-main
+                  div.row
+                    div.col
+                      |GOBO
+                      div.row.no-wrap
+                        // Bitmap
+                        //- j-drop-target(:value='gobo', @add='dropGobo($event)', style='width:80px;height:80px;')
+                        //- j-drop-target(:value='goboFrame', @add='dropGoboFrame($event)', style='width:80px;height:80px;')
+                        //- j-canvas(:value='bitmapFilterOutput.colors', style='width:80px;height:80px;')
 
 
-
-
-
-
-      //- <p>$・Italian, Cafe</p>
-      //- <p class="text">Small plates, salads & sandwiches in an intimate setting.</p>
     </q-card-main>
   </q-card-media>
 
@@ -206,7 +187,7 @@ export default {
         {label: 'Square', value:'picture-aspect-square'},
         {label: 'Portrait', value:'picture-aspect-portrait'},
         {label: 'Landscape', value:'picture-aspect-landscape'}
-      ],      
+      ],
       presetSlidingSpeedOptions: [
         '1,2,3,2,1,1,1,1,1,2,3,2',
         '1,1,1,1,1,1,1,1,1,1,1,2,3,4,5,4,3,2,3,4,5,6,7,6,5,4,3,4,5,6,5,4,3,2',
