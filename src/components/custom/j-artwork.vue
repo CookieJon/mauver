@@ -2,7 +2,7 @@
 
   div
     //- PREVIEW
-    j-panel(icon='business', :title='selectedArtwork?selectedArtwork.name:"Art"', :width='900', :height='800', :x='350', :y='10')
+    j-panel(icon='business', :title='value.name + " Preview"', :width='900', :height='800', :x='350', :y='10')
       div.j-tray.area.panel-item-grow(slot='content')
         div.row
           div(:class='value.options.frame')
@@ -12,7 +12,7 @@
                 //- j-canvas.frame-type-grid(:image-data='filterFinalImageData')
 
     //- SETTINGS
-    j-panel(icon='business', :title='selectedArtwork?selectedArtwork.name:"Art"',
+    j-panel(icon='business', :title='value.name',
       :width='900', :height='800', :x='350', :y='10')
       div.j-tray.area.panel-item-grow(slot='content')
         div.row

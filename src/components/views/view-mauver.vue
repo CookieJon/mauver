@@ -6,9 +6,6 @@ div
   //- selectedArtwork SLIDER
   div(v-if='selectedArtwork != null')
     j-artwork(v-model='selectedArtwork')
-
-
-
   j-upload-zone(ref='zone',@select='addBitmapsFromFiles') <!-- do not delete! -->
   // COLLECTION
   j-panel(icon='business', title='O', :width='300', :height='700', :x='10', :y='10')
