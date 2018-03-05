@@ -4,7 +4,7 @@
     view="lHh Lpr fff"
     :left-class="{'bg-glass': true}"
     :style="bgStyle">
-      
+
     <q-toolbar slot="header">
       <q-btn
         flat
@@ -30,7 +30,7 @@
 
 
 
-      
+
     <!-- <q-tabs slot="navigation" class="text-white">
       <q-tab route="/view-mauve" icon="settings_system_daydream" exact>Mauve</q-tab>
       <q-tab route="/view-panels" icon="mail" exact>Panels</q-tab>
@@ -47,8 +47,8 @@
 
     <!-- <div slot="left"> -->
       <!--
-        Use <q-side-link> component 
-        instead of <q-item> for 
+        Use <q-side-link> component
+        instead of <q-item> for
         internal vue-router navigation
       -->
       <!-- <div class='j-tray.area.panel-item-grow' slot='content'>
@@ -71,7 +71,7 @@
     </div> -->
     <keep-alive>
       <router-view> </router-view>
-    </keep-alive>    
+    </keep-alive>
   </q-layout>
 </template>
 <script>
@@ -99,7 +99,7 @@ import {
 
 var jObject = require('components/custom/j-object')
 const
-  { viewport } = dom, 
+  { viewport } = dom,
   { position } = event,
   moveForce = 30,
   rotateForce = 40,
@@ -201,7 +201,7 @@ export default {
       onInput (e) {
         this.selectedBg = e
         console.log(e)
-      },    
+      },
       launch (url) {
         openURL(url)
       },

@@ -2,7 +2,7 @@
 
   div
     //- PREVIEW
-    j-panel(icon='business', :title='value.name + " Preview"', :width='900', :height='800', :x='350', :y='10')
+    j-panel(icon='business', :title='value.name + " Preview"', :width='400', :height='400', :x='770', :y='10')
       div.j-tray.area.panel-item-grow(slot='content')
         div.row
           div(:class='value.options.frame')
@@ -13,7 +13,7 @@
 
     //- SETTINGS
     j-panel(icon='business', :title='value.name',
-      :width='900', :height='800', :x='350', :y='10')
+      :width='400', :height='800', :x='350', :y='10')
       div.j-tray.area.panel-item-grow(slot='content')
         div.row
 
