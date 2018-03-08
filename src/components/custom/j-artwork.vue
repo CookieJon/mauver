@@ -4,7 +4,7 @@
     //- PREVIEW
     j-panel(icon='business', :title='value.name + " Preview"', :width='400', :height='400', :x='770', :y='10')
       div.j-tray.area.panel-item-grow(slot='content')
-        div.row
+        div.rowx
           div(:class='value.options.frame')
             div.picture-mat
               div.picture-art
@@ -941,6 +941,15 @@ export default {
   width: 100%;
   height: 100%;
   box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.5) inset;
+}
+
+
+
+
+  // *****  FRAME MINIMAL   https //thinkux.ca/blog/Creating-Framed-Matted-Pictures-Using-CSS/
+.picture-frame-none mat {
+  width:100%;
+  height:100%;
 }
 
 
