@@ -1,5 +1,48 @@
 <template lang="pug">
 
+//- https://jsfiddle.net/Herteby/rwfam6p1/
+
+//- <div id="vue">
+//-   <input v-model="input">
+//-   <select v-model="selected">
+//-     <option v-for="fn, name in filters" :value="name">{{name}}</option>
+//-   </select>
+//-   <button @click="filterChain.push(selected)">Add to chain</button>
+//-   <h3>Filter chain:</h3>
+//-   <span v-for="filter, i in filterChain" @click="filterChain.splice(i, 1)">
+//-     {{filter}} >
+//-   </span>
+//-   <h3>Result:</h3>
+//-   {{output}}
+//- </div>
+
+// new Vue({
+//   el:'#vue',
+//   data(){
+//   	return {
+//     	input:'Hello, world!',
+//       selected:'reverse',
+//       filters:{
+//       	reverse: val => val.split('').reverse().join(''),
+//         space: val => val.split('').join(' '),
+//         upperCase: val => val.toUpperCase(),
+//         lowerCase: val => val.toLowerCase()
+//       },
+//       filterChain:[]
+//     }
+//   },
+//   computed:{
+//   	output(){
+//     	let thing = this.input
+//       this.filterChain.forEach(filterName => {
+//         thing = this.filters[filterName](thing)
+//       })
+//     	return thing
+//     }
+//   }
+// })
+
+
   div
     //- PREVIEW
     j-panel(icon='business', :title='value.name + " Preview"', :width='400', :height='400', :x='770', :y='10')
