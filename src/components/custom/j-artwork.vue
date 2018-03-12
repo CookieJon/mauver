@@ -1,48 +1,5 @@
 <template lang="pug">
 
-//- https://jsfiddle.net/Herteby/rwfam6p1/
-
-//- <div id="vue">
-//-   <input v-model="input">
-//-   <select v-model="selected">
-//-     <option v-for="fn, name in filters" :value="name">{{name}}</option>
-//-   </select>
-//-   <button @click="filterChain.push(selected)">Add to chain</button>
-//-   <h3>Filter chain:</h3>
-//-   <span v-for="filter, i in filterChain" @click="filterChain.splice(i, 1)">
-//-     {{filter}} >
-//-   </span>
-//-   <h3>Result:</h3>
-//-   {{output}}
-//- </div>
-
-// new Vue({
-//   el:'#vue',
-//   data(){
-//   	return {
-//     	input:'Hello, world!',
-//       selected:'reverse',
-//       filters:{
-//       	reverse: val => val.split('').reverse().join(''),
-//         space: val => val.split('').join(' '),
-//         upperCase: val => val.toUpperCase(),
-//         lowerCase: val => val.toLowerCase()
-//       },
-//       filterChain:[]
-//     }
-//   },
-//   computed:{
-//   	output(){
-//     	let thing = this.input
-//       this.filterChain.forEach(filterName => {
-//         thing = this.filters[filterName](thing)
-//       })
-//     	return thing
-//     }
-//   }
-// })
-
-
   div
     //- PREVIEW
     j-panel(icon='business', :title='value.name + " Preview"', :width='400', :height='400', :x='770', :y='10')
@@ -148,7 +105,7 @@
                       |PIXELMAP
                       div.row.no-wrap
                         div.col-3
-                          // pixelMapInput
+                          //- // pixelMapInput
                           j-drop-target(:value='pixelMapInput', @add='dropPixelMapInput($event)', style='width:80px;height:80px;')
                           //- j-drop-target(:value='goboFrame', @add='dropGoboFrame($event)', style='width:80px;height:80px;')
                           //- j-canvas(:value='bitmapFilterOutput.colors', style='width:80px;height:80px;')
@@ -159,23 +116,70 @@
                           q-toggle(v-model="myValue.options.unmapPixelMapSpeed", label='Unmap Speed')
                           q-toggle(v-model="myValue.options.mapPixelMapSpeed", label='Map Speed')
 
-            // GOBO
+            // COLOR MAP
             q-card(color='dark')
                 q-card-main
                   div.row
                     div.col
-                      |GOBO
+                      |COLORMAP
                       div.row.no-wrap
-                        // Bitmap
-                        //- j-drop-target(:value='gobo', @add='dropGobo($event)', style='width:80px;height:80px;')
-                        //- j-drop-target(:value='goboFrame', @add='dropGoboFrame($event)', style='width:80px;height:80px;')
-                        //- j-canvas(:value='bitmapFilterOutput.colors', style='width:80px;height:80px;')
+                        div.col-3
+                          //- // colorMapInput
+                          j-drop-target(:value='colorMapInput', @add='dropColorMapInput($event)', style='width:80px;height:80px;')
+                          //- j-drop-target(:value='goboFrame', @add='dropGoboFrame($event)', style='width:80px;height:80px;')
+                          //- j-canvas(:value='bitmapFilterOutput.colors', style='width:80px;height:80px;')
+                        div.col-3
+                          q-toggle(v-model="myValue.options.unmapColorMap", label='Unmap')
+                          q-toggle(v-model="myValue.options.mapColorMap", label='Map')
 
 
     </q-card-main>
   </q-card-media>
 
 </template>
+
+//- https://jsfiddle.net/Herteby/rwfam6p1/
+
+//- <div id="vue">
+//-   <input v-model="input">
+//-   <select v-model="selected">
+//-     <option v-for="fn, name in filters" :value="name">{{name}}</option>
+//-   </select>
+//-   <button @click="filterChain.push(selected)">Add to chain</button>
+//-   <h3>Filter chain:</h3>
+//-   <span v-for="filter, i in filterChain" @click="filterChain.splice(i, 1)">
+//-     {{filter}} >
+//-   </span>
+//-   <h3>Result:</h3>
+//-   {{output}}
+//- </div>
+
+//- // new Vue({
+//- //   el:'#vue',
+//- //   data(){
+//- //   	return {
+//- //     	input:'Hello, world!',
+//- //       selected:'reverse',
+//- //       filters:{
+//- //       	reverse: val => val.split('').reverse().join(''),
+//- //         space: val => val.split('').join(' '),
+//- //         upperCase: val => val.toUpperCase(),
+//- //         lowerCase: val => val.toLowerCase()
+//- //       },
+//- //       filterChain:[]
+//- //     }
+//- //   },
+//- //   computed:{
+//- //   	output(){
+//- //     	let thing = this.input
+//- //       this.filterChain.forEach(filterName => {
+//- //         thing = this.filters[filterName](thing)
+//- //       })
+//- //     	return thing
+//- //     }
+//- //   }
+//- // })
+
 
 <script>
 /* eslint-disable */
@@ -259,8 +263,8 @@ export default {
       pixels: null,
       // imageData: null,
 
-      pixelMapInput: null,  // greyscale source for generating a pixelmap
-
+      pixelMapInput: null,  // greyscale source for generating a pixelmap,
+      colorMapInput: null,
 
       sliderInterval: 10,         // Timeout for continuous press
 
@@ -609,11 +613,14 @@ export default {
           }
         }
       }
-
-      console.log('PROCESSED MAP: ', mapOut)
+    },
+    dropColorMapInput(e) {
+      console.log('dropColorMapInput')
+      e.item.remove() // will be added by v-for instead
+      this.colorMapInput = e.clone.obj
       let art = {
         id: this.value.id,
-        pixelmap:  mapOut
+        colormap: this.colorMapInput.pixels
       }
       this.$store.dispatch('updateFields', {artworks: [art]} )
     },
@@ -754,7 +761,7 @@ export default {
 
       }
 
-      let theColor, mappedIndex
+      let theColor, mappedIndex, colorIndex
 
       let tmp = new ImageData(256,256)
       //tmp.data.fill(125)
@@ -765,7 +772,12 @@ export default {
           mappedIndex = i * 4
         }
         try {
-          theColor = SLIDING_COLORS[SLIDING_PIXELS[i]];
+
+
+          colorIndex =  value.mapColorMap ? (SLIDING_PIXELS[i] + value.colormap[i]) % 256 : SLIDING_PIXELS[i]
+
+          theColor = SLIDING_COLORS[colorIndex];
+
 
           tmp.data[mappedIndex] = theColor.r; //*4 =*4 =*4 =*4 = !! NB!!!
           tmp.data[mappedIndex+1] = theColor.g;

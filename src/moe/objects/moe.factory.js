@@ -21,6 +21,17 @@ export default class Factory {
 	}
 
 
+
+  // FILTERS
+  //
+  static createFilter_Slider () {
+    let filter = {
+      id: 'FILTER'+ UID++,
+      delta: Array(65536).fill(0)
+    }
+  }
+
+
   // PALETTE
   //
   static createPalette(presetId) {
@@ -47,10 +58,12 @@ export default class Factory {
         useNewPalette: false,
         remapBitmapToPalette: true,
         slidingLocked: true,
-        unmapPixelMap: true,  // Apply the pixelmap to the bitmap?
-        mapPixelMap: true,
+        unmapPixelMap: false,  // Apply the pixelmap to the bitmap?
+        mapPixelMap: false,
         unmapPixelMapSpeed: true, // Apply the pixelmap to the sliding speeds?
         mapPixelMapSpeed: true,
+        mapColorMap: false, // Apply color map?
+        unmapColorMap: false,
         frame: 'picture-frame-minimal',
         aspect: 'picture-aspect-square' // square | portrait | landscape
       },

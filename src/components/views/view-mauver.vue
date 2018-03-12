@@ -39,7 +39,9 @@ div
 <script>
 /* eslint-disable */
 import { dom, event, openURL, QLayout, QToolbar, QToolbarTitle, QBtn, QIcon, QList, QListHeader, QItem, QItemSide, QItemMain, QSlider} from 'quasar'
-import MoeObjects from '../../moe/objects'
+//import MoeObjects from '../../moe/objects'
+
+
 import Factory from '../../moe/objects/moe.factory.js'
 import dataColors from '../../data'
 import iq from 'image-q'
