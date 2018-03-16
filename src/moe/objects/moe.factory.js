@@ -58,10 +58,13 @@ export default class Factory {
         useNewPalette: false,
         remapBitmapToPalette: true,
         slidingLocked: true,
+
         unmapPixelMap: false,  // Apply the pixelmap to the bitmap?
         mapPixelMap: false,
+
         unmapPixelMapSpeed: true, // Apply the pixelmap to the sliding speeds?
         mapPixelMapSpeed: true,
+        
         mapColorMap: false, // Apply color map?
         unmapColorMap: false,
         frame: 'picture-frame-minimal',

@@ -60,6 +60,26 @@
                     div.col-6
                       q-select(dark, v-model='myValue.options.frame', :options='frameOptions')
                       q-select(dark, v-model='myValue.options.aspect', :options='aspectOptions')
+            // PXL MAP
+            q-card(color='dark')
+                q-card-main
+                  div.row
+                    div.col
+                      |PIXELMAP
+                      div.row.no-wrap
+                        div.col-3
+                          //- // pixelMapInput
+                          j-drop-target(:value='pixelMapInput', @add='dropPixelMapInput($event)', style='width:80px;height:80px;')
+                          //- j-drop-target(:value='goboFrame', @add='dropGoboFrame($event)', style='width:80px;height:80px;')
+                          //- j-canvas(:value='bitmapFilterOutput.colors', style='width:80px;height:80px;')
+                        div.col-3
+                          q-toggle(v-model="myValue.options.unmapPixelMap", label='Unmap')
+                          q-toggle(v-model="myValue.options.mapPixelMap", label='Map')
+                        div.col-3
+                          q-toggle(v-model="myValue.options.unmapPixelMapSpeed", label='Unmap Speed')
+                          q-toggle(v-model="myValue.options.mapPixelMapSpeed", label='Map Speed')
+
+
 
             // SPEEDMAP
             q-card(color='dark')
@@ -97,24 +117,6 @@
                       div.col-3
                         j-canvas(:value='paletteFilterOutput', style='width:80px;height:80px;')
 
-            // PXL MAP
-            q-card(color='dark')
-                q-card-main
-                  div.row
-                    div.col
-                      |PIXELMAP
-                      div.row.no-wrap
-                        div.col-3
-                          //- // pixelMapInput
-                          j-drop-target(:value='pixelMapInput', @add='dropPixelMapInput($event)', style='width:80px;height:80px;')
-                          //- j-drop-target(:value='goboFrame', @add='dropGoboFrame($event)', style='width:80px;height:80px;')
-                          //- j-canvas(:value='bitmapFilterOutput.colors', style='width:80px;height:80px;')
-                        div.col-3
-                          q-toggle(v-model="myValue.options.unmapPixelMap", label='Unmap')
-                          q-toggle(v-model="myValue.options.mapPixelMap", label='Map')
-                        div.col-3
-                          q-toggle(v-model="myValue.options.unmapPixelMapSpeed", label='Unmap Speed')
-                          q-toggle(v-model="myValue.options.mapPixelMapSpeed", label='Map Speed')
 
             // COLOR MAP
             q-card(color='dark')
@@ -125,7 +127,7 @@
                       div.row.no-wrap
                         div.col-3
                           //- // colorMapInput
-                          j-drop-target(:value='colorMapInput', @add='dropColorMapInput($event)', style='width:80px;height:80px;')
+                          j-drop-target(:value='myColormap', @add='dropColormap($event)', style='width:80px;height:80px;')
                           //- j-drop-target(:value='goboFrame', @add='dropGoboFrame($event)', style='width:80px;height:80px;')
                           //- j-canvas(:value='bitmapFilterOutput.colors', style='width:80px;height:80px;')
                         div.col-3
@@ -333,6 +335,14 @@ export default {
         // alert('sorted!')
       }
     },
+    myColormap: {
+      get () {
+        return this.value.colormap
+      },
+      set() {
+        // alert('sorted!')
+      }
+    },    
     myImageData () {
       // NB. Only used for icon & general. preview imageData is handled manually updating ctx for Art because of fast control, don't  want watchers.
       return this.value ? this.value.imageData : null
@@ -394,7 +404,7 @@ export default {
 
 
       // UNMAP PIXEL MAP!
-      if (this.value.options.unmapPixelMap && output.pixels) {
+      if (this.value.options.unmapPixelMap && output.pixels && this.value.pixelmap) {
         let tmpPixels = output.pixels.slice()
 
         for (var i=0; i<65536; i++ ) {
@@ -596,6 +606,15 @@ export default {
       }
       this.$store.dispatch('updateFields', {artworks: [art]} )
     },
+    dropColormap(e) {
+      console.log('dropBitmap')
+      e.item.remove() // will be added by v-for instead
+      let art = {
+        id: this.value.id,
+        colormap:  e.clone.obj
+      }
+      this.$store.dispatch('updateFields', {artworks: [art]} )
+    },    
     dropPixelMapInput(e) {
       console.log('dropPixelMapInput')
       e.item.remove() // will be added by v-for instead
@@ -613,16 +632,6 @@ export default {
           }
         }
       }
-    },
-    dropColorMapInput(e) {
-      console.log('dropColorMapInput')
-      e.item.remove() // will be added by v-for instead
-      this.colorMapInput = e.clone.obj
-      let art = {
-        id: this.value.id,
-        colormap: this.colorMapInput.pixels
-      }
-      this.$store.dispatch('updateFields', {artworks: [art]} )
     },
     //
     addFilter (e) {
@@ -766,18 +775,25 @@ export default {
       let tmp = new ImageData(256,256)
       //tmp.data.fill(125)
       for (var i=0; i<65536; i++ ) {
+
+        // MAP PIXEL MAP        
         if (this.value.options.mapPixelMap) {
           mappedIndex = (this.value.pixelmap[i*2] + 256 * this.value.pixelmap[i*2+1]) * 4
         } else {
           mappedIndex = i * 4
         }
+
+        // MAP COLOR MAP
+        if (this.value.options.mapColorMap) {
+          colorIndex = (SLIDING_PIXELS[i] + this.value.colormap.pixels[i]) % 256
+        } else {
+          colorIndex = SLIDING_PIXELS[i]
+        }
+
+
         try {
 
-
-          colorIndex =  value.mapColorMap ? (SLIDING_PIXELS[i] + value.colormap[i]) % 256 : SLIDING_PIXELS[i]
-
           theColor = SLIDING_COLORS[colorIndex];
-
 
           tmp.data[mappedIndex] = theColor.r; //*4 =*4 =*4 =*4 = !! NB!!!
           tmp.data[mappedIndex+1] = theColor.g;

@@ -44,7 +44,8 @@ const Artwork = new schema.Entity('artworks', {
   // name: null,
   // imageData: null,
   filters: [ Bitmap ],
-  bitmap: Bitmap
+  bitmap: Bitmap,
+  colormap: Bitmap
 })
 
 // MASTER SCHEMA
