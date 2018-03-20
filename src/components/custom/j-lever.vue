@@ -16,9 +16,9 @@
         v-for="(n, i) in myRange"
         :key="i"
         :style="{left: n.percent * 100 + '%'}">
-        <div class="q-slider-value">
+        <!-- <div class="q-slider-value">
           {{ n.value  }}
-        </div>
+        </div> -->
       </div>
       <div
         class="q-slider-track active-track"
@@ -289,11 +289,15 @@ $dark      ?= #333
 $faded     ?= #777
 
 $slider-height              = 28px
-$slider-track-height        = 2px
-$slider-mark-height         = 10px
-$slider-handle-size         = 12px
+$slider-track-height        = 7px
+$slider-mark-height         = 20px
+$slider-handle-size         = 24px
 $slider-label-transform     = translateX(-50%) translateY(-139%) scale(1)
 
+
+.q-slider
+  padding-top 10px
+  
 .q-slider-track, .q-slider-mark
   opacity .4
   background currentColor

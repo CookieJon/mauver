@@ -48,7 +48,7 @@ export default class MoeUtils {
       return imgData
 	}
 
-	static imageDataFromPixels({pixels, colors}) {
+	static imageDataFromPixels(pixels) {
 		// Render as greyscale
 		let imgData = new ImageData(256, 256)
 		try {

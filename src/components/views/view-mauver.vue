@@ -8,7 +8,7 @@ div
     j-artwork(v-model='selectedArtwork')
   j-upload-zone(ref='zone',@select='addBitmapsFromFiles') <!-- do not delete! -->
   // COLLECTION
-  j-panel(icon='business', title='O', :width='300', :height='700', :x='10', :y='10')
+  j-panel(icon='business', title='O', :width='185', :height='850', :x='5', :y='5')
     div.j-panel-toolbar.text-black(slot='toolbar', style='padding:4px;')
       q-btn(small,push,icon='art track', @click='addArtwork')
       q-btn(small,push,icon='satellite', @click='openFileInput')
@@ -181,7 +181,7 @@ export default {
       this.$store.dispatch('updateEntities', {palettes: [pal]})
     },
     addArtwork () {
-      let art = Factory.createArtwork(null, Factory.createPalette('b_rbgy12_rgby34_g123_w_lumaUndulating'))
+      let art = Factory.createArtwork(Factory.createPalette('w_rgby1234_b_lumaUndulating'))
       this.$store.dispatch('updateEntities', {artworks: [art]} )
     },
 

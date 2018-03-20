@@ -11,7 +11,7 @@ import dataColors from '../../data'
 import MoeObjects from '../../moe/objects'
 import ColorUtils from 'moe/utils/moe.utils.color.js'
 import MoeUtils from 'moe/utils/moe.utils.js'
-
+var crunch = require("number-crunch");
 import iq from 'image-q'
 
 let UID = 0
@@ -19,6 +19,8 @@ let UID = 0
 export default class Factory {
 	constructor () {
 	}
+
+
 
 
   // PALETTE
@@ -35,10 +37,20 @@ export default class Factory {
     return pal
   }
 
+  // FILTERS
+  //
+  static createFilter_Slider() {
+    let filter = {
+      id: 'SLIDER'+UID++,
+      delta: new Array(65536).fill(0),
+      pixelsOut: null
+    }
+    return filter
+  }
 
   // ARTWORK
   //
-	static createArtwork(oBitmap, oPalette) {
+	static createArtwork(oPalette) {
     let id= 'ART'+UID++
     let art = {
       id: id,
@@ -47,22 +59,24 @@ export default class Factory {
         useNewPalette: false,
         remapBitmapToPalette: true,
         slidingLocked: true,
+        mapColorMap: true,
+        unmapColorMap: true,
         unmapPixelMap: true,  // Apply the pixelmap to the bitmap?
         mapPixelMap: true,
         unmapPixelMapSpeed: true, // Apply the pixelmap to the sliding speeds?
         mapPixelMapSpeed: true,
-        frame: 'picture-frame-minimal',
+        frame: 'picture-frame-none',
         aspect: 'picture-aspect-square' // square | portrait | landscape
       },
 
       pixels: Array(65536).fill(244),
-      bitmap: oBitmap,
+      bitmap: null,
       palette: oPalette,
       imageData: null,
       slidingCurrent: [],
       filters: [],
       // 1. artwork components. MUCH TODO:!
-      pixelmap: null,
+      pixelmap: null,   // <- NB: NOT a BITMAP!!!
       colormap: null,
       slider: null,
       gobo: null

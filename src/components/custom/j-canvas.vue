@@ -2,7 +2,8 @@
 <template>
 <div :style="styleComponent">
   <canvas ref="canvas" :width='myPixelWidth' :height='myPixelHeight'></canvas>
-  <!-- {{ msg }}  -->
+  <!-- {{ msg }} {{ debug }}-->
+  
 </div>
 </template>
 
@@ -48,6 +49,9 @@ export default {
   },
 
   computed: {
+    debug () { 
+      return myImageData ? myImageData.slice(0,10) : 'undefined'
+    },
     myImageData () {
       let v = this.value
       console.log('compute CANVAS myValue AND set myImageData and RENDER from value =>', v)
@@ -57,7 +61,6 @@ export default {
       if (typeof v === ImageData) {
         return extend({}, v)
       }
-      this.myValue = extend({}, newVal)
     },
     styleComponent () {
       return {
@@ -76,7 +79,6 @@ export default {
 
         let imgData
         let msg
-
         // undefined / empty 
         if (!newVal) {
           msg = 'undefined'
@@ -90,7 +92,7 @@ export default {
         }
 
         // Array (of colors)
-        else if (Array.isArray(newVal)) {
+        else if (Array.isArray(newVal) && newVal.length <= 256) {
           msg = 'Array'
           imgData = MoeUtils.imageDataFromColors(newVal)
         }
@@ -117,6 +119,13 @@ export default {
         else if (newVal.pixels) {
           msg = '.pixels'
           imgData = MoeUtils.imageDataFromPixels(newVal.pixels)
+        }
+
+        // Array of pixels
+        else if (newVal.length === 65536) {
+          msg = 'Array of pixels (render greyscal)'
+          imgData = MoeUtils.imageDataFromPixels(newVal)
+
         }
 
         // unknown 
