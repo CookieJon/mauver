@@ -1,5 +1,3 @@
-\\ DO WANT
-
 <template lang="pug">
 
   div
