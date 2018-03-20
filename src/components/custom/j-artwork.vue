@@ -1,6 +1,9 @@
 <template lang="pug">
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/master
   div
     //-  PREVIEW
     j-panel(icon='business', :title='value.name + " Preview"', :width='600', :height='800', :x='600', :y='5')
@@ -17,6 +20,7 @@
     //- SETTINGS
     j-panel(icon='business', :title='value.name', :width='400', :height='850', :x='195', :y='5')
       div.j-tray.area.panel-item-grow(slot='content')
+<<<<<<< HEAD
         
         //- LEVER
         q-card(color='dark')      
@@ -107,11 +111,175 @@
                 div.row
                   j-canvas(:value='pipelineFiltered', width='40px' height='40px')
                 
+=======
+        div.row
+
+          div.col
+
+            // BITMAP
+            q-card(color='dark')
+                q-card-main
+                  div.row
+                    j-lever(v-model='controlTargetPower', rest='50%', :markers='true',
+                      :labelAlways='true',
+                      orientation='vertical',
+                      @start='__startSliding',
+                      @stop='__stopSliding',
+                      :range={
+                        'min': -10000,
+                        '35%': -1200,
+                        '45%': -100,
+                        '50%': 0,
+                        '55%': 100,
+                        '65%': 1200,
+                        'max': 10000
+                      }
+                    )
+                  div.row
+                    div.col
+                      |BITMAP
+                      div.row.no-wrap
+                        // Bitmap
+                        j-drop-target(:value='myBitmap', @add='dropBitmap($event)', style='width:80px;height:80px;')
+                        //- j-canvas(:value='bitmapFilterOutput.colors', style='width:80px;height:80px;')
+
+                    div.col
+                      |PALETTE
+                      div.row.no-wrap
+                        // Art Palette
+                        j-drop-target(:value='myPalette', @add='dropPalette($event)', style='width:80px;height:80px;')
+                        j-canvas(:value='paletteFilterOutput', style='width:80px;height:80px;')
+                  div.row.gutter-xs
+                    div.col-6
+                      q-select(dark, v-model='paletteDDL', :options='paletteOptions')
+                      q-toggle(v-model="myValue.options.useNewPalette", label='Active')
+                      q-toggle(v-model="myValue.options.remapBitmapToPalette", label='Remap Bitmap')
+                    div.col-6
+                      q-select(dark, v-model='myValue.options.frame', :options='frameOptions')
+                      q-select(dark, v-model='myValue.options.aspect', :options='aspectOptions')
+            // PXL MAP
+            q-card(color='dark')
+                q-card-main
+                  div.row
+                    div.col
+                      |PIXELMAP
+                      div.row.no-wrap
+                        div.col-3
+                          //- // pixelMapInput
+                          j-drop-target(:value='pixelMapInput', @add='dropPixelMapInput($event)', style='width:80px;height:80px;')
+                          //- j-drop-target(:value='goboFrame', @add='dropGoboFrame($event)', style='width:80px;height:80px;')
+                          //- j-canvas(:value='bitmapFilterOutput.colors', style='width:80px;height:80px;')
+                        div.col-3
+                          q-toggle(v-model="myValue.options.unmapPixelMap", label='Unmap')
+                          q-toggle(v-model="myValue.options.mapPixelMap", label='Map')
+                        div.col-3
+                          q-toggle(v-model="myValue.options.unmapPixelMapSpeed", label='Unmap Speed')
+                          q-toggle(v-model="myValue.options.mapPixelMapSpeed", label='Map Speed')
+
+
+
+            // SPEEDMAP
+            q-card(color='dark')
+                q-card-main
+                  div.col
+                    |SPEEDMAP
+
+                    div.row
+                      div.col-9
+                        div.row
+                          div.col
+                            //- q-select(dark, v-model='slidingSpeedsPattern', :options='presetSlidingSpeedOptions')
+                            q-input.col(stack-label='Sliding Speeds Pattern', dark, v-model='slidingSpeedsPattern')
+                          div.col
+
+                            q-btn(small,push,ref='target')|?
+                              q-popover(ref='popover')
+                                q-list(separator,link,style="min-width: 100px")
+                                  q-item(
+                                    v-for="(n, i) in presetSlidingSpeedOptions",
+                                    :key='i',
+                                    @click='slidingSpeedsPattern=presetSlidingSpeedOptions[i].value,$refs.popover.close()')
+                                    q-item-main(:label='n.label')
+                        div.row
+                          q-toggle(v-model="myValue.options.slidingLocked", label='Lock')
+                          q-btn(small,push,ref='target',@click='changePeriod(-1)')|<
+                          q-btn(small,push,ref='target',@click='changePeriod(1)')|>
+                          q-btn(small,push,ref='target',@click='changeAmplitude(1)')|+
+                          q-btn(small,push,ref='target',@click='changeAmplitude(-1)')|-
+                          //- q-input.col(readonly,stack-label='started', dark, v-model='slidingStarted')
+                          //- q-input.col(stack-label='Control Target Power', dark, v-model='controlTargetPower')
+                      //- div.row
+                      //-   q-input.col(stack-label='Control Power', dark, v-model='controlPower')
+                      //-   q-input.col(stack-label='Sliding Speed Power', dark, v-model='slidingSpeedPower')
+                      div.col-3
+                        j-canvas(:value='paletteFilterOutput', style='width:80px;height:80px;')
+
+
+            // COLOR MAP
+            q-card(color='dark')
+                q-card-main
+                  div.row
+                    div.col
+                      |COLORMAP
+                      div.row.no-wrap
+                        div.col-3
+                          //- // colorMapInput
+                          j-drop-target(:value='myColormap', @add='dropColormap($event)', style='width:80px;height:80px;')
+                          //- j-drop-target(:value='goboFrame', @add='dropGoboFrame($event)', style='width:80px;height:80px;')
+                          //- j-canvas(:value='bitmapFilterOutput.colors', style='width:80px;height:80px;')
+                        div.col-3
+                          q-toggle(v-model="myValue.options.unmapColorMap", label='Unmap')
+                          q-toggle(v-model="myValue.options.mapColorMap", label='Map')
+
+>>>>>>> origin/master
 
     </q-card-main>
   </q-card-media>
 
 </template>
+
+//- https://jsfiddle.net/Herteby/rwfam6p1/
+
+//- <div id="vue">
+//-   <input v-model="input">
+//-   <select v-model="selected">
+//-     <option v-for="fn, name in filters" :value="name">{{name}}</option>
+//-   </select>
+//-   <button @click="filterChain.push(selected)">Add to chain</button>
+//-   <h3>Filter chain:</h3>
+//-   <span v-for="filter, i in filterChain" @click="filterChain.splice(i, 1)">
+//-     {{filter}} >
+//-   </span>
+//-   <h3>Result:</h3>
+//-   {{output}}
+//- </div>
+
+//- // new Vue({
+//- //   el:'#vue',
+//- //   data(){
+//- //   	return {
+//- //     	input:'Hello, world!',
+//- //       selected:'reverse',
+//- //       filters:{
+//- //       	reverse: val => val.split('').reverse().join(''),
+//- //         space: val => val.split('').join(' '),
+//- //         upperCase: val => val.toUpperCase(),
+//- //         lowerCase: val => val.toLowerCase()
+//- //       },
+//- //       filterChain:[]
+//- //     }
+//- //   },
+//- //   computed:{
+//- //   	output(){
+//- //     	let thing = this.input
+//- //       this.filterChain.forEach(filterName => {
+//- //         thing = this.filters[filterName](thing)
+//- //       })
+//- //     	return thing
+//- //     }
+//- //   }
+//- // })
+
 
 <script>
 /* eslint-disable */
@@ -194,7 +362,14 @@ export default {
       palette: null,
       pixels: null,
       // imageData: null,
+<<<<<<< HEAD
       pixelMapInput: null,  // greyscale source for generating a pixelmap
+=======
+
+      pixelMapInput: null,  // greyscale source for generating a pixelmap,
+      colorMapInput: null,
+
+>>>>>>> origin/master
       sliderInterval: 10,         // Timeout for continuous press
 
       // bignum crunching base-256 arrays
@@ -366,6 +541,14 @@ export default {
         // alert('sorted!')
       }
     },
+    myColormap: {
+      get () {
+        return this.value.colormap
+      },
+      set() {
+        // alert('sorted!')
+      }
+    },    
     myImageData () {
       // NB. Only used for icon & general. preview imageData is handled manually updating ctx for Art because of fast control, don't  want watchers.
       return this.value ? this.value.imageData : null
@@ -375,6 +558,126 @@ export default {
     },
 
 
+<<<<<<< HEAD
+=======
+    // COMPUTED PROPS ON THE FLY: READ  https://jsfiddle.net/Linusborg/3p4kpz1t/
+    //
+    bitmapFilterOutput () {
+
+      let output = {
+        pixels: this.value.bitmap ? Array.prototype.slice.call(this.value.bitmap.pixels) : undefined,
+        colors: this.value.bitmap ? this.value.bitmap.palette.colors.slice() : this.value.palette.colors
+      }
+
+      console.log("COMPUTED bitmapOutput")
+      return output
+    },
+    // ===>>
+    paletteFilterOutput () {
+      const input = this.bitmapFilterOutput
+
+      let output = {
+        pixels: input.pixels ? Array.prototype.slice.call(input.pixels) : undefined,
+        colors: input.colors ? input.colors.slice() : undefined
+      }
+
+
+      const oUseNewPalette = this.value.options.useNewPalette
+      const oRemapBitmapToPalette = this.value.options.remapBitmapToPalette
+
+      if (oUseNewPalette) {
+
+        let bitmapColors = input.colors // Just in case
+
+        ////output.colors =   Array.prototype.slice.call(this.value.palette.colors)
+        output.colors = JSON.parse(JSON.stringify(this.value.palette.colors))
+
+        if (oRemapBitmapToPalette) {
+          // Remap bitmap to palette
+          let paletteColors = output.colors
+          let map = bitmapColors.map(b => {
+            let m2 = paletteColors.findIndex(p => {return p.id === b.id})
+            return m2 > -1 ? m2 : 0
+          })
+          console.log('MAP =>', bitmapColors.map(c=>c.name))
+          console.log('MAP =>', paletteColors.map(c=>c.name))
+          console.log('MAP =>', map)
+          for (let i = 0; i < input.pixels.length; i++) {
+            output.pixels[i] = map[input.pixels[i]]
+          }
+
+        }
+
+      }
+
+
+      // UNMAP PIXEL MAP!
+      if (this.value.options.unmapPixelMap && output.pixels && this.value.pixelmap) {
+        let tmpPixels = output.pixels.slice()
+
+        for (var i=0; i<65536; i++ ) {
+          output.pixels[i] = tmpPixels[this.value.pixelmap[i*2]+256*this.value.pixelmap[i*2+1]];
+        }
+
+      }
+
+      output.id = this.uid++
+      console.log("COMPUTED paletteFilterOutput", output)
+      return output
+    },
+    // ===>>
+    sliderFilterOutput() {
+      // 2. Sliding Progress
+      // 3.
+      const input = this.paletteFilterOutput
+
+      let output = {
+        pixels: input.pixels ? Array.prototype.slice.call(input.pixels) : undefined,
+        colors: input.colors ? input.colors.slice() : undefined
+      }
+
+      console.log("SLIDER INPUT WAS", input)
+      if (input.pixels.length != 65536) alert(input.pixels.length)
+
+
+      return input
+
+    },
+
+    // ===>> BITMAP ==> PALETTE ===>
+    filterFinalImageData() {
+
+      const input = extend(true, {},this.paletteFilterOutput)
+
+      // Preview Image &
+      // ImageData
+      let imgData = new ImageData(256,256)
+      try {
+        for (var i=0; i<65536; i++ ) {
+          let mappedIndex = i * 4;
+          let theColor = input.colors[input.pixels[i]]
+          // if (!theColor) console.log('NO COLOR @'+i, SLIDING_PIXELS, SLIDING_PIXELS[i], v.palette.colors)
+          imgData.data[mappedIndex] = theColor.r
+          imgData.data[mappedIndex+1] = theColor.g
+          imgData.data[mappedIndex+2] = theColor.b
+          imgData.data[mappedIndex+3] = 255;
+        }
+      } catch(e) {
+        console.warn('Render error:', e)
+      }
+
+      console.log("COMPUTED filterFinalImageData")
+      this.$nextTick(() => {
+      //  this.myCtx.putImageData(imgData,0,0)
+      })
+
+      // this.$emit('input', this.myValue)
+      return imgData
+
+    },
+
+
+>>>>>>> origin/master
 
     myValue() {
       let val = extend({}, {val: this.value}).val
@@ -582,6 +885,15 @@ export default {
       }
       this.$store.dispatch('updateFields', {artworks: [art]} )
     },
+    dropColormap(e) {
+      console.log('dropBitmap')
+      e.item.remove() // will be added by v-for instead
+      let art = {
+        id: this.value.id,
+        colormap:  e.clone.obj
+      }
+      this.$store.dispatch('updateFields', {artworks: [art]} )
+    },    
     dropPixelMapInput(e) {
       console.log('dropPixelMapInput')
       e.item.remove() // will be added by v-for instead
@@ -599,13 +911,6 @@ export default {
           }
         }
       }
-
-      console.log('PROCESSED MAP: ', mapOut)
-      let art = {
-        id: this.value.id,
-        pixelmap:  mapOut
-      }
-      this.$store.dispatch('updateFields', {artworks: [art]} )
     },
     //
     xaddFilter (e) {
@@ -745,7 +1050,46 @@ export default {
 
       }
 
+<<<<<<< HEAD
 
+=======
+      let theColor, mappedIndex, colorIndex
+
+      let tmp = new ImageData(256,256)
+      //tmp.data.fill(125)
+      for (var i=0; i<65536; i++ ) {
+
+        // MAP PIXEL MAP        
+        if (this.value.options.mapPixelMap) {
+          mappedIndex = (this.value.pixelmap[i*2] + 256 * this.value.pixelmap[i*2+1]) * 4
+        } else {
+          mappedIndex = i * 4
+        }
+
+        // MAP COLOR MAP
+        if (this.value.options.mapColorMap) {
+          colorIndex = (SLIDING_PIXELS[i] + this.value.colormap.pixels[i]) % 256
+        } else {
+          colorIndex = SLIDING_PIXELS[i]
+        }
+
+
+        try {
+
+          theColor = SLIDING_COLORS[colorIndex];
+
+          tmp.data[mappedIndex] = theColor.r; //*4 =*4 =*4 =*4 = !! NB!!!
+          tmp.data[mappedIndex+1] = theColor.g;
+          tmp.data[mappedIndex+2] = theColor.b;
+          tmp.data[mappedIndex+3] = 255;
+        } catch(e) {
+          console.log('error', SLIDING_COLORS, theColor, SLIDING_PIXELS[i], i)
+          console.log(i, SLIDING_PIXELS[i], SLIDING_PIXELS.length);
+          this.__stopSliding()
+          return;
+        }
+      }
+>>>>>>> origin/master
       // this.slidingImageData = tmp
       // update Preview
       this.__updatePreview({pixels: SLIDING_PIXELS, colors: SLIDING_COLORS})
