@@ -2,7 +2,7 @@
 
 
   div
-    //-  PREVIEW
+    //-  PREVIEW (w.bitmsp2 branch)
     j-panel(icon='business', :title='value.name + " Preview"', :width='600', :height='800', :x='600', :y='5')
       div.j-tray.area.panel-item-grow(slot='content')
         div.rowx
