@@ -22,8 +22,6 @@ export default class Factory {
 
 
 
-<<<<<<< HEAD
-=======
   // FILTERS
   //
   static createFilter_Slider () {
@@ -33,7 +31,6 @@ export default class Factory {
     }
   }
 
->>>>>>> origin/master
 
   // PALETTE
   //
@@ -71,15 +68,6 @@ export default class Factory {
         useNewPalette: false,
         remapBitmapToPalette: true,
         slidingLocked: true,
-<<<<<<< HEAD
-        mapColorMap: true,
-        unmapColorMap: true,
-        unmapPixelMap: true,  // Apply the pixelmap to the bitmap?
-        mapPixelMap: true,
-        unmapPixelMapSpeed: true, // Apply the pixelmap to the sliding speeds?
-        mapPixelMapSpeed: true,
-        frame: 'picture-frame-none',
-=======
 
         unmapPixelMap: false,  // Apply the pixelmap to the bitmap?
         mapPixelMap: false,
@@ -90,7 +78,6 @@ export default class Factory {
         mapColorMap: false, // Apply color map?
         unmapColorMap: false,
         frame: 'picture-frame-minimal',
->>>>>>> origin/master
         aspect: 'picture-aspect-square' // square | portrait | landscape
       },
 

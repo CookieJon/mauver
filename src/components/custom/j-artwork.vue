@@ -1,9 +1,5 @@
 <template lang="pug">
 
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/master
   div
     //-  PREVIEW
     j-panel(icon='business', :title='value.name + " Preview"', :width='600', :height='800', :x='600', :y='5')
@@ -20,98 +16,6 @@
     //- SETTINGS
     j-panel(icon='business', :title='value.name', :width='400', :height='850', :x='195', :y='5')
       div.j-tray.area.panel-item-grow(slot='content')
-<<<<<<< HEAD
-        
-        //- LEVER
-        q-card(color='dark')      
-          q-card-main.row   
-              j-lever(v-model='controlTargetPower', rest='50%', :markers='true',
-                :labelAlways='true',
-                orientation='vertical',
-                @start='__startSliding',
-                @stop='__stopSliding',
-                :range={
-                  'min': -10000,
-                  '35%': -1200,
-                  '45%': -100,
-                  '50%': 0,
-                  '55%': 100,
-                  '65%': 1200,
-                  'max': 10000
-                }
-              )
-        q-scroll-area(style="height: 800px" :thumb-style="{right: '4px',borderRadius: '2px',background: 'black',width: '5px', opacity: 1}"  :delay="1500")
-      
-          //- PALETTE
-          q-card(color='dark')      
-            q-card-main       
-              div.row
-                |PALETTE
-                j-canvas(:value='pipelineFiltered', width='40px' height='40px')
-              div.row
-                div.col-4
-                  j-drop-target(:value='myPalette', @add='dropPalette($event)', style='width:80px;height:80px;')
-                div.col-8
-                  q-select(dark, v-model='paletteDDL', :options='paletteOptions')
-                  q-select(dark, v-model='myValue.options.frame', :options='frameOptions')
-
-          //- PIXELMAP
-          q-card(color='dark')      
-            q-card-main       
-              div.row
-                |PIXELMAP
-              div.row
-                div.col
-                  j-drop-target(:value='pixelMapInput', @add='dropPixelMapInput($event)', style='width:80px;height:80px;')
-                div.col
-
-          //- SPEEDMAP
-          q-card(color='dark')
-            q-card-main
-              div.row
-                |SPEEDMAP
-              div.row
-                div.col-11
-                  //- q-select(dark, v-model='slidingSpeedsPattern', :options='presetSlidingSpeedOptions')
-                  q-input.col(stack-label='Sliding Speeds Pattern', dark, v-model='slidingSpeedsPattern')
-                div.col-1
-                  q-btn(small,push,ref='target')|?
-                    q-popover(ref='popover')
-                      q-list(separator,link,style="min-width: 100px")
-                        q-item(
-                          v-for="(n, i) in presetSlidingSpeedOptions",
-                          :key='i',
-                          @click='slidingSpeedsPattern=presetSlidingSpeedOptions[i].value,$refs.popover.close()')
-                          q-item-main(:label='n.label')
-              div.row
-                q-toggle(v-model="myValue.options.slidingLocked", label='Lock')
-                q-btn(small,push,@click='changePeriod(-1)')|<
-                q-btn(small,push,@click='changePeriod(1)')|>
-                q-btn(small,push,@click='changeAmplitude(1)')|+
-                q-btn(small,push,@click='changeAmplitude(-1)')|-
-          
-          //- FILTERS
-          q-card(color='dark')
-              q-card-main
-                div.row
-                  div.col
-                    |FILTERS
-                    q-btn(small,push,@click='setActiveFilter(-1)')|Initial
-                    q-btn(small,push,@click='setActiveFilter(-2)')|Final
-                    q-btn(small,push,@click='addFilter')|+ Filter
-                  
-                div.row(v-for='filter, i in value.filters' @click='setActiveFilter(i)')
-                  q-card(color='dark' :class='i === activeFilter ? "active" : ""')      
-                    q-card-main  
-                      div.row
-                        |{{i}}
-                        //- |{{ value.filters[i].pixelsOut }}
-                        j-canvas(:value='value.filters[i].delta', width='40px' height='40px')
-                        //- j-canvas(:value='{pixels: value.filters[i].pixelsOut, colors: value.palette.colors}', width='40px' height='40px')
-                div.row
-                  j-canvas(:value='pipelineFiltered', width='40px' height='40px')
-                
-=======
         div.row
 
           div.col
@@ -231,7 +135,6 @@
                           q-toggle(v-model="myValue.options.unmapColorMap", label='Unmap')
                           q-toggle(v-model="myValue.options.mapColorMap", label='Map')
 
->>>>>>> origin/master
 
     </q-card-main>
   </q-card-media>
@@ -362,14 +265,10 @@ export default {
       palette: null,
       pixels: null,
       // imageData: null,
-<<<<<<< HEAD
-      pixelMapInput: null,  // greyscale source for generating a pixelmap
-=======
 
       pixelMapInput: null,  // greyscale source for generating a pixelmap,
       colorMapInput: null,
 
->>>>>>> origin/master
       sliderInterval: 10,         // Timeout for continuous press
 
       // bignum crunching base-256 arrays
@@ -558,8 +457,6 @@ export default {
     },
 
 
-<<<<<<< HEAD
-=======
     // COMPUTED PROPS ON THE FLY: READ  https://jsfiddle.net/Linusborg/3p4kpz1t/
     //
     bitmapFilterOutput () {
@@ -677,7 +574,6 @@ export default {
     },
 
 
->>>>>>> origin/master
 
     myValue() {
       let val = extend({}, {val: this.value}).val
@@ -1050,9 +946,6 @@ export default {
 
       }
 
-<<<<<<< HEAD
-
-=======
       let theColor, mappedIndex, colorIndex
 
       let tmp = new ImageData(256,256)
@@ -1089,7 +982,6 @@ export default {
           return;
         }
       }
->>>>>>> origin/master
       // this.slidingImageData = tmp
       // update Preview
       this.__updatePreview({pixels: SLIDING_PIXELS, colors: SLIDING_COLORS})
