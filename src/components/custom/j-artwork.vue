@@ -12,15 +12,13 @@
                 canvas(ref='preview', @click="clickPreview", width='256', height='256', style='width:100%;height:100%;')
                 //- j-canvas.frame-type-grid(:image-data='filterFinalImageData')
 
-
-
     //- SETTINGS
     j-panel(icon='business', :title='value.name', :width='400', :height='850', :x='195', :y='5')
       div.j-tray.area.panel-item-grow(slot='content')
-        
+
         //- LEVER
-        q-card(color='dark')      
-          q-card-main.row   
+        q-card(color='dark')
+          q-card-main.row
               j-lever(v-model='controlTargetPower', rest='50%', :markers='true',
                 :labelAlways='true',
                 orientation='vertical',
@@ -37,29 +35,6 @@
                 }
               )
         q-scroll-area(style="height: 800px" :thumb-style="{right: '4px',borderRadius: '2px',background: 'black',width: '5px', opacity: 1}"  :delay="1500")
-      
-          //- PALETTE
-          q-card(color='dark')      
-            q-card-main       
-              div.row
-                |PALETTE
-                j-canvas(:value='pipelineFiltered', width='40px' height='40px')
-              div.row
-                div.col-4
-                  j-drop-target(:value='myPalette', @add='dropPalette($event)', style='width:80px;height:80px;')
-                div.col-8
-                  q-select(dark, v-model='paletteDDL', :options='paletteOptions')
-                  q-select(dark, v-model='myValue.options.frame', :options='frameOptions')
-
-          //- PIXELMAP
-          q-card(color='dark')      
-            q-card-main       
-              div.row
-                |PIXELMAP
-              div.row
-                div.col
-                  j-drop-target(:value='pixelMapInput', @add='dropPixelMapInput($event)', style='width:80px;height:80px;')
-                div.col
 
           //- SPEEDMAP
           q-card(color='dark')
@@ -85,76 +60,74 @@
                 q-btn(small,push,@click='changePeriod(1)')|>
                 q-btn(small,push,@click='changeAmplitude(1)')|+
                 q-btn(small,push,@click='changeAmplitude(-1)')|-
-          
+
+          //- PALETTE
+          q-card(color='dark')
+            q-card-main
+              div.row
+                |PALETTE
+                j-canvas(:value='pipelineFiltered', width='40px' height='40px')
+              div.row
+                div.col-4
+                  j-drop-target(:value='myPalette', @add='dropPalette($event)', style='width:80px;height:80px;')
+                div.col-8
+                  q-select(dark, v-model='paletteDDL', :options='paletteOptions')
+                  q-select(dark, v-model='myValue.options.frame', :options='frameOptions')
+
+          //- PIXELMAP
+          q-card(color='dark')
+            q-card-main
+              div.row
+                |PIXELMAP
+              div.row
+                div.col
+                  j-drop-target(:value='pixelMapInput', @add='dropPixelMapInput($event)', style='width:80px;height:80px;')
+                div.col
+
           //- FILTERS
           q-card(color='dark')
               q-card-main
                 div.row
-                  div.col
-                    |FILTERS
-                    q-btn(small,push,@click='setActiveFilter(-1)')|Initial
-                    q-btn(small,push,@click='setActiveFilter(-2)')|Final
-                    q-btn(small,push,@click='addFilter')|+ Filter
-                  
-                div.row(v-for='filter, i in value.filters' @click='setActiveFilter(i)')
-                  q-card(color='dark' :class='i === activeFilter ? "active" : ""')      
-                    q-card-main  
-                      div.row
-                        |{{i}}
-                        //- |{{ value.filters[i].pixelsOut }}
-                        j-canvas(:value='value.filters[i].delta', width='40px' height='40px')
-                        //- j-canvas(:value='{pixels: value.filters[i].pixelsOut, colors: value.palette.colors}', width='40px' height='40px')
+                  |FILTERS
                 div.row
-                  j-canvas(:value='pipelineFiltered', width='40px' height='40px')
-                
+                  q-btn(small push @click='addFilter("slider")')|+ Slider
+                  q-btn(small push @click='addFilter("bitmap")')|+ BMP
+                  q-btn(small push @click='setActiveFilter(-1)')
+                    j-canvas(:value='pipelineInit', width='40px' height='40px')
+                    |= Initial
+                  q-btn(small,push,@click='setActiveFilter(-2)')
+                    j-canvas(:value='pipelineFiltered', width='40px' height='40px')
+                    |Final
+
+
+                div.row(v-for='filter, i in value.filters' @click='setActiveFilter(i)')
+                  q-card(color='dark' :class='i === activeFilter ? "active" : ""')
+
+                    q-card-main(v-if='filter.type === "slider"')
+                      div.row
+                        |{{i}} S
+                        
+                        j-canvas(:id='"Filter"+i+"Delta"' :value='value.filters[i].delta', width='40px' height='40px')
+                        pre(v-html='value.filters[i].pixelSummary')
+                        j-canvas(:id='"Filter"+i+"ImageData"' :value='value.filters[i].imageData', width='40px' height='40px')
+                        q-btn(small push @click='deleteFilter(i)')|-
+
+                    q-card-main(v-else-if='filter.type === "bitmap"')
+                      div.row
+                        |{{i}} B
+                        //- |{{ value.filters[i].pixelsOut }}
+                        j-canvas(:id='"Filter"+i+"Delta"' :value='value.filters[i].delta', width='40px' height='40px')
+                        pre(v-html='value.filters[i].pixelSummary')
+                        j-canvas(:id='"Filter"+i+"ImageData"' :value='value.filters[i].imageData', width='40px' height='40px')
+                        q-btn(small push @click='deleteFilter(i)')|-
+                        
+                div.row
+
 
     </q-card-main>
   </q-card-media>
 
 </template>
-
-//- https://jsfiddle.net/Herteby/rwfam6p1/
-
-//- <div id="vue">
-//-   <input v-model="input">
-//-   <select v-model="selected">
-//-     <option v-for="fn, name in filters" :value="name">{{name}}</option>
-//-   </select>
-//-   <button @click="filterChain.push(selected)">Add to chain</button>
-//-   <h3>Filter chain:</h3>
-//-   <span v-for="filter, i in filterChain" @click="filterChain.splice(i, 1)">
-//-     {{filter}} >
-//-   </span>
-//-   <h3>Result:</h3>
-//-   {{output}}
-//- </div>
-
-//- // new Vue({
-//- //   el:'#vue',
-//- //   data(){
-//- //   	return {
-//- //     	input:'Hello, world!',
-//- //       selected:'reverse',
-//- //       filters:{
-//- //       	reverse: val => val.split('').reverse().join(''),
-//- //         space: val => val.split('').join(' '),
-//- //         upperCase: val => val.toUpperCase(),
-//- //         lowerCase: val => val.toLowerCase()
-//- //       },
-//- //       filterChain:[]
-//- //     }
-//- //   },
-//- //   computed:{
-//- //   	output(){
-//- //     	let thing = this.input
-//- //       this.filterChain.forEach(filterName => {
-//- //         thing = this.filters[filterName](thing)
-//- //       })
-//- //     	return thing
-//- //     }
-//- //   }
-//- // })
-
 
 <script>
 /* eslint-disable */
@@ -271,7 +244,7 @@ export default {
    */
   computed: {
 
-    // INITIAL STATE: 
+    // INITIAL STATE:
     // (Before any sliding or filters)
     //
     pipelineInit () {
@@ -280,8 +253,8 @@ export default {
 
       // 1. Pixels (todo: multiple bitmap filters)
       //
-      pixels = this.value.bitmap 
-        ? Array.prototype.slice.call(this.value.bitmap.pixels) 
+      pixels = this.value.bitmap
+        ? Array.prototype.slice.call(this.value.bitmap.pixels)
         : new Array(65536).fill(66)
 
       // 2. Colors
@@ -331,38 +304,38 @@ export default {
 
     pipelineFiltered() {
 
-      let thing = this.pipelineInit
+      let input = this.pipelineInit
+      let tmpPixels = [].concat(input.pixels)
 
       this.value.filters.forEach((filter, i) => {
 
         // A) Slider Filter
-        thing.pixels = crunch.add(thing.pixels, filter.delta)
-        filter.pixelsOut = thing.pixels.slice()
-
-        console.log('computed filter ', filter)
-        // B) Todo
+        if (filter.type === 'slider') {
+          tmpPixels = crunch.add(tmpPixels, filter.delta)
+          filter.pixelsOut = [].concat(tmpPixels)
+          filter.imageData = MoeUtils.imageDataFromPixelsAndColors({pixels: tmpPixels, colors: input.colors})
+          filter.pixelSummary = MoeUtils.getPixelSummary(filter.pixelsOut)
+          console.log('computed filter ', filter)
+        }
+        else if (filter.type === 'bitmap') {
+          filter.pixelsOut = [].concat(tmpPixels)
+          filter.imageData = MoeUtils.imageDataFromPixelsAndColors({pixels: tmpPixels, colors: input.colors})
+          filter.pixelSummary = MoeUtils.getPixelSummary(filter.pixelsOut)
+          console.log('computed filter ', filter)
+        }
 
       })
 
-
       // pipelineFiltered => Output
-      console.log('** COMPUTED pipelineFiltered()', thing)
-      return thing
+      let out = {
+        pixels: tmpPixels,
+        colors: input.colors
+      }
+      console.log('** COMPUTED pipelineFiltered()', out)
+
+      return out
+
     },
-
-
-    // ===>>
-    // sliderFilterOutput() {
-    //   // 2. Sliding Progress
-    //   // 3.
-    //   let {pixels, colors} = {...this.pipelineInit}
-    //   return {
-    //     pixels: pixels.slice(),
-    //     colors: this.palette.colors.slice()
-    //   }
-
-    // },
-
 
 
     debug () {
@@ -400,7 +373,7 @@ export default {
       get () {
         return this.value.colormap
       }
-    }, 
+    },
     myBitmap: {
       get () {
         return this.value.bitmap
@@ -416,7 +389,7 @@ export default {
       set() {
         // alert('sorted!')
       }
-    },    
+    },
     myImageData () {
       // NB. Only used for icon & general. preview imageData is handled manually updating ctx for Art because of fast control, don't  want watchers.
       return this.value ? this.value.imageData : null
@@ -483,11 +456,11 @@ export default {
   methods: {
     setActiveFilter(i) {
       this.activeFilter = i
-    
+
       // Coose preview pixels
-      SLIDING_PIXELS = 
-        i > -1 ? this.value.filters[i].pixelsOut 
-        : i === -1 
+      SLIDING_PIXELS =
+        i > -1 ? this.value.filters[i].pixelsOut
+        : i === -1
           ? this.pipelineInit.pixels
           : this.pipelineFiltered.pixels // -2
 
@@ -553,12 +526,12 @@ export default {
 
       // RENDER PREVIEW
       // & Apply pixelmap, colormap to preview (unmap)
-      
+
       let theColor, mappedIndex, mappedColorIndex
 
       for (var i=0; i<65536; i++ ) {
 
-        // Apply pixelmap 
+        // Apply pixelmap
         if (this.value.options.mapPixelMap && this.value.pixelmap) {
           mappedIndex = (this.value.pixelmap[i*2] + 256 * this.value.pixelmap[i*2+1]) * 4
         } else {
@@ -589,14 +562,16 @@ export default {
       this.myCtx.putImageData(IMAGEDATA, 0, 0)
     },
 
-    configurePalette() {
-
-    },
-
-
-    addFilter() {
+    addFilter(type) {
       console.log('addFilter')
-      let filter = Factory.createFilter_Slider()
+      let filter
+      if (type==='slider') {
+        filter = Factory.createFilter_Slider()
+      }
+      else if (type==='bitmap') {
+        filter = Factory.createFilter_Bitmap()
+      }
+
       let filters = extend({}, {val: this.value.filters}).val
       filters.push(filter)
       let art = {
@@ -605,7 +580,18 @@ export default {
       }
       this.$store.dispatch('updateFields', {artworks: [art]} )
     },
-    
+
+    deleteFilter(i) {
+      let filters = extend({}, {val: this.value.filters}).val
+      filters.splice(i, 1)
+      let art = {
+        id: this.value.id,
+        filters: filters
+      }
+      this.$store.dispatch('updateFields', {artworks: [art]} )
+    },
+
+
     dropPalette(e) {
       console.log('dropPalette')
       e.item.remove() // will be added by v-for instead
@@ -652,29 +638,6 @@ export default {
       }
     },
     //
-    xaddFilter (e) {
-      // sortable hack...
-      e.item.remove() // will be added by v-for instead
-
-      let filter = e.clone.obj // <- the dropped filter Object
-
-      // c) Update ONLY fields, directly
-      let art = {
-        // Nonentities (must be extended?)
-        id: this.value.id,
-        imageData: extend({}, {val: filter.imageData}).val,
-        pixels : extend({}, {val: filter.pixels}).val,
-        // Entities
-        filters: this.value.filters,
-        palette: filter.palette,
-        bitmap: filter
-      }
-      art.filters.push(filter)
-      this.$store.dispatch('updateFields', {artworks: [art]} )
-
-    },
-
-    //
     __init() {
       this.slidingLower = new Array(65536).fill(0)
       //this.slidingCurrent = new Array(65536).fill(0)
@@ -713,7 +676,7 @@ export default {
 
       SLIDING_PIXELS = i > -1 ? this.value.filters[i].pixelsOut.slice() : SLIDING_PIXELS
       // Hacvk for first time
-      if (!SLIDING_PIXELS) { 
+      if (!SLIDING_PIXELS) {
         SLIDING_PIXELS = new Array(65536).fill(87)
       }
 
@@ -742,7 +705,7 @@ export default {
         let lower = i > 0 ? this.value.filters[i-1].pixelsOut : this.pipelineInit.pixels
         let filters = extend({}, {val: this.value.filters}).val
 
-        filters[i].delta = crunch.sub(SLIDING_PIXELS, lower) 
+        filters[i].delta = crunch.sub(SLIDING_PIXELS, lower)
 
         let art = {
           rem: 'Stop Sliding',
@@ -750,7 +713,7 @@ export default {
           filters: filters
         }
         this.$store.dispatch('updateFields', {artworks: [art]} )
-        
+
       }
 
       this.slidingStarted = false
@@ -860,6 +823,10 @@ export default {
 </script>
 <style lang="stylus">
 
+
+  pre
+    margin 0 2px
+    font-size 12px
   .q-card.active
     background #555 !important
 
@@ -1065,21 +1032,21 @@ export default {
 
         //-     // BITMAP
         //-     q-card(color='dark')
-        //-         q-card-main 
+        //-         q-card-main
         //-           div.row
 
         //-           div.row
-             
+
         //-           div.row
         //-             j-drop-target(:value='pixelMapInput', @add='dropPixelMapInput($event)', style='width:80px;height:80px;')
 
         //-               div.row.no-wrap
         //-                 // Art Palette
-                        
 
 
 
-        //-                 j-canvas(:value='pipelineInit.imageData', style='width:80px;height:80px;')                  
+
+        //-                 j-canvas(:value='pipelineInit.imageData', style='width:80px;height:80px;')
         //-             //- div.col
         //-               //- |BITMAP
         //-               //- div.row.no-wrap
@@ -1113,7 +1080,7 @@ export default {
                     //-   div.col-3
                     //-     q-toggle(v-model="myValue.options.unmapColorMap", label='Unmap')
                     //-     q-toggle(v-model="myValue.options.mapColorMap", label='Map')
-                            
+
 
 
             //- // GOBO

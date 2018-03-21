@@ -41,9 +41,21 @@ export default class Factory {
   //
   static createFilter_Slider() {
     let filter = {
+      type: 'slider',
       id: 'SLIDER'+UID++,
       delta: new Array(65536).fill(0),
-      pixelsOut: null
+      pixelsOut: null,
+      imageData: null
+    }
+    return filter
+  }
+  static createFilter_Bitmap() {
+    let filter = {
+      type: 'bitmap',
+      id: 'BITMAP'+UID++,
+      bitmap: null,
+      pixelsOut: null,
+      imageData: null
     }
     return filter
   }

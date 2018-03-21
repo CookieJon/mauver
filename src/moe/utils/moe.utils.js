@@ -3,7 +3,15 @@ export default class MoeUtils {
 	constructor () {
 	}
 
-
+	static getPixelSummary(pixels) {
+		// Returns shorthand version of 65536 array!
+		let out = '', t = 0
+		for (var i=0; i<65536; i+= 256 * 16) {
+			// Range 0-9 (255/9 = 28.333)
+			out += Math.round(pixels[i]/28.4)  + (++t%4 < 1 ? '\n' : '')
+		}
+		return out
+	}
 
 
 	// ImageData

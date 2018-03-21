@@ -3,7 +3,7 @@
 <div :style="styleComponent">
   <canvas ref="canvas" :width='myPixelWidth' :height='myPixelHeight'></canvas>
   <!-- {{ msg }} {{ debug }}-->
-  
+
 </div>
 </template>
 
@@ -14,10 +14,14 @@ import MoeUtils from '../../moe/utils/moe.utils.js'
 
 export default {
   name: 'j-canvas',
-  
+
   components: { },
 
   props: {
+    id: {
+      type: String,
+      default: 'NOID'
+    },
     width: {  // display width
       type: String,
       default: '100%'
@@ -42,14 +46,13 @@ export default {
   data () {
     return {
       ctx: null,
-      id: 'j-canvas-1',
       msg: '',
       myPixelWidth: 256
     }
   },
 
   computed: {
-    debug () { 
+    debug () {
       return myImageData ? myImageData.slice(0,10) : 'undefined'
     },
     myImageData () {
@@ -75,20 +78,20 @@ export default {
   watch: {
     value: {
       handler (newVal) {
-        console.log( "watch CANVAS VALUE->", newVal)
+        console.log( '(⌐■_■) Canvas#' + this.id + '.value ==> ', typeof(newVal), newVal)
 
         let imgData
         let msg
-        // undefined / empty 
+        // undefined / empty
         if (!newVal) {
           msg = 'undefined'
           imgData = MoeUtils.imageDataEmpty()
         }
 
         // ImageData
-        else if (typeof newVal === ImageData) {
+        else if (newVal instanceof ImageData) {
           msg = 'ImageData'
-          imgData = extend({}, newVal)
+          imgData = newVal //extend({}, newVal)
         }
 
         // Array (of colors)
@@ -128,22 +131,22 @@ export default {
 
         }
 
-        // unknown 
+        // unknown
         else {
           msg = 'unknown'
           imgData = MoeUtils.imageDataEmpty()
         }
 
-        console.log('CANVAS TYPE: *' + msg + '*')
+        console.log(this.id + ' CANVAS TYPE: *' + msg + '*')
 
         this.msg = msg
         this.$nextTick(function() {
           this.updateImage(imgData)
-        })        
+        })
 
       },
       immediate: true
-    },        
+    },
     // Data input Prop Types:
     //
     imageData: {
@@ -176,7 +179,7 @@ export default {
     },
     // get canvas FROM...
     fromImageData (imageData) {
-      
+
       // this.myImageData = imageData
       // this.updateImage()
     },
