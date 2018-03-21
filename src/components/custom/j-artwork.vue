@@ -61,18 +61,58 @@
                 q-btn(small,push,@click='changeAmplitude(1)')|+
                 q-btn(small,push,@click='changeAmplitude(-1)')|-
 
+
+          //- FILTERS
+          q-card(color='dark')
+              q-card-main
+                div.row
+                  |FILTERS
+                div.row
+                  q-btn(small push @click='setActiveFilter(-1)')
+                    j-canvas(:value='pipelineInit', width='40px' height='40px')
+                  q-btn(small push @click='addFilter("slider")')|+ SLD
+                  q-btn(small push @click='addFilter("bitmap")')|+ BMP
+                  q-btn(small,push,@click='setActiveFilter(-2)')
+                    j-canvas(:value='pipelineFiltered', width='40px' height='40px')
+
+
+                div.row(v-for='filter, i in value.filters' @click='setActiveFilter(i)')
+                  q-card(color='dark' :class='i === activeFilter ? "active" : ""')
+
+                    q-card-main(v-if='filter.type === "slider"')
+                      div.row
+                        |{{i}} SLD
+                        
+                        j-canvas(:id='"Filter"+i+"Delta"' :value='value.filters[i].delta', width='40px' height='40px')
+                        pre(v-html='value.filters[i].pixelSummary')
+                        j-canvas(:id='"Filter"+i+"ImageData"' :value='value.filters[i].imageData', width='40px' height='40px')
+                        q-btn(small push @click='deleteFilter(i)')|-
+
+                    q-card-main(v-else-if='filter.type === "bitmap"')
+                      div.row
+                        |{{i}} BMP
+                        //- |{{ value.filters[i].pixelsOut }}
+                        j-canvas(:id='"Filter"+i+"Delta"' :value='value.filters[i].delta', width='40px' height='40px')
+                        j-drop-target(:value='value.filters[i].bitmap', @add='dropBitmapFilter($event, i)', style='width:50px;height:50px;')
+                        pre(v-html='value.filters[i].pixelSummary')
+                        j-canvas(:id='"Filter"+i+"ImageData"' :value='value.filters[i].imageData', width='40px' height='40px')
+                        q-btn(small push @click='deleteFilter(i)')|-
+                 
           //- PALETTE
           q-card(color='dark')
-            q-card-main
-              div.row
-                |PALETTE
-                j-canvas(:value='pipelineFiltered', width='40px' height='40px')
-              div.row
-                div.col-4
+            q-card-main.row
+              div.col
+                div.row
+                  |PALETTE
+                div.col
                   j-drop-target(:value='myPalette', @add='dropPalette($event)', style='width:80px;height:80px;')
-                div.col-8
                   q-select(dark, v-model='paletteDDL', :options='paletteOptions')
                   q-select(dark, v-model='myValue.options.frame', :options='frameOptions')
+              div.col
+                div.row
+                  |PIXELMAP
+                div.row
+                j-drop-target(:value='pixelMapInput', @add='dropPixelMapInput($event)', style='width:80px;height:80px;')
 
           //- PIXELMAP
           q-card(color='dark')
@@ -84,42 +124,6 @@
                   j-drop-target(:value='pixelMapInput', @add='dropPixelMapInput($event)', style='width:80px;height:80px;')
                 div.col
 
-          //- FILTERS
-          q-card(color='dark')
-              q-card-main
-                div.row
-                  |FILTERS
-                div.row
-                  q-btn(small push @click='addFilter("slider")')|+ Slider
-                  q-btn(small push @click='addFilter("bitmap")')|+ BMP
-                  q-btn(small push @click='setActiveFilter(-1)')
-                    j-canvas(:value='pipelineInit', width='40px' height='40px')
-                    |= Initial
-                  q-btn(small,push,@click='setActiveFilter(-2)')
-                    j-canvas(:value='pipelineFiltered', width='40px' height='40px')
-                    |Final
-
-
-                div.row(v-for='filter, i in value.filters' @click='setActiveFilter(i)')
-                  q-card(color='dark' :class='i === activeFilter ? "active" : ""')
-
-                    q-card-main(v-if='filter.type === "slider"')
-                      div.row
-                        |{{i}} S
-                        
-                        j-canvas(:id='"Filter"+i+"Delta"' :value='value.filters[i].delta', width='40px' height='40px')
-                        pre(v-html='value.filters[i].pixelSummary')
-                        j-canvas(:id='"Filter"+i+"ImageData"' :value='value.filters[i].imageData', width='40px' height='40px')
-                        q-btn(small push @click='deleteFilter(i)')|-
-
-                    q-card-main(v-else-if='filter.type === "bitmap"')
-                      div.row
-                        |{{i}} B
-                        //- |{{ value.filters[i].pixelsOut }}
-                        j-canvas(:id='"Filter"+i+"Delta"' :value='value.filters[i].delta', width='40px' height='40px')
-                        pre(v-html='value.filters[i].pixelSummary')
-                        j-canvas(:id='"Filter"+i+"ImageData"' :value='value.filters[i].imageData', width='40px' height='40px')
-                        q-btn(small push @click='deleteFilter(i)')|-
                         
                 div.row
 
@@ -260,34 +264,6 @@ export default {
       // 2. Colors
       colors = this.value.palette.colors
 
-      // 2.A. Remap pixel colors?
-      if (this.value.options.remapBitmapToPalette && this.value.bitmap) {
-        let bitmapColors = this.value.bitmap.colors || ColorUtils.GeneratePaletteColors('raw')
-        let map = bitmapColors.map(b => {
-          let m2 = colors.findIndex(p => {return p.id === b.id})
-          return m2 > -1 ? m2 : 0
-        })
-        for (let i = 0; i < pixels.length; i++) {
-          pixels[i] = map[pixels[i]]
-        }
-      }
-
-      // TODO: 3 & 4 to be moved to individual image filters
-      // 3. Unnamp Color map
-      if (this.value.options.unmapColorMap && this.value.colormap) {
-        for (let i=0; i < 65536; i++) {
-          pixels[i] = (pixels[i] + 256 - this.value.colormap.pixels[i]) % 256
-        }
-      }
-
-      // 4. Unmap Pixel Map
-      if (this.value.options.unmapPixelMap && this.value.pixelmap) {
-        let unmappedPixels = new Array(65536)
-        for (let i = 0; i < 65536; i++) {
-          unmappedPixels[i] = pixels[this.value.pixelmap[i * 2] + 256 * this.value.pixelmap[i * 2 + 1]];
-        }
-        pixels = unmappedPixels
-      }
 
       // pipelineInit => Output
       let out = {
@@ -306,22 +282,70 @@ export default {
 
       let input = this.pipelineInit
       let tmpPixels = [].concat(input.pixels)
-
+      let inputPixels = input.pixels
+      let inputColors = input.colors
+      
       this.value.filters.forEach((filter, i) => {
 
-        // A) Slider Filter
+        // F1) Compute SLIDER FILTER
         if (filter.type === 'slider') {
           tmpPixels = crunch.add(tmpPixels, filter.delta)
           filter.pixelsOut = [].concat(tmpPixels)
-          filter.imageData = MoeUtils.imageDataFromPixelsAndColors({pixels: tmpPixels, colors: input.colors})
+          filter.imageData = MoeUtils.imageDataFromPixelsAndColors({pixels: tmpPixels, colors: inputColors})
           filter.pixelSummary = MoeUtils.getPixelSummary(filter.pixelsOut)
           console.log('computed filter ', filter)
         }
+        // F2) Compute BITMAP FILTER
         else if (filter.type === 'bitmap') {
+          // filter.pixelsOut = [].concat(tmpPixels)
+          
+
+          // F2.A. Remap pixel colors?
+          if ((1==1 || filter.remapToPalette) && filter.bitmap) {
+            let bitmapColors = filter.bitmap.palette.colors || ColorUtils.GeneratePaletteColors('raw')
+            let bitmapPixels = filter.bitmap.pixels
+            // create palette map
+            let map = bitmapColors.map(b => {
+              let m2 = inputColors.findIndex(p => {return p.id === b.id})
+              return m2 > -1 ? m2 : 0
+            })
+            // apply palette map
+            for (let i = 0; i < tmpPixels.length; i++) {
+              tmpPixels[i] = map[bitmapPixels[i]]
+            }
+          }
+
           filter.pixelsOut = [].concat(tmpPixels)
           filter.imageData = MoeUtils.imageDataFromPixelsAndColors({pixels: tmpPixels, colors: input.colors})
           filter.pixelSummary = MoeUtils.getPixelSummary(filter.pixelsOut)
           console.log('computed filter ', filter)
+
+
+
+
+
+
+          // // TODO: 3 & 4 to be moved to individual image filters
+          // // 3. Unnamp Color map
+          // if (this.value.options.unmapColorMap && this.value.colormap) {
+          //   for (let i=0; i < 65536; i++) {
+          //     pixels[i] = (pixels[i] + 256 - this.value.colormap.pixels[i]) % 256
+          //   }
+          // }
+
+          // // 4. Unmap Pixel Map
+          // if (this.value.options.unmapPixelMap && this.value.pixelmap) {
+          //   let unmappedPixels = new Array(65536)
+          //   for (let i = 0; i < 65536; i++) {
+          //     unmappedPixels[i] = pixels[this.value.pixelmap[i * 2] + 256 * this.value.pixelmap[i * 2 + 1]];
+          //   }
+          //   pixels = unmappedPixels
+          // }
+
+
+
+
+
         }
 
       })
@@ -591,7 +615,18 @@ export default {
       this.$store.dispatch('updateFields', {artworks: [art]} )
     },
 
-
+    dropBitmapFilter(e, i) {
+      // Drop a bitmap on a bitmap filter
+      console.log('dropBitmapFilter')
+      e.item.remove() // will be added by v-for instead
+      let filters = extend({}, {val: this.value.filters}).val
+      filters[i].bitmap = e.clone.obj
+      let art = {
+        id: this.value.id,
+        filters: filters
+      }
+      this.$store.dispatch('updateFields', {artworks: [art]} )
+    },
     dropPalette(e) {
       console.log('dropPalette')
       e.item.remove() // will be added by v-for instead
