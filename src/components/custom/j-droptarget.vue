@@ -2,11 +2,11 @@
   <div
     ref="container"
     class='frame frame-type-droptarget'
-  >  
-    <j-item 
+  >
+    <j-item
       v-if='value'
       :value='value'
-      @click='onSelect(i, $event)' 
+      @click='onSelect'
     ></j-item>
   </div>
 </template>
@@ -14,7 +14,7 @@
 /* eslint-disable */
   import { extend, QScrollArea } from 'quasar'
   import Sortable from 'sortablejs'
- 
+
   export default {
     name: 'j-droptarget',
     components: { QScrollArea },
@@ -35,7 +35,7 @@
       //     elm.removeChild(elm.lastChild);
       //   }
       // }
-    },    
+    },
     computed: {
       myValue () {
         this.value ? [this.value] : null
@@ -52,19 +52,19 @@
           chosenClass: 'sortable-chosen',  // Class name for the chosen item
           dragClass: 'sortable-drag',  // Class name for the dragging item
           group: {
-            name: 'general', 
-            pull: 'clone', 
-            revertClone: true 
-          },    
+            name: 'general',
+            pull: 'clone',
+            revertClone: true
+          },
           setData: (dataTransfer, element) => {
-            // ## na ##  
+            // ## na ##
             // element.objs = self.value // Attach 'myObjs' reference to my Object array
             // // console.log('onClone cloneEl.objs', element.objs)
-          },                
-          onClone: (e) => { 
+          },
+          onClone: (e) => {
             let origEl = e.item;
             let cloneEl = e.clone;
-            
+
             // Manually set new imagedata because that's how it rolls!
             let fromCanvas = origEl.getElementsByTagName('canvas')[0]
             let fromCtx = fromCanvas.getContext('2d');
@@ -73,27 +73,27 @@
             let toCtx = toCanvas.getContext('2d');
             toCtx.putImageData(fromImageData, 0, 0)
 
-            // ## 1 ##    
+            // ## 1 ##
             cloneEl.objs = self.value
             // console.log('onClone cloneEl.objs', cloneEl.objs)
             this.$emit("clone", e)
-          },      
+          },
           onStart: (e) => {
 
           },
           onAdd: (e) => {
-            // ## 2 ##  
-            e.clone.obj = e.clone.objs[e.oldIndex] 
+            // ## 2 ##
+            e.clone.obj = e.clone.objs[e.oldIndex]
             e.item.remove()
             // console.log('onAdd e.clone.obj', e.clone.obj)
             this.$emit('add', e)
-          },     
+          },
           onEnd: (e)=> {
             // console.log(">>>>> onEnd ", e,  self.value)
           },
           onUpdate: (e)=> {
             // console.log(">>>>> onUpdate ", e, self.value)
-    
+
             // ** ASSOCIATE THE MOE OBJECT WITH DRAGGED HTML **
             let itemEl = e.item // dragged HTMLElement
             itemEl.obj = self.value[e.oldIndex]
@@ -123,7 +123,8 @@
       },
     methods: {
       // item clicked
-      onSelect (index, e) {
+      onSelect (e) {
+        console.log("*! Clicked", this.value)
         this.$emit("select", {item: this.value})
       },
       // Element is removed from the list into another list
@@ -131,7 +132,7 @@
         // same properties as onEnd
         // console.log('onRemove',e)
         this.$emit("add", e)
-      }      
+      }
     }
   }
 </script>

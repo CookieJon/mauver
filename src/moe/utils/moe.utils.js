@@ -13,8 +13,26 @@ export default class MoeUtils {
 		return out
 	}
 
+	// Get Image
+	static imageFromBitmap(bitmap) {
+		return MoeUtils.imageFromImageData(MoeUtils.imageDataFromBitmap(bitmap))
+	}
 
-	// ImageData
+	static imageFromImageData(imagedata) {
+    var canvas = document.createElement('canvas');
+    var ctx = canvas.getContext('2d');
+    canvas.width = imagedata.width;
+    canvas.height = imagedata.height;
+    ctx.putImageData(imagedata, 0, 0);
+
+    var image = new Image();
+    image.src = canvas.toDataURL();
+    return image;
+}
+
+
+
+	// Get ImageData
 	//
 	static imageDataEmpty() {
 		let imgData = new ImageData(256, 256)
@@ -75,7 +93,7 @@ export default class MoeUtils {
 	}
 
 	static imageDataFromColors(colors) {
-		// Assumes 256 colors!
+		// Assumes 256 colors! (i.e. render a palette)
 		let imageData = new ImageData(256, 256)
 
 		let l = colors.length

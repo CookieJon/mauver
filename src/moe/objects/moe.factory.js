@@ -21,39 +21,34 @@ export default class Factory {
 	}
 
 
-
-
-  // PALETTE
-  //
-  static createPalette(presetId) {
-
-    // return palette
-    let pal = {
-      id: 'PAL'+ UID++,
-      name: 'Default',
-      colors: ColorUtils.GeneratePaletteColors(presetId || 'raw')
-    }
-
-    return pal
-  }
-
   // FILTERS
   //
+  // Filter 1 - Slider
   static createFilter_Slider() {
     let filter = {
       type: 'slider',
       id: 'SLIDER'+UID++,
+      active: true,
       delta: new Array(65536).fill(0),
       pixelsOut: null,
       imageData: null
     }
     return filter
   }
+  // Filter 2 - Bitmap
   static createFilter_Bitmap() {
     let filter = {
       type: 'bitmap',
       id: 'BITMAP'+UID++,
+      active: true,
       bitmap: null,
+      bitmapX: 0,
+      bitmapY: 0,
+      gobo: null,
+      goboX: 0,
+      goboY: 0,
+      unmapPixel: true,
+      remapPalette: true,
       pixelsOut: null,
       imageData: null
     }
@@ -103,6 +98,20 @@ export default class Factory {
   //
   static createBitmap(payload) {
 
+  }
+
+  // PALETTE
+  //
+  static createPalette(presetId) {
+
+    // return palette
+    let pal = {
+      id: 'PAL'+ UID++,
+      name: 'Default',
+      colors: ColorUtils.GeneratePaletteColors(presetId || 'raw')
+    }
+
+    return pal
   }
 
 

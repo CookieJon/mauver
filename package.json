@@ -22,6 +22,7 @@
     "quasar-framework": "git+https://git@github.com/quasarframework/quasar-edge.git",
     "sortablejs": "^1.7.0",
     "vue": "^2.5.13",
+    "vue-croppa": "^1.3.0",
     "vue-router": "^3.0.1",
     "vuex-orm": "^0.15.0"
   },

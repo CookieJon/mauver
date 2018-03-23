@@ -14,11 +14,13 @@ import Vue from 'vue'
 import Quasar from 'quasar'
 import router from './router'
 import store from './store'
+import Croppa from 'vue-croppa'
 
 Vue.config.productionTip = false
 
 Vue.use(Quasar) // Install Quasar Framework
 Vue.use(store)
+Vue.use(Croppa)
 
 // Moe Cusatom Components
 import jArtwork from 'components/custom/j-artwork'
