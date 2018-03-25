@@ -141,7 +141,7 @@ export default {
 
         this.msg = msg
         this.$nextTick(function() {
-          this.updateImage(imgData)
+          this.putImageData(imgData)
         })
 
       },
@@ -159,7 +159,7 @@ export default {
   },
   methods: {
 
-    updateImage (imgData) {
+    putImageData (imgData) {
       // const imageData = this.myImageData
       // console.log('UPDATE IMAGEDATA', imgData)
       if (imgData instanceof ImageData) {
@@ -181,19 +181,19 @@ export default {
     fromImageData (imageData) {
 
       // this.myImageData = imageData
-      // this.updateImage()
+      // this.putImageData()
     },
     fromRGBA (rgba) { // @rgba = UInt8Array
       for (var i = 0, l = rgba.length; i < l; i++) {
         this.myImageData.data[i] = rgba[i]
       }
-      this.updateImage()
+      this.putImageData()
     },
     fromImage (img) {
       console.log('j-canvas.fromImage() with ', img)
       this.ctx.drawImage(0, 0, this.pixelWidth, this.pixelHeight)
       this.imageData = this.ctx.getImageData(0, 0, this.pixelWidth, this.pixelHeight)
-      this.updateImage()
+      this.putImageData()
     },
     // GET from canvas...
     getCanvas () {

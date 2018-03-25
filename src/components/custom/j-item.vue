@@ -38,7 +38,7 @@
     },
     computed: {
       myImageData () {
-        //this.$refs['jCanvas'].updateImage()
+        //this.$refs['jCanvas'].putImageData()
         // console.log('|---j-item computed.myImageData()----------------------> ')
         // console.log(' this.value.imageData.data', this.value.imageData.data)
         // console.log('<---j-item computed.myImageData()----------------------|')
@@ -46,7 +46,7 @@
       }
     },
     mounted () {
-      this.$refs.jCanvas.updateImage()
+      this.$refs.jCanvas.putImageData()
     },
     methods: {
       onClick (e) {
