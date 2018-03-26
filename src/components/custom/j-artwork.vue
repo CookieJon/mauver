@@ -2,7 +2,7 @@
 
   div
     //-  PREVIEW (w.bitmsp2 branch)
-    j-panel(icon='business', v-touch-pan="previewPan" :title='value.name + " Preview"', :width='600', :height='800', :x='600', :y='5')
+    j-panel(icon='business' :responsive='previewResponsive' v-touch-pan="previewPan" :title='value.name + " Preview"', :width='600', :height='800', :x='600', :y='5')
       div.j-tray.area.panel-item-grow(slot='content')
         div.row.text-white
           q-checkbox(v-model="value.options.unmapPixelMap", label='unmapPixlMap')
@@ -149,7 +149,6 @@
                   |COLORMAP
                 div.col
                   j-drop-target(:value='colorMapInput', @add='dropColorMapInput($event)', style='width:80px;height:80px;')
-                  
 
 
     </q-card-main>
@@ -204,6 +203,8 @@ export default {
   },
   data () {
     return {
+
+      previewResponsive: true,
       myCroppa: { },
       myCroppaInitialImage: null,
 
@@ -333,7 +334,6 @@ export default {
           // F2) Compute BITMAP FILTER
           else if (filter.type === 'bitmap' && filter.bitmap) {
 
-
             // F2.A. Remap pixel colors?
             let paletteMap
             if (filter.remapPalette) {
@@ -346,16 +346,6 @@ export default {
             }
 
             // F2.C Offset pixelmap & apply palette map
-            //
-            // -----  ..-----
-            // -----  ..--AAAaa
-            // -----  ..--AAAaa
-            //            aaaaa
-
-            // 12345  67800  AAAAA
-            // -----  --123  --678
-            console.log('tmp1', tmpPixels.slice(-100))
-
             // Attempt 2
             let shift = filter.bitmapX + filter.bitmapY * 256,
               top = Math.min(Math.max(0 - filter.bitmapY, 0), 256),
@@ -368,51 +358,18 @@ export default {
               for (let x = left; x < right; x++) {
 
                 let fromI = x + y * 256
-                let toI = x + y * 256
-                toI += shift
+                let toI = shift + x + y * 256
 
                 if (this.value.options.unmapPixelMap && this.value.pixelunmap) {
                   toI = this.value.pixelunmap[toI]
                 }
 
                 tmpPixels[toI] = paletteMap ? paletteMap[bitmapPixels[fromI]] : bitmapPixels[fromI]
-
-                // let ii = i - shift
-                // let iii = (this.value.options.unmapPixelMap && this.value.pixelmap)
-                //   ? this.value.pixelmap[ii] // unmap pixel
-                //   : ii
-                // tmpPixels[i] = paletteMap ? paletteMap[bitmapPixels[iii]] : bitmapPixels[iii]
               }
             }
 
-
-            // Attempt 1
-            // let shift = filter.bitmapX + filter.bitmapY * 256,
-            //   top = Math.min(Math.max(filter.bitmapY, 0), 256),
-            //   left = Math.min(Math.max(filter.bitmapX, 0), 256),
-            //   bottom = Math.min(Math.max(filter.bitmapY + 256, 0), 256),
-            //   right = Math.min(Math.max(filter.bitmapX + 256, 0), 256),
-            //   bitmapPixels = filter.bitmap.pixels
-
-            // for (let y = top; y < bottom; y++) {
-            //   for (let x = left; x < right; x++) {
-
-            //     let i = x + y * 256
-            //     let ii = i - shift
-            //     let iii = (this.value.options.unmapPixelMap && this.value.pixelmap)
-            //       ? this.value.pixelmap[ii] // unmap pixel
-            //       : ii
-            //     tmpPixels[i] = paletteMap ? paletteMap[bitmapPixels[iii]] : bitmapPixels[iii]
-            //   }
-            // }
-            //console.log(top, left, bottom, right)
-
             //  UNMAP- pixels[i] = Mapper.tmpPixels[Mapper.mappedCoords[i*2]+256*Mapper.mappedCoords[i*2+1]];
-            // mappedI = map[i*2]+256*map[i]
-            // unmappedPixels[ i ] = mappedPixels[ mappedI ]
-
             //  MAP->	pixels[Mapper.mappedCoords[i*2]+256*Mapper.mappedCoords[i*2+1]] = Mapper.tmpPixels[i];
-
 
             // F2.D Subtract gobo
 
@@ -421,24 +378,6 @@ export default {
             filter.imageData = MoeUtils.imageDataFromPixelsAndColors({pixels: tmpPixels, colors: input.colors})
             filter.pixelSummary = MoeUtils.getPixelSummary(filter.pixelsOut)
             console.log('computed filter ', filter)
-
-            // // TODO: 3 & 4 to be moved to individual image filters
-            // // 3. Unnamp Color map
-            // if (this.value.options.unmapColorMap && this.value.colormap) {
-            //   for (let i=0; i < 65536; i++) {
-            //     pixels[i] = (pixels[i] + 256 - this.value.colormap.pixels[i]) % 256
-            //   }
-            // }
-
-            // // 4. Unmap Pixel Map
-            // if (this.value.options.unmapPixelMap && this.value.pixelmap) {
-            //   let unmappedPixels = new Array(65536)
-            //   for (let i = 0; i < 65536; i++) {
-            //     unmappedPixels[i] = pixels[this.value.pixelmap[i * 2] + 256 * this.value.pixelmap[i * 2 + 1]];
-            //   }
-            //   pixels = unmappedPixels
-            // }
-
           }
 
         }
@@ -450,76 +389,19 @@ export default {
         colors: input.colors
       }
       console.log('** COMPUTED pipelineFiltered()', out)
-      //this.__updatePreview(out)
+
       return out
 
     },
 
     pipelineMapped () {
-      console.log('** COMPUTING pipelineMapped() -->')
-      let input = this.pipelineFiltered
-      let tmpPixels = [].concat(input.pixels)
-      let inputPixels = input.pixels
-      let inputColors = input.colors
-      let artwork = this.value
-
-      // OUTPUT
-      //
-      let theColor, mappedIndex, mappedColorIndex, imageDataIndex
-
-      for (var i=0; i<65536; i++ ) {
-
-        // Apply pixelmap
-        //  MAP->	pixels[Mapper.mappedCoords[i*2]+256*Mapper.mappedCoords[i*2+1]] = Mapper.tmpPixels[i];
-        if (this.value.options.mapPixelMap && this.value.pixelmap) {
-          ////mappedIndex = (this.value.pixelmap[i*2] + 256 * this.value.pixelmap[i*2+1])
-          mappedIndex = this.value.pixelmap[i] // parseInt(i * 2) //
-          if (!mappedIndex || mappedIndex < 0 || mappedIndex > 65535) {
-            console.log("ERROR", i, mappedIndex)
-          }
-        } else {
-          mappedIndex = i
-        }
-
-
-        // Apply colormap
-        if (this.value.options.mapColorMap && this.value.colormap) {
-          mappedColorIndex = (inputPixels[i] + 256 + this.value.colormap[mappedIndex]) % 256
-        } else {
-          mappedColorIndex = inputPixels[i]
-        }
-
-        tmpPixels[mappedIndex] = mappedColorIndex
-
-        // try {
-        //   theColor = colors[mappedColorIndex];
-        //   imageDataIndex = mappedIndex * 4
-        //   IMAGEDATA.data[imageDataIndex] = theColor.r; //*4 =*4 =*4 =*4 = !! NB!!!
-        //   IMAGEDATA.data[imageDataIndex+1] = theColor.g;
-        //   IMAGEDATA.data[imageDataIndex+2] = theColor.b;
-        //   IMAGEDATA.data[imageDataIndex+3] = 255;
-        // }
-        // catch(e) {
-        //   console.log('error', colors, theColor, pixels[i], i)
-        //   console.log(i, pixels[i], pixels.length);
-        //   this.__stopSliding()
-        //   return;
-        // }
-      }
-      //this.myCtx.putImageData(IMAGEDATA, 0, 0)
-      //this.myPreview.putImageData(IMAGEDATA)
-
-      // pipelineFiltered => Output
-      let out = {
-        pixels: tmpPixels,
-        colors: input.colors
-      }
-      console.log('** COMPUTED pipelineMapped()', out)
-      //this.__updatePreview(out)
-      return out
-
-
+      return this.mapOutput(this.pipelineFiltered)
     },
+
+    previewMapped () {
+      return this.mapOutput({pixels: SLIDING_PIXELS, colors: this.value.palette.colors})
+    },
+
 
     debug () {
       try {
@@ -638,19 +520,22 @@ export default {
    */
   methods: {
 
-    __updatePreview({ pixels, colors}) {
-return
-      // RENDER PREVIEW
-      // & Apply pixelmap, colormap to preview (unmap)
+    __updatePreview(bitmap) {
+      let imageData = MoeUtils.imageDataFromPixelsAndColors(this.mapOutput(bitmap))
+      this.$refs.preview.putImageData(imageData)
+      console.log('** __updatePreview() -->', bitmap, imageData)
+    },
 
-      // Apply colormap if final output
-      // if (this.value.options.mapColorMap && this.value.colormap) {
-      //   mappedColorIndex = (pixels[i] + this.value.colormap.pixels[i]) % 256
-      // } else {
-      //   mappedColorIndex = pixels[i]
-      // }
+    mapOutput(bitmap) {
+      console.log('** mapOutput() -->', bitmap)
+      let input = bitmap //this.pipelineFiltered
+      let tmpPixels = [].concat(input.pixels)
+      let inputPixels = input.pixels
+      let inputColors = input.colors
+      let artwork = this.value
 
-
+      // OUTPUT
+      //
       let theColor, mappedIndex, mappedColorIndex, imageDataIndex
 
       for (var i=0; i<65536; i++ ) {
@@ -658,41 +543,34 @@ return
         // Apply pixelmap
         //  MAP->	pixels[Mapper.mappedCoords[i*2]+256*Mapper.mappedCoords[i*2+1]] = Mapper.tmpPixels[i];
         if (this.value.options.mapPixelMap && this.value.pixelmap) {
-          mappedIndex = (this.value.pixelmap[i*2] + 256 * this.value.pixelmap[i*2+1])
+          ////mappedIndex = (this.value.pixelmap[i*2] + 256 * this.value.pixelmap[i*2+1])
+          mappedIndex = this.value.pixelmap[i] // parseInt(i * 2) //
+          if (!mappedIndex || mappedIndex < 0 || mappedIndex > 65535) {
+            console.log("ERROR", i, mappedIndex)
+          }
         } else {
-          mappedIndex = 12
+          mappedIndex = i
         }
 
 
         // Apply colormap
         if (this.value.options.mapColorMap && this.value.colormap) {
-          mappedColorIndex = (pixels[mappedIndex] + this.value.colormap.pixels[i]) % 256
+          mappedColorIndex = (inputPixels[i] + 256 + this.value.colormap[mappedIndex]) % 256
         } else {
-          mappedColorIndex = pixels[mappedIndex]
+          mappedColorIndex = inputPixels[i]
         }
 
-        try {
-          theColor = colors[mappedColorIndex];
-          imageDataIndex = mappedIndex * 4
-          IMAGEDATA.data[imageDataIndex] = theColor.r; //*4 =*4 =*4 =*4 = !! NB!!!
-          IMAGEDATA.data[imageDataIndex+1] = theColor.g;
-          IMAGEDATA.data[imageDataIndex+2] = theColor.b;
-          IMAGEDATA.data[imageDataIndex+3] = 255;
-        }
-        catch(e) {
-          console.log('error', colors, theColor, pixels[i], i)
-          console.log(i, pixels[i], pixels.length);
-          this.__stopSliding()
-          return;
-        }
+        tmpPixels[mappedIndex] = mappedColorIndex
+
       }
-      //this.myCtx.putImageData(IMAGEDATA, 0, 0)
-      this.myPreview.putImageData(IMAGEDATA)
+      // mapped output for pipeline or preview
+      let out = {
+        pixels: tmpPixels,
+        colors: input.colors
+      }
+      return out
     },
-
-
-
-
+  
     uploadCroppedImage(e) {
       alert(e)
     },
@@ -952,6 +830,8 @@ return
       // If activeFilter, pick up the pixels from that filter's output otherwise use what's there.
       let i = this.activeFilter
 
+      this.previewResponsive = false
+
       SLIDING_PIXELS = i > -1 ? this.value.filters[i].pixelsOut.slice() : SLIDING_PIXELS
       // Hacvk for first time
       if (!SLIDING_PIXELS) {
@@ -976,6 +856,7 @@ return
       if (!this.slidingStarted) return
       console.log('__stopSliding')
 
+      this.previewResponsive = true
       // If activeFilter, pick up the pixels from that filter's output otherwise use the final filter pipeline output.
       let i = this.activeFilter
       if (i > -1) {
@@ -996,6 +877,8 @@ return
 
       this.slidingStarted = false
       cancelAnimationFrame(this.slidingAnimId)
+      
+      this.$refs.preview.responsive=true
 
     },
 
@@ -1029,12 +912,11 @@ return
         // this.__stopSliding();
 
       }
-
-
-      // this.slidingImageData = tmp
       // update Preview
-      this.__updatePreview({pixels: SLIDING_PIXELS, colors: SLIDING_COLORS})
-
+      this.__updatePreview({
+        pixels: SLIDING_PIXELS,
+        colors: this.value.palette.colors
+      })
       // DEBUG
       //
       // var position = "";

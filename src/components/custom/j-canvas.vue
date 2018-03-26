@@ -40,6 +40,10 @@ export default {
     },
     value: {
       type: [Object, Array, ImageData, Image]
+    },
+    responsive: {
+      type: Boolean,
+      default: true
     }
   },
 
@@ -47,7 +51,8 @@ export default {
     return {
       ctx: null,
       msg: '',
-      myPixelWidth: 256
+      myPixelWidth: 256,
+      bitmap: null
     }
   },
 
@@ -78,6 +83,8 @@ export default {
   watch: {
     value: {
       handler (newVal) {
+
+        if (!this.responsive) return
         console.log( '(⌐■_■) Canvas#' + this.id + '.value ==> ', typeof(newVal), newVal)
 
         let imgData
@@ -159,6 +166,10 @@ export default {
   },
   methods: {
 
+    putBitmap (bitmap) {
+      console.log(MoeUtils.imageDataFromBitmap(bitmap))
+    //  this.putImageData(MoeUtils.imageDataFromBitmap(bitmap))
+    },
     putImageData (imgData) {
       // const imageData = this.myImageData
       // console.log('UPDATE IMAGEDATA', imgData)

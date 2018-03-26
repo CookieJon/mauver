@@ -1,0 +1,49 @@
+Sure, thanks - I've annotated a simplified example. Hopefully it'll explain my problem...
+    
+    <!-- custom control's value is computed imageData -->
+    <custom-canvas-control :value='pipelineFiltered' />
+
+    // component
+    data: () { return {
+        project: {  
+            // Looks like...
+            // filters: [{type, options, output, stuff...}, filter, filter... ]
+            // srcBitmap: {pixels, palette, stuff...}
+        }
+    }},
+    computed: {
+        pipelineFiltered () {
+
+            // start with an image (custom object)
+            let bitmap = srcBitmap
+
+            // iterate filters, change image by filter types & options
+            // ## 1 ### (Need only start at the filter that changed. How??)
+            this.value.filters.forEach((filter, i) => {
+
+                  if (filter.type == 'applyPattern') {
+            
+                      filter.mappedBitmap = filter.options.remapPalette
+                          ? utils.remapBitmapPalette(bitmap) 
+                          : clone(bitmap)
+                         (###2### ^ if the "remapPalette" option didn't change, don't need to call the expensive 'remapBitmapPalette()'. How to tell??)
+
+                      filter.transformedBitmap = filter.options.transform  
+                          ? utils.transformBitmap(filter.mappedBitmap , filter.x, filter.y, filter.w, filter.h)
+                          : clone(filter.mappedBitmap )
+ (###2b### ^ If transform, x, y, w, or height didn't change, the tx doesn't need recalculating)
+
+                      // other options, finally...
+                      bitmap = clone(filter.finalBitmap)
+                      
+                  }
+                  // other filter types...
+                }
+            return utils.getImageData(bitmap)
+        }
+    
+It seems to me that Vue must "know" somewhere what caused it to re-calculate the computed property.  I thought it would be simpler to get that information from Vue rather than write structures of my own to watch for fine-grained changes, or compare old and new data.
+
+I've gone down this path of computed property, but I'm not wedded to it. I raised [this original question](https://forum.vuejs.org/t/dynamic-chain-of-reactive-properties-how-to/29216?u=cookiejon) when I couldn't think of how to make a dynaic chain of filter reactive at all, but I've realised it didn't quite answer the question 100% as the WHOLE chain is calculated every time.
+
+Is there a better way altogether? 
