@@ -4,10 +4,12 @@
     //-  PREVIEW (w.bitmsp2 branch)
     j-panel(icon='business', v-touch-pan="previewPan" :title='value.name + " Preview"', :width='600', :height='800', :x='600', :y='5')
       div.j-tray.area.panel-item-grow(slot='content')
-        div.row.text-white    
-          q-checkbox(v-model="value.options.unmapPixelMap", label='Unmap Pixel')
-          q-checkbox(v-model="value.options.mapPixelMap", label='Map Pixel')
-          |{{value.options.mapPixelMap}}
+        div.row.text-white
+          q-checkbox(v-model="value.options.unmapPixelMap", label='unmapPixlMap')
+          q-checkbox(v-model="value.options.mapPixelMap", label='mapPixelMap')
+          q-checkbox(v-model="myValue.options.unmapColorMap", label='unmapColorMap')
+          q-checkbox(v-model="myValue.options.mapColorMap", label='mapColorMap')
+
         div.rowx
 
           div(:class='value.options.frame')
@@ -68,9 +70,9 @@
                 q-btn(small,push,@click='changeAmplitude(-1)')|-
 
 
-          
-          
-          
+
+
+
           //- FILTERS
           q-card(color='dark')
             q-card-main
@@ -98,7 +100,7 @@
                         q-btn(small push @click='filter.delta = new Array().fill(0)')|Zero
                       pre(v-html='value.filters[i].pixelSummary')
                       j-canvas(:id='"Filter"+i+"ImageData"' :value='value.filters[i].imageData', width='60px' height='60px')
-                      
+
                   //- BITMAP
                   q-card-main(v-else-if='filter.type === "bitmap"')
                     div.row
@@ -109,6 +111,8 @@
                         |X:{{filter.bitmapX}}
                         br
                         |Y:{{filter.bitmapY}}
+                        br
+                        q-btn(small push @click='(filter.bitmapX =0, filter.bitmapY = 0)')|Zero
                       div.col
                         |BMP
                         j-drop-target(:value='value.filters[i].bitmap', @add='dropBitmapOnBitmapFilter($event, i)', @select='selectBitmapFilterBitmap(i)' style='width:60px;height:60px;')
@@ -120,8 +124,8 @@
                         j-canvas(:id='"Filter"+i+"ImageData"' :value='value.filters[i].imageData', width='60px' height='60px')
                       div.col
                         pre(v-html='value.filters[i].pixelSummary')
-                     
-          //- PALETTE
+
+          //- MAPS
           q-card(color='dark')
             q-card-main.row
               div.col
@@ -140,8 +144,12 @@
                     //-   div.col-3
                     //-     q-toggle(v-model="myValue.options.unmapColorMap", label='Unmap')
                     //-     q-toggle(v-model="myValue.options.mapColorMap", label='Map')
-
-
+              div.col
+                div.row
+                  |COLORMAP
+                div.col
+                  j-drop-target(:value='colorMapInput', @add='dropColorMapInput($event)', style='width:80px;height:80px;')
+                  
 
 
     </q-card-main>
@@ -237,6 +245,7 @@ export default {
       palette: null,
       pixels: null,
       // imageData: null,
+      colorMapInput: null,
       pixelMapInput: null,  // greyscale source for generating a pixelmap
       sliderInterval: 10,         // Timeout for continuous press
 
@@ -337,20 +346,65 @@ export default {
             }
 
             // F2.C Offset pixelmap & apply palette map
-            // -----  .....
-            // -----  ..AAAaa
-            // -----  ..AAAaa
+            //
+            // -----  ..-----
+            // -----  ..--AAAaa
+            // -----  ..--AAAaa
+            //            aaaaa
 
             // 12345  67800  AAAAA
             // -----  --123  --678
             console.log('tmp1', tmpPixels.slice(-100))
+
+            // Attempt 2
             let shift = filter.bitmapX + filter.bitmapY * 256,
-              top = Math.min(Math.max(filter.bitmapY, 0), 256),
-              left = Math.min(Math.max(filter.bitmapX, 0), 256),
-              bottom = Math.min(Math.max(filter.bitmapY + 256, 0), 256),
-              right = Math.min(Math.max(filter.bitmapX + 256, 0), 256),
+              top = Math.min(Math.max(0 - filter.bitmapY, 0), 256),
+              left = Math.min(Math.max(0 - filter.bitmapX, 0), 256),
+              right =  Math.min(Math.max(256 - filter.bitmapX, 0), 256),
+              bottom =  Math.min(Math.max(256 - filter.bitmapY, 0), 256),
               bitmapPixels = filter.bitmap.pixels
 
+            for (let y = top; y < bottom; y++) {
+              for (let x = left; x < right; x++) {
+
+                let fromI = x + y * 256
+                let toI = x + y * 256
+                toI += shift
+
+                if (this.value.options.unmapPixelMap && this.value.pixelunmap) {
+                  toI = this.value.pixelunmap[toI]
+                }
+
+                tmpPixels[toI] = paletteMap ? paletteMap[bitmapPixels[fromI]] : bitmapPixels[fromI]
+
+                // let ii = i - shift
+                // let iii = (this.value.options.unmapPixelMap && this.value.pixelmap)
+                //   ? this.value.pixelmap[ii] // unmap pixel
+                //   : ii
+                // tmpPixels[i] = paletteMap ? paletteMap[bitmapPixels[iii]] : bitmapPixels[iii]
+              }
+            }
+
+
+            // Attempt 1
+            // let shift = filter.bitmapX + filter.bitmapY * 256,
+            //   top = Math.min(Math.max(filter.bitmapY, 0), 256),
+            //   left = Math.min(Math.max(filter.bitmapX, 0), 256),
+            //   bottom = Math.min(Math.max(filter.bitmapY + 256, 0), 256),
+            //   right = Math.min(Math.max(filter.bitmapX + 256, 0), 256),
+            //   bitmapPixels = filter.bitmap.pixels
+
+            // for (let y = top; y < bottom; y++) {
+            //   for (let x = left; x < right; x++) {
+
+            //     let i = x + y * 256
+            //     let ii = i - shift
+            //     let iii = (this.value.options.unmapPixelMap && this.value.pixelmap)
+            //       ? this.value.pixelmap[ii] // unmap pixel
+            //       : ii
+            //     tmpPixels[i] = paletteMap ? paletteMap[bitmapPixels[iii]] : bitmapPixels[iii]
+            //   }
+            // }
             //console.log(top, left, bottom, right)
 
             //  UNMAP- pixels[i] = Mapper.tmpPixels[Mapper.mappedCoords[i*2]+256*Mapper.mappedCoords[i*2+1]];
@@ -358,18 +412,7 @@ export default {
             // unmappedPixels[ i ] = mappedPixels[ mappedI ]
 
             //  MAP->	pixels[Mapper.mappedCoords[i*2]+256*Mapper.mappedCoords[i*2+1]] = Mapper.tmpPixels[i];
-           
-            for (let y = top; y < bottom; y++) {
-              for (let x = left; x < right; x++) {
 
-                let i = x + y * 256
-                let ii = i - shift
-                let iii = (this.value.options.unmapPixelMap && this.value.pixelmap)
-                  ? this.value.pixelmap[i*2] + this.value.pixelmap[i*2+1] * 256 // unmap pixel
-                  : ii
-                tmpPixels[i] = paletteMap ? paletteMap[bitmapPixels[iii]] : bitmapPixels[iii]
-              }
-            }            
 
             // F2.D Subtract gobo
 
@@ -413,7 +456,7 @@ export default {
     },
 
     pipelineMapped () {
-
+      console.log('** COMPUTING pipelineMapped() -->')
       let input = this.pipelineFiltered
       let tmpPixels = [].concat(input.pixels)
       let inputPixels = input.pixels
@@ -429,15 +472,19 @@ export default {
         // Apply pixelmap
         //  MAP->	pixels[Mapper.mappedCoords[i*2]+256*Mapper.mappedCoords[i*2+1]] = Mapper.tmpPixels[i];
         if (this.value.options.mapPixelMap && this.value.pixelmap) {
-          mappedIndex = (this.value.pixelmap[i*2] + 256 * this.value.pixelmap[i*2+1])
+          ////mappedIndex = (this.value.pixelmap[i*2] + 256 * this.value.pixelmap[i*2+1])
+          mappedIndex = this.value.pixelmap[i] // parseInt(i * 2) //
+          if (!mappedIndex || mappedIndex < 0 || mappedIndex > 65535) {
+            console.log("ERROR", i, mappedIndex)
+          }
         } else {
           mappedIndex = i
         }
-        
-      
+
+
         // Apply colormap
         if (this.value.options.mapColorMap && this.value.colormap) {
-          mappedColorIndex = (inputPixels[i] + this.value.colormap.pixels[mappedIndex]) % 256
+          mappedColorIndex = (inputPixels[i] + 256 + this.value.colormap[mappedIndex]) % 256
         } else {
           mappedColorIndex = inputPixels[i]
         }
@@ -616,7 +663,7 @@ return
           mappedIndex = 12
         }
 
-       
+
         // Apply colormap
         if (this.value.options.mapColorMap && this.value.colormap) {
           mappedColorIndex = (pixels[mappedIndex] + this.value.colormap.pixels[i]) % 256
@@ -822,12 +869,25 @@ return
       }
       this.$store.dispatch('updateFields', {artworks: [art]} )
     },
-    dropColorMap(e) {
+    dropColorMapInput(e) {
       console.log('dropColormap')
       e.item.remove()
+      this.colorMapInput = e.clone.obj
+      let colormap = []
+      let colorunmap = []
+      let bitmapColors = this.colorMapInput.colors || ColorUtils.GeneratePaletteColors('raw')
+      let inputColors = this.value.palette.colors
+      // create palette map
+      let paletteMap = bitmapColors.map(b => {
+        let m2 = inputColors.findIndex(p => {return p.id === b.id})
+        return m2 > -1 ? m2 : 0
+      })
+      for (let i =  0; i < 65536; i++) {
+        colormap[i] = paletteMap[this.colorMapInput.pixels[i]]
+      }
       let art = {
         id: this.value.id,
-        colormap: e.clone.obj
+        colormap: colormap
       }
       this.$store.dispatch('updateFields', {artworks: [art]} )
     },
@@ -836,21 +896,22 @@ return
       e.item.remove() // will be added by v-for instead
       this.pixelMapInput = e.clone.obj
       let pixelsIn = this.pixelMapInput.pixels
-      let mapOut = []
-      for (let i = 0; i< 256; i++) {
-        for (let y = 0; y < 256; y++) {
-          for (let x = 0; x < 256; x++) {
-            let offset = x + y * 256
-            if (pixelsIn[offset] === i) {
-              mapOut.push(x)
-              mapOut.push(y)
-            }
+      let pixelmap = []
+      let pixelunmap = []
+      let ci, mi, ui = 0 // Indices: color, mapped, unmapped
+      for (ci = 0; ci < 256; ci++) {
+        for (mi = 0; mi < 65536; mi++) {
+          if (pixelsIn[mi] === ci)  {
+            pixelmap[ui] = mi
+            pixelunmap[mi] = ui
+            ui++
           }
         }
       }
       let art = {
         id: this.value.id,
-        pixelmap: mapOut
+        pixelmap,
+        pixelunmap
       }
       this.$store.dispatch('updateFields', {artworks: [art]} )
     },
@@ -1001,7 +1062,6 @@ return
         this.slidingSpeedPower = parseInt( ((65536 )*this.controlPower/10000) ) ;
       } else {
         this.slidingSpeedPower = parseInt(this.controlPower/10000 * this.slidingSpeedsGradations) * this.slidingSpeedsLength;
-
       }
 
       // record
