@@ -23,6 +23,8 @@
           div.col
             div.row
               |SPEEDMAP
+              q-btn(small,push,ref='target')|?
+                q-popover(ref='popover')
             div.row
               div.col-11
                 //- q-select(dark, v-model='slidingSpeedsPattern', :options='presetSlidingSpeedOptions')
@@ -74,14 +76,16 @@
         q-btn(small push @click='addFilter("bitmap")')|+ BMP
         q-btn(small,push,@click='setActiveFilter(-2)')
           j-canvas(:value='pipelineFiltered', width='40px' height='40px')
+        q-btn(small,push,@click='setActiveFilter(-2)')
+          j-canvas(:value='pipelineMapped', width='40px' height='40px')
 
       div.j-tray.area.panel-item-grow(slot='content')
-        
-        q-scroll-area(style="min-height: 400px" :thumb-style="{right: '4px',borderRadius: '2px',background: 'black',width: '5px', opacity: 1}"  :delay="1500")
 
-          //- FILTERS
-          q-card(color='dark')
-            q-card-main
+          q-card-main
+            //- FILTERS
+            q-scroll-area(style="height: 400px" :thumb-style="{right: '4px',borderRadius: '2px',background: 'black',width: '5px', opacity: 1}"  :delay="1500")
+
+
               div.row(v-for='filter, i in value.filters' @click='setActiveFilter(i)')
                 q-card(style='width: 100%;' color='dark' :class='i === activeFilter ? "active" : ""')
 
@@ -280,7 +284,7 @@ export default {
         colors,
         imageData: MoeUtils.imageDataFromPixelsAndColors({pixels, colors})
       }
-      console.clear()
+      //console.clear()
       console.log('** COMPUTED pipelineInit()', out)
       return out
 
@@ -476,11 +480,11 @@ export default {
     __updatePreview(bitmap) {
       let imageData = MoeUtils.imageDataFromPixelsAndColors(this.mapOutput(bitmap))
       this.$refs.preview.putImageData(imageData)
-      console.log('** __updatePreview() -->', bitmap, imageData)
+      //console.log('** __updatePreview() -->', bitmap, imageData)
     },
 
     mapOutput(bitmap) {
-      console.log('** mapOutput() -->', bitmap)
+      //console.log('** mapOutput() -->', bitmap)
       let input = bitmap //this.pipelineFiltered
       let tmpPixels = [].concat(input.pixels)
       let inputPixels = input.pixels
@@ -532,7 +536,7 @@ export default {
 
       // Coose preview pixels
       SLIDING_PIXELS =
-        i > -1 ? this.value.filters[i].pixelsOut
+        i > -1  ? this.value.filters[i].pixelsOut
         : i === -1
           ? this.pipelineInit.pixels
           : this.pipelineFiltered.pixels // -2
@@ -612,12 +616,12 @@ export default {
       }
       let filters = extend({}, {val: this.value.filters}).val
       filters.push(filter)
-      setActiveFilter(filters.length)
       let art = {
         id: this.value.id,
         filters: filters
       }
       this.$store.dispatch('updateFields', {artworks: [art]} )
+      // this.setActiveFilter(filters.length-1)
     },
 
     deleteFilter(i) {
