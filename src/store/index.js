@@ -45,6 +45,7 @@ const Artwork = new schema.Entity('artworks', {
   // imageData: null,
   // filters: [ Bitmap ],
   bitmap: Bitmap,
+  // gobo: Bitmap,
   // colormap: Bitmap
 })
 
@@ -55,12 +56,6 @@ const Museum = {
   bitmaps: [ Bitmap ],
   artworks: [ Artwork ],
 }
-
-
-
-
-
-
 
 
 

@@ -47,6 +47,7 @@ export default class Factory {
       gobo: null,
       goboX: 0,
       goboY: 0,
+      mode: 1, // 1=bitmap selected, 2=gobo selected
       unmapPixel: true,
       remapPalette: true,
       pixelsOut: null,
@@ -73,7 +74,8 @@ export default class Factory {
         unmapPixelMapSpeed: true, // Apply the pixelmap to the sliding speeds?
         mapPixelMapSpeed: true,
         frame: 'picture-frame-none',
-        aspect: 'picture-aspect-square' // square | portrait | landscape
+        aspect: 'picture-aspect-square', // square | portrait | landscape,
+        colorMapOffset: 0
       },
 
       pixels: Array(65536).fill(244),

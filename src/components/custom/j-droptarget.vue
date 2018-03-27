@@ -2,6 +2,7 @@
   <div
     ref="container"
     class='frame frame-type-droptarget'
+    :class='myClass'
   >
     <j-item
       v-if='value'
@@ -25,6 +26,10 @@
       myClass: {
         type: String,
         default: 'frame-type-grid'
+      },
+      selected: {
+        type: Boolean,
+        default: true
       }
     },
     watch: {
@@ -39,6 +44,9 @@
     computed: {
       myValue () {
         this.value ? [this.value] : null
+      },
+      myClass () {
+        return this.selected ? 'selected' : ''
       }
     },
     data () {
@@ -144,16 +152,19 @@
 
 /* frame-type-grid */
 .frame.frame-type-droptarget
-  // padding 5px
-  // background-color rgba(0, 0, 0, 0.3)
+  padding 5px
+  background-color rgba(0, 0, 0, 0.3)
   width 100px
   height 100px
-  // overflow hidden
+
+  &.selected
+    border 2px solid white !important
+
 
 .frame.frame-type-droptarget > .frame
 
   position relative
-  float left
+  xfloat left
   min-height 48px
   border 2px solid #333
   //border-left 4px solid #2196F3
