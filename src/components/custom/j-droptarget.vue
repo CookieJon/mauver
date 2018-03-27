@@ -45,7 +45,7 @@
       myValue () {
         this.value ? [this.value] : null
       },
-      myClass () {
+      myClassx () {
         return this.selected ? 'selected' : ''
       }
     },

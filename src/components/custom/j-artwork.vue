@@ -12,90 +12,76 @@
               //- j-canvas.frame-type-grid(:image-data='filterFinalImageData')
 
     //- GLOBAL OPTIONS
-    j-panel(icon='business', :title='value.name', :width='400', :height='850', :x='195', :y='5')
-      div.j-tray.area.panel-item-grow(slot='content')
-        
-        q-card(color='dark')
-          q-card-main.row
-            j-lever(v-model='controlTargetPower', rest='50%', :markers='true',:labelAlways='true',orientation='vertical',@start='__startSliding',@stop='__stopSliding',:range={'min': -10000,'35%': -1200,'45%': -100,'50%': 0,'55%': 100,'65%': 1200,'max': 10000})
-            
-          //- MAPS
-          q-card-main.row
-            div.col
-              div.row
-                |SPEEDMAP
-              div.row
-                div.col-11
-                  //- q-select(dark, v-model='slidingSpeedsPattern', :options='presetSlidingSpeedOptions')
-                  q-input(stack-label='Sliding Speeds Pattern', dark, v-model='slidingSpeedsPattern')
-                div.col-1
-                  q-btn(small,push,ref='target')|?
-                    q-popover(ref='popover')
-                      q-list(separator,link,style="min-width: 100px")
-                        q-item(
-                          v-for="(n, i) in presetSlidingSpeedOptions",
-                          :key='i',
-                          @click='slidingSpeedsPattern=presetSlidingSpeedOptions[i].value,$refs.popover.close()')
-                          q-item-main(:label='n.label')
-              div.row
-                q-checkbox(v-model="myValue.options.slidingLocked", label='Lock')
-                q-btn(small,push,@click='changePeriod(-1)')|<
-                q-btn(small,push,@click='changePeriod(1)')|>
-                q-btn(small,push,@click='changeAmplitude(1)')|+
-                q-btn(small,push,@click='changeAmplitude(-1)')|-
-            div.col
-              div.row
-                |PALETTE
-              div.col
-                j-drop-target(:value='myPalette', @add='dropPalette($event)', style='width:80px;height:80px;')
-                q-select(dark, v-model='paletteDDL', :options='paletteOptions')
-                q-select(dark, v-model='myValue.options.frame', :options='frameOptions')
-            div.col
-              div.row
-                |PIXELMAP
-              div.col
-                j-drop-target(:value='pixelMapInput', @add='dropPixelMapInput($event)', style='width:80px;height:80px;')
-                q-checkbox(v-model="myValue.options.unmapPixelMap", label='Unmap')
-                q-checkbox(v-model="myValue.options.mapPixelMap", label='Map')
-            div.col
-              div.row
-                |COLORMAP
-              div.col
-                j-drop-target(:value='colorMapInput', @add='dropColorMapInput($event)', style='width:80px;height:80px;')
-                q-checkbox(v-model="myValue.options.unmapColorMap", label='Unmap')
-                q-checkbox(v-model="myValue.options.mapColorMap", label='Map')
-                q-slider(label='Offset' dark v-model='myValue.options.colorMapOffset' :min='0' :max='255')          
+    j-panel(icon='business', :title='value.name', :width='400', :height='350', :x='195', :y='5')
+      div.text-primary.j-tray.area.panel-item-grow(slot='content')
+        //- q-card(color='dark')
+        q-card-main.row
+          j-lever(v-model='controlTargetPower', rest='50%', :markers='true',:labelAlways='true',orientation='vertical',@start='__startSliding',@stop='__stopSliding',:range={'min': -10000,'35%': -1200,'45%': -100,'50%': 0,'55%': 100,'65%': 1200,'max': 10000})
 
+        //- MAPS
+        q-card-main.row
+          div.col
+            div.row
+              |SPEEDMAP
+            div.row
+              div.col-11
+                //- q-select(dark, v-model='slidingSpeedsPattern', :options='presetSlidingSpeedOptions')
+                q-input(stack-label='Sliding Speeds Pattern', dark, v-model='slidingSpeedsPattern')
+              div.col-1
+                q-btn(small,push,ref='target')|?
+                  q-popover(ref='popover')
+                    q-list(separator,link,style="min-width: 100px")
+                      q-item(
+                        v-for="(n, i) in presetSlidingSpeedOptions",
+                        :key='i',
+                        @click='slidingSpeedsPattern=presetSlidingSpeedOptions[i].value,$refs.popover.close()')
+                        q-item-main(:label='n.label')
+            div.row
+              q-checkbox(v-model="myValue.options.slidingLocked", label='Lock')
+              q-btn(small,push,@click='changePeriod(-1)')|<
+              q-btn(small,push,@click='changePeriod(1)')|>
+              q-btn(small,push,@click='changeAmplitude(1)')|+
+              q-btn(small,push,@click='changeAmplitude(-1)')|-
+          div.col
+            div.row
+              |PALETTE
+            div.col
+              j-drop-target(:value='myPalette', @add='dropPalette($event)', style='width:80px;height:80px;')
+              q-select(dark, v-model='paletteDDL', :options='paletteOptions')
+              q-select(dark, v-model='myValue.options.frame', :options='frameOptions')
+          div.col
+            div.row
+              |PIXELMAP
+            div.col
+              j-drop-target(:value='pixelMapInput', @add='dropPixelMapInput($event)', style='width:80px;height:80px;')
+              q-checkbox(v-model="myValue.options.unmapPixelMap", label='Unmap')
+              q-checkbox(v-model="myValue.options.mapPixelMap", label='Map')
+          div.col
+            div.row
+              |COLORMAP
+            div.col
+              j-drop-target(:value='colorMapInput', @add='dropColorMapInput($event)', style='width:80px;height:80px;')
+              q-checkbox(v-model="myValue.options.unmapColorMap", label='Unmap')
+              q-checkbox(v-model="myValue.options.mapColorMap", label='Map')
+              q-slider(dark v-model='myValue.options.colorMapOffset' :min='0' :max='255')
 
     //- SETTINGS
-    j-panel(icon='business', :title='value.name', :width='400', :height='850', :x='195', :y='5')
+    j-panel(icon='business', title='Filters', :width='400', :height='550', :x='195', :y='360')
+      div.j-panel-toolbar.text-black(slot='toolbar', style='padding:4px;')
+        q-btn(small push @click='setActiveFilter(-1)')
+          j-canvas(:value='pipelineInit', width='40px' height='40px')
+        q-btn(small push @click='addFilter("slider")')|+ SLD
+        q-btn(small push @click='addFilter("bitmap")')|+ BMP
+        q-btn(small,push,@click='setActiveFilter(-2)')
+          j-canvas(:value='pipelineFiltered', width='40px' height='40px')
+
       div.j-tray.area.panel-item-grow(slot='content')
-
-
-        q-scroll-area(style="height: 800px" :thumb-style="{right: '4px',borderRadius: '2px',background: 'black',width: '5px', opacity: 1}"  :delay="1500")
-
-          //- SPEEDMAP
-          q-card(color='dark')
-            q-card-main
-             
-
-
-
-
+        
+        q-scroll-area(style="min-height: 400px" :thumb-style="{right: '4px',borderRadius: '2px',background: 'black',width: '5px', opacity: 1}"  :delay="1500")
 
           //- FILTERS
           q-card(color='dark')
             q-card-main
-              div.row
-                |FILTERS
-              div.row
-                q-btn(small push @click='setActiveFilter(-1)')
-                  j-canvas(:value='pipelineInit', width='40px' height='40px')
-                q-btn(small push @click='addFilter("slider")')|+ SLD
-                q-btn(small push @click='addFilter("bitmap")')|+ BMP
-                q-btn(small,push,@click='setActiveFilter(-2)')
-                  j-canvas(:value='pipelineFiltered', width='40px' height='40px')
-
               div.row(v-for='filter, i in value.filters' @click='setActiveFilter(i)')
                 q-card(style='width: 100%;' color='dark' :class='i === activeFilter ? "active" : ""')
 
@@ -139,7 +125,7 @@
 
 
 
-          
+
 
     </q-card-main>
   </q-card-media>
@@ -344,7 +330,7 @@ export default {
               bottom =  Math.min(Math.max(256 - filter.bitmapY, 0), 256),
               bitmapPixels = filter.bitmap ? filter.bitmap.pixels : null,
               goboPixels = filter.gobo ? filter.gobo.pixels : null
-            
+
             if (bitmapPixels) {
 
               for (let y = top; y < bottom; y++) {
