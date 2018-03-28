@@ -170,16 +170,16 @@ export default {
       }
     },
     computed: {
-      position () {
-        const transform = `rotateX(${this.rotateX}deg) rotateY(${this.rotateY}deg)`
-        return {
-          top: this.moveY + 'px',
-          left: this.moveX + 'px',
-          '-webkit-transform': transform,
-          '-ms-transform': transform,
-          transform
-        }
-      },
+      // position () {
+      //   const transform = `rotateX(${this.rotateX}deg) rotateY(${this.rotateY}deg)`
+      //   return {
+      //     top: this.moveY + 'px',
+      //     left: this.moveX + 'px',
+      //     '-webkit-transform': transform,
+      //     '-ms-transform': transform,
+      //     transform
+      //   }
+      // },
       'bgStyle' () {
         return {
           'background-color': 'white',
@@ -251,17 +251,17 @@ export default {
       }
     },
     mounted () {
-      this.$nextTick(() => {
-        if (this.orienting) {
-          window.addEventListener('deviceorientation', this.orient, false)
-        }
-        else if (this.rotating) {
-          window.addEventListener('devicemove', this.rotate, false)
-        }
-        else {
-          document.addEventListener('mousemove', this.move)
-        }
-      })
+      // this.$nextTick(() => {
+      //   if (this.orienting) {
+      //     window.addEventListener('deviceorientation', this.orient, false)
+      //   }
+      //   else if (this.rotating) {
+      //     window.addEventListener('devicemove', this.rotate, false)
+      //   }
+      //   else {
+      //     document.addEventListener('mousemove', this.move)
+      //   }
+      // })
     },
     beforeDestroy () {
       if (this.orienting) {

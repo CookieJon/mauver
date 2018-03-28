@@ -2,18 +2,19 @@
 
   div
     //-  PREVIEW (w.bitmsp2 branch)
-    j-panel(icon='business' :responsive='previewResponsive' v-touch-pan="previewPan" :title='value.name + " Preview"', :width='600', :height='800', :x='600', :y='5')
+    j-panel(icon='business' :responsive='previewResponsive' :title='value.name + " Preview"', :width='600', :height='800', :x='600', :y='5')
       div.j-tray.area.panel-item-grow(slot='content')
         div(:class='value.options.frame')
           div.picture-mat
             div.picture-art
               // croppa(v-model='myCroppa' disable-click-to-choose :initial-image="myCroppaInitialImage" auto-sizing style="border:1px solid red;")
-              j-canvas( ref='preview', :value='pipelineMapped' @click="clickPreview", width='256', height='256', style='border:1px solid yellow; width:100%;height:100%;')
+              j-canvas( ref='preview' v-touch-pan="previewPan" :value='pipelineMapped' @click="clickPreview", width='256', height='256' style='width:100%;height:100%;')
               //- j-canvas.frame-type-grid(:image-data='filterFinalImageData')
 
     //- GLOBAL OPTIONS
     j-panel(icon='business', :title='value.name', :width='400', :height='350', :x='195', :y='5')
       div.text-primary.j-tray.area.panel-item-grow(slot='content')
+
         //- q-card(color='dark')
         q-card-main.row
           j-lever(v-model='controlTargetPower', rest='50%', :markers='true',:labelAlways='true',orientation='vertical',@start='__startSliding',@stop='__stopSliding',:range={'min': -10000,'35%': -1200,'45%': -100,'50%': 0,'55%': 100,'65%': 1200,'max': 10000})
@@ -22,23 +23,22 @@
         q-card-main.row
           div.col
             div.row
+              //-
+
               |SPEEDMAP
-              q-btn(small,push,ref='target')|?
-                q-popover(ref='popover')
             div.row
-              div.col-11
+              div.col
                 //- q-select(dark, v-model='slidingSpeedsPattern', :options='presetSlidingSpeedOptions')
                 q-input(stack-label='Sliding Speeds Pattern', dark, v-model='slidingSpeedsPattern')
-              div.col-1
-                q-btn(small,push,ref='target')|?
-                  q-popover(ref='popover')
-                    q-list(separator,link,style="min-width: 100px")
-                      q-item(
-                        v-for="(n, i) in presetSlidingSpeedOptions",
-                        :key='i',
-                        @click='slidingSpeedsPattern=presetSlidingSpeedOptions[i].value,$refs.popover.close()')
-                        q-item-main(:label='n.label')
             div.row
+              q-btn(small,push,ref='target')|?
+                q-popover(ref='popover')
+                  q-list(separator,link,style="min-width: 100px")
+                    q-item(
+                      v-for="(n, i) in presetSlidingSpeedOptions",
+                      :key='i',
+                      @click='slidingSpeedsPattern=presetSlidingSpeedOptions[i].value,$refs.popover.close()')            
+                        q-item-main(:label='n.label')
               q-checkbox(v-model="myValue.options.slidingLocked", label='Lock')
               q-btn(small,push,@click='changePeriod(-1)')|<
               q-btn(small,push,@click='changePeriod(1)')|>
@@ -51,6 +51,14 @@
               j-drop-target(:value='myPalette', @add='dropPalette($event)', style='width:80px;height:80px;')
               q-select(dark, v-model='paletteDDL', :options='paletteOptions')
               q-select(dark, v-model='myValue.options.frame', :options='frameOptions')
+              q-btn(small,push,ref='target')|?
+                q-popover(ref='popover')
+                  q-list(separator,link,style="min-width: 100px")
+                    q-item(
+                      v-for="(n, i) in presetSlidingSpeedOptions",
+                      :key='i',
+                      @click='slidingSpeedsPattern=presetSlidingSpeedOptions[i].value,$refs.popover.close()')
+                      q-item-main(:label='n.label')
           div.col
             div.row
               |PIXELMAP
@@ -63,9 +71,12 @@
               |COLORMAP
             div.col
               j-drop-target(:value='colorMapInput', @add='dropColorMapInput($event)', style='width:80px;height:80px;')
+              j-canvas(:value='value.colormap')
               q-checkbox(v-model="myValue.options.unmapColorMap", label='Unmap')
               q-checkbox(v-model="myValue.options.mapColorMap", label='Map')
               q-slider(dark v-model='myValue.options.colorMapOffset' :min='0' :max='255')
+              q-btn(small push @click='unmapColorsToZero()')|Zero
+
 
     //- SETTINGS
     j-panel(icon='business', title='Filters', :width='400', :height='550', :x='195', :y='360')
@@ -108,21 +119,24 @@
                         q-btn(small push @click='deleteFilter(i)')|-
                     div.row
                       div.col
-                        |X:{{filter.bitmapX}}
-                        br
-                        |Y:{{filter.bitmapY}}
+                        |B:{{filter.bitmapX}},{{filter.bitmapY}}
+                        q-btn(small push @click='(filter.bitmapX =0, filter.bitmapY = 0)')|Zero
+                        |G:{{filter.goboX}},{{filter.goboY}}
+                        q-btn(small push @click='(filter.goboX =0, filter.goboY = 0)')|Zero
                         br
                         |{{filter.mode}}
-                        q-btn(small push @click='(filter.bitmapX =0, filter.bitmapY = 0)')|Zero
+                        
                       div.col
                         |BMP
                         j-drop-target(:selected='filter.mode===1' :value='value.filters[i].bitmap', @add='dropBitmapOnBitmapFilter($event, i)', @select='selectBitmapFilterBitmap(i)' style='width:60px;height:60px;')
                       div.col
                         |GOBO
                         j-drop-target(:selected='filter.mode===2' :value='value.filters[i].gobo', @add='dropGoboOnBitmapFilter($event, i)', @select='selectBitmapFilterGobo(i)' style='width:60px;height:60px;')
+                        q-checkbox(v-model="filter.goboInvert", :label='i +" SLIDER"')
+                        q-slider(dark v-model='filter.goboThreshold' :min='0' :max='255' label)
                       div.col
                         |RAW
-                        j-canvas(:id='"Filter"+i+"ImageData"' :value='value.filters[i].imageData', width='60px' height='60px')
+                        j-canvas(:id='"Filter"+i+"ImageData"' :value='myValue.filters[i].imageData', width='60px' height='60px')
                       div.col
                         pre(v-html='value.filters[i].pixelSummary')
 
@@ -300,7 +314,8 @@ export default {
       let artwork = this.value
 
       this.value.filters.forEach((filter, i) => {
-        if (filter.active && this.activeFilter == -2 || i <= this.activeFilter) {
+
+        if (filter.active) {
 
           // F1) Compute SLIDER FILTER
           if (filter.type === 'slider') {
@@ -328,28 +343,27 @@ export default {
             // F2.C Offset pixelmap & apply palette map
             // Attempt 2
             let shift = filter.bitmapX + filter.bitmapY * 256,
+              goboShift = filter.goboX + filter.goboY * 256,
               top = Math.min(Math.max(0 - filter.bitmapY, 0), 256),
               left = Math.min(Math.max(0 - filter.bitmapX, 0), 256),
               right =  Math.min(Math.max(256 - filter.bitmapX, 0), 256),
               bottom =  Math.min(Math.max(256 - filter.bitmapY, 0), 256),
               bitmapPixels = filter.bitmap ? filter.bitmap.pixels : null,
-              goboPixels = filter.gobo ? filter.gobo.pixels : null
+              goboPixels = filter.gobo ? filter.gobo.pixels : null,
+              goboThreshold = filter.gobo ? filter.goboThreshold : null,
+              goboInvert = filter.goboInvert
 
             if (bitmapPixels) {
 
               for (let y = top; y < bottom; y++) {
                 for (let x = left; x < right; x++) {
 
-                  let fromI = x + y * 256
-                  let toI = fromI + shift
+                  let rawI = x + y * 256
+                  let shiftedI = rawI + shift
+                  let unmappedI = (this.value.options.unmapPixelMap && this.value.pixelunmap) ? this.value.pixelunmap[shiftedI] : shiftedI
 
-                  if (this.value.options.unmapPixelMap && this.value.pixelunmap) {
-                    toI = this.value.pixelunmap[toI]
-                  }
-
-                  let threshold = 1
-                  if (!goboPixels || (goboPixels[toI] === 0)) {
-                    tmpPixels[toI] = paletteMap ? paletteMap[bitmapPixels[fromI]] : bitmapPixels[fromI]
+                  if (!goboPixels || (goboInvert ? goboPixels[shiftedI] > goboThreshold : goboPixels[shiftedI] < goboThreshold)) {
+                    tmpPixels[unmappedI] = paletteMap ? paletteMap[bitmapPixels[rawI]] : bitmapPixels[rawI]
                   }
 
                 }
@@ -366,6 +380,7 @@ export default {
             filter.pixelsOut = [].concat(tmpPixels)
             filter.imageData = MoeUtils.imageDataFromPixelsAndColors({pixels: tmpPixels, colors: input.colors})
             filter.pixelSummary = MoeUtils.getPixelSummary(filter.pixelsOut)
+
             console.log('computed filter ', filter)
           }
 
@@ -502,9 +517,9 @@ export default {
         if (this.value.options.mapPixelMap && this.value.pixelmap) {
           ////mappedIndex = (this.value.pixelmap[i*2] + 256 * this.value.pixelmap[i*2+1])
           mappedIndex = this.value.pixelmap[i] // parseInt(i * 2) //
-          if (!mappedIndex || mappedIndex < 0 || mappedIndex > 65535) {
-            console.log("ERROR", i, mappedIndex)
-          }
+          // if (!mappedIndex || mappedIndex < 0 || mappedIndex > 65535) {
+          //   console.log("ERROR", i, mappedIndex)
+          // }
         } else {
           mappedIndex = i
         }
@@ -731,6 +746,20 @@ export default {
       }
       this.$store.dispatch('updateFields', {artworks: [art]} )
     },
+    unmapColorsToZero() {
+      // Zero colormap
+      let tmpPixels = this.pipelineMapped.pixels
+      let colormap = []
+      for (let i=0; i < 65536; i++) {
+        colormap.push(256 - tmpPixels[i])
+      }
+      let art = {
+        id: this.value.id,
+        colormap: colormap
+      }
+      this.$store.dispatch('updateFields', {artworks: [art]} )
+    },
+
     dropPixelMapInput(e) {
       console.log('dropPixelMapInput')
       e.item.remove() // will be added by v-for instead
@@ -797,8 +826,11 @@ export default {
       SLIDING_PIXELS = i > -1 ? this.value.filters[i].pixelsOut.slice() : SLIDING_PIXELS
       // Hacvk for first time
       if (!SLIDING_PIXELS) {
-        SLIDING_PIXELS = new Array(65536).fill(87)
+        SLIDING_PIXELS = [100].concat(new Array(65536).fill(87)) 
+                       // ^^^ 100 as first item to prevent leading 0's being truncated during SUB. & detect top/bottom passed.
       }
+
+
 
       SLIDING_COLORS = this.value.palette.colors
 
@@ -865,6 +897,7 @@ export default {
         : crunch.sub(SLIDING_PIXELS, this.slidingSpeed)
 
       // recCounter++;
+      if (SLIDING_PIXELS[0])
       if (SLIDING_PIXELS.length > 65536) {
 
         SLIDING_PIXELS.shift(1);
@@ -873,7 +906,7 @@ export default {
         //oRangeDisplay.val(oRangeDisplay.val() + " \n " + " Stopping @ " + (controlDirection > 0 ? "UPPER":"LOWER") );
         // this.__stopSliding();
 
-      }
+      } 
       // update Preview
       this.__updatePreview({
         pixels: SLIDING_PIXELS,

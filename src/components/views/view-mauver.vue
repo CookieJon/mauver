@@ -2,11 +2,13 @@
 <!-- root node required -->
 div
 
+  //- do not delete upload zone!
+  j-upload-zone.hidden(ref='zone',@select='addBitmapsFromFiles') 
 
   //- selectedArtwork SLIDER
   div(v-if='selectedArtwork != null')
     j-artwork(v-model='selectedArtwork')
-  j-upload-zone(ref='zone',@select='addBitmapsFromFiles') <!-- do not delete! -->
+    
   // COLLECTION
   j-panel(icon='business', title='O', :width='185', :height='850', :x='5', :y='5')
     div.j-panel-toolbar.text-black(slot='toolbar', style='padding:4px;')

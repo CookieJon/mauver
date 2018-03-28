@@ -47,6 +47,8 @@ export default class Factory {
       gobo: null,
       goboX: 0,
       goboY: 0,
+      goboThreshold: 1,
+      goboInvert: false,
       mode: 1, // 1=bitmap selected, 2=gobo selected
       unmapPixel: true,
       remapPalette: true,
