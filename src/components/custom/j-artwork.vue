@@ -31,6 +31,7 @@
                 //- q-select(dark, v-model='slidingSpeedsPattern', :options='presetSlidingSpeedOptions')
                 q-input(stack-label='Sliding Speeds Pattern', dark, v-model='slidingSpeedsPattern')
             div.row
+              j-canvas(:value='value.speedmap')
               q-btn(small,push,ref='target')|?
                 q-popover(ref='popover')
                   q-list(separator,link,style="min-width: 100px")
@@ -64,8 +65,10 @@
               |PIXELMAP
             div.col
               j-drop-target(:value='pixelMapInput', @add='dropPixelMapInput($event)', style='width:80px;height:80px;')
-              q-checkbox(v-model="myValue.options.unmapPixelMap", label='Unmap')
-              q-checkbox(v-model="myValue.options.mapPixelMap", label='Map')
+              q-checkbox(v-model="myValue.options.unmapPixelMap", label='UnPix')
+              q-checkbox(v-model="myValue.options.unmapPixelMapSpeed", label='UnSpd')
+              q-checkbox(v-model="myValue.options.mapPixelMap", label='MapPix')
+              q-checkbox(v-model="myValue.options.mapPixelMapSpeed", label='MapSpd')
           div.col
             div.row
               |COLORMAP
@@ -215,6 +218,7 @@ export default {
         {label: 'Landscape', value:'picture-aspect-landscape'}
       ],
       presetSlidingSpeedOptions: [
+        '11,12,0,0,0,0,0,0,0,0,0,0,0',
         '1,2,3,2,1,1,1,1,1,2,3,2',
         '1,1,1,1,1,1,1,1,1,1,1,2,3,4,5,4,3,2,3,4,5,6,7,6,5,4,3,4,5,6,5,4,3,2',
         '1,2,3,4,5,6,7,8,9,8,7,6,5,4,3,2',
@@ -701,10 +705,7 @@ export default {
         filter.bitmapX += e.delta.x
         filter.bitmapY += e.delta.y
       }
-
     },
-
-
 
     dropPalette(e) {
       console.log('dropPalette')
@@ -802,15 +803,17 @@ export default {
         this.slidingSpeeds[i] =  parseInt(speeds[i%speeds.length]);
       }
 
+
       // pixelmap => Sliding speeds
-      if (this.value.options.mapPixelMapSpeeds) {
-        let tmp = []
-        for (let i=0; i < 65536; i++) {
-          tmp.push (this.slidingSpeeds[i*2] + 256 * [i*2+1])
+      if (this.value.options.unmapPixelMapSpeed) {
+        let tmp = new Array(65536).fill(0)
+        for (let i = 0; i < 65536; i++) {
+          tmp[this.value.pixelmap[i]] = this.slidingSpeeds[i]
         }
         this.slidingSpeeds = tmp
       }
 
+      this.value.speedmap = [].concat(this.slidingSpeeds)
     },
 
 

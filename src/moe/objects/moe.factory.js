@@ -89,6 +89,7 @@ export default class Factory {
       // 1. artwork components. MUCH TODO:!
       pixelmap: null,   // <- NB: NOT a BITMAP!!!
       colormap: null,
+      speedmap: null,
       slider: null,
       gobo: null
     }
