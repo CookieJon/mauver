@@ -362,7 +362,7 @@ export default {
                   let shiftedI = rawI + shift
                   let unmappedI = (this.value.options.unmapPixelMap && this.value.pixelunmap) ? this.value.pixelunmap[shiftedI] : shiftedI
 
-                  if (!goboPixels || (goboInvert ? goboPixels[shiftedI] > goboThreshold : goboPixels[shiftedI] < goboThreshold)) {
+                  if (!goboPixels || (goboInvert ? goboPixels[shiftedI - goboShift] > goboThreshold : goboPixels[shiftedI - goboShift] < goboThreshold)) {
                     tmpPixels[unmappedI] = paletteMap ? paletteMap[bitmapPixels[rawI]] : bitmapPixels[rawI]
                   }
 
