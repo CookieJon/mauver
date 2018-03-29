@@ -4,9 +4,12 @@
     //-  PREVIEW (w.bitmsp2 branch)
     j-panel(icon='business' :responsive='previewResponsive' :title='value.name + " Preview"', :width='600', :height='800', :x='600', :y='5')
       div.j-tray.area.panel-item-grow(slot='content')
-        div(:class='value.options.frame')
+        div(:class='value.options.frame')        
           div.picture-mat
             div.picture-art
+              div.canvas-container(ref='canvasContainer')
+                canvas(id='c' width='256', height='256' style='border:2px dotted white; width:256px;height:256px;')
+              
               // croppa(v-model='myCroppa' disable-click-to-choose :initial-image="myCroppaInitialImage" auto-sizing style="border:1px solid red;")
               j-canvas( ref='preview' v-touch-pan="previewPan" :value='pipelineMapped' @click="clickPreview", width='256', height='256' style='width:100%;height:100%;')
               //- j-canvas.frame-type-grid(:image-data='filterFinalImageData')
@@ -172,6 +175,8 @@ var crunch = require("number-crunch");
 import ColorUtils from '../../moe/utils/moe.utils.color.js'
 import MoeUtils from '../../moe/utils/moe.utils.js'
 import Factory from '../../moe/objects/moe.factory.js'
+//import Fabric from '../../moe/utils/fabric.js'
+//import Fabric from 'fabric'
 let UID = 10
 
 let
@@ -180,6 +185,7 @@ let
   ELAPSED_TIME
 
 let
+  CANVAS,
   SLIDING_PIXELS,
   SLIDING_COLORS,
   IMAGEDATA = new ImageData(256, 256)
@@ -500,7 +506,7 @@ export default {
       let imageData = MoeUtils.imageDataFromPixelsAndColors(this.mapOutput(bitmap))
       this.$refs.preview.putImageData(imageData)
       //console.log('** __updatePreview() -->', bitmap, imageData)
-    },
+     },
 
     mapOutput(bitmap) {
       //console.log('** mapOutput() -->', bitmap)
@@ -787,6 +793,9 @@ export default {
     },
     //
     __init() {
+
+
+
       this.slidingLower = new Array(65536).fill(0)
       //this.slidingCurrent = new Array(65536).fill(0)
       this.slidingUpper = new Array(65536).fill(255)
@@ -967,10 +976,129 @@ export default {
     }
 
   },
+
+
   mounted () {
     //this.myCtx = this.$refs.preview.getContext('2d') // <- canvas
     //this.myCtx = this.$refs.preview.getContext('2d') // <-jCanvas
     this.myPreview = this.$refs.preview
+
+
+  // // SETUP FABRIC CANVAS EVENTS ETc.
+  // let handleDragOver = function(e) {
+  //     if (e.preventDefault) {
+  //         e.preventDefault(); // Necessary. Allows us to drop.
+  //     }
+
+  //     e.dataTransfer.dropEffect = 'copy'; // See the section on the DataTransfer object.
+  //     // NOTE: comment above refers to the article (see top) -natchiketa
+  //     return false;
+  // }
+
+  // let handleDragEnter = function(e) {
+  //     // this / e.target is the current hover target.
+  //     this.classList.add('over');
+  // }
+
+  // let handleDragLeave  = function(e) {
+  //     this.classList.remove('over'); // this / e.target is previous target element.
+  // }
+
+  // let handleDrop = function (e) {
+  //     // this / e.target is current target element.
+
+  //     e.preventDefault(); //I've altert this line for FireFox
+
+  //     var img = document.querySelector('#images img.img_dragging');
+  //     var test = e.clone
+  //     console.log('event: ', e);
+
+  //     var newImage = new fabric.Image(img, {
+  //         width: img.width,
+  //         height: img.height,
+  //         // Set the center of the new object based on the event coordinates relative
+  //         // to the canvas container.
+  //         left: e.layerX,
+  //         top: e.layerY
+  //     });
+  //     canvas.add(newImage);
+
+
+  //     canvas.on('drop', function(e) {
+  //       console.log('dropped splat', e)
+  //       debugger
+  //     })
+  //     return false;
+
+  //     // oRIG dropPixelMapInput  console.log('dropPixelMapInput')
+  //     // e.item.remove() // will be added by v-for instead
+  //     // this.pixelMapInput = e.clone.obj
+  //     // let pixelsIn = this.pixelMapInput.pixels
+  //     // let pixelmap = []
+  //     // let pixelunmap = []
+  //     // let ci, mi, ui = 0 // Indices: color, mapped, unmapped
+  //     // for (ci = 0; ci < 256; ci++) {
+  //     //   for (mi = 0; mi < 65536; mi++) {
+  //     //     if (pixelsIn[mi] === ci)  {
+  //     //       pixelmap[ui] = mi
+  //     //       pixelunmap[mi] = ui
+  //     //       ui++
+  //     //     }
+  //     //   }
+  //     // }
+  // }
+
+
+  //   let handleDragEnd = function(e) {
+  //       // this/e.target is the source node.
+  //       [].forEach.call(images, function (img) {
+  //           img.classList.remove('img_dragging');
+  //       });
+  //   }
+
+    var canvas  = new fabric.Canvas('c');
+      canvas.on('drop', function(e) {
+      console.log('dropped splat', e)
+      debugger
+    })
+    var shadow = {
+        color: 'rgba(0,0,0,0.6)',
+        blur: 20,    
+        offsetX: 10,
+        offsetY: 10,
+        opacity: 0.6,
+        fillShadow: true, 
+        strokeShadow: true 
+    }
+
+    var rect = new fabric.Rect({
+            left: 100,
+            top: 100,
+            fill:  "#FF0000",
+            stroke: "#000",
+            width: 100,
+            height: 100,
+            strokeWidth: 10, 
+            opacity: .8      
+        });
+
+    rect.setShadow(shadow)
+    canvas.add(rect)
+
+    // Bind the event listeners for the image elements
+    // var images = document.querySelectorAll('#images img');
+    // [].forEach.call(images, function (img) {
+    //     img.addEventListener('dragstart', handleDragStart, false);
+    //     img.addEventListener('dragend', handleDragEnd, false);
+    // });
+    // Bind the event listeners for the canvas
+    // var canvasContainer = this.$refs.canvasContainer
+    // canvasContainer.addEventListener('dragenter', handleDragEnter, false);
+    // canvasContainer.addEventListener('dragover', handleDragOver, false);
+    // canvasContainer.addEventListener('dragleave', handleDragLeave, false);
+    // canvasContainer.addEventListener('drop', handleDrop, false);
+
+
 
   },
   created () {
