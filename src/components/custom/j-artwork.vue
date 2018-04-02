@@ -1,26 +1,12 @@
 <template lang="pug">
-
   div
-    //-  PREVIEW (w.bitmsp2 branch)
-    j-panel(icon='business' :responsive='previewResponsive' :title='value.name + " Preview"', :width='600', :height='800', :x='600', :y='5')
-      div.j-tray.area.panel-item-grow(slot='content')
-        div(:class='value.options.frame')        
-          div.picture-mat
-            div.picture-art
-              div.canvas-container(ref='canvasContainer')
-                canvas(id='c' width='256', height='256' style='border:2px dotted white; width:256px;height:256px;')
-              
-              // croppa(v-model='myCroppa' disable-click-to-choose :initial-image="myCroppaInitialImage" auto-sizing style="border:1px solid red;")
-              j-canvas( ref='preview' v-touch-pan="previewPan" :value='pipelineMapped' @click="clickPreview", width='256', height='256' style='width:100%;height:100%;')
-              //- j-canvas.frame-type-grid(:image-data='filterFinalImageData')
-
     //- GLOBAL OPTIONS
     j-panel(icon='business', :title='value.name', :width='400', :height='350', :x='195', :y='5')
       div.text-primary.j-tray.area.panel-item-grow(slot='content')
 
         //- q-card(color='dark')
         q-card-main.row
-          j-lever(v-model='controlTargetPower', rest='50%', :markers='true',:labelAlways='true',orientation='vertical',@start='__startSliding',@stop='__stopSliding',:range={'min': -10000,'35%': -1200,'45%': -100,'50%': 0,'55%': 100,'65%': 1200,'max': 10000})
+          //- j-lever(v-model='controlTargetPower', rest='50%', :markers='true',:labelAlways='true',orientation='vertical',@start='__startSliding',@stop='__stopSliding',:range={'min': -10000,'35%': -1200,'45%': -100,'50%': 0,'55%': 100,'65%': 1200,'max': 10000})
 
         //- MAPS
         q-card-main.row
@@ -55,7 +41,7 @@
               j-drop-target(:value='myPalette', @add='dropPalette($event)', style='width:80px;height:80px;')
               q-select(dark, v-model='paletteDDL', :options='paletteOptions')
               q-select(dark, v-model='myValue.options.frame', :options='frameOptions')
-              q-btn(small,push,ref='target')|?
+              q-btn(small push ref='target')|?
                 q-popover(ref='popover')
                   q-list(separator,link,style="min-width: 100px")
                     q-item(
@@ -84,76 +70,147 @@
               q-btn(small push @click='unmapColorsToZero()')|Zero
 
 
-    //- SETTINGS
-    j-panel(icon='business', title='Filters', :width='400', :height='550', :x='195', :y='360')
-      div.j-panel-toolbar.text-black(slot='toolbar', style='padding:4px;')
-        q-btn(small push @click='setActiveFilter(-1)')
-          j-canvas(:value='pipelineInit', width='40px' height='40px')
-        q-btn(small push @click='addFilter("slider")')|+ SLD
-        q-btn(small push @click='addFilter("bitmap")')|+ BMP
-        q-btn(small,push,@click='setActiveFilter(-2)')
-          j-canvas(:value='pipelineFiltered', width='40px' height='40px')
-        q-btn(small,push,@click='setActiveFilter(-2)')
-          j-canvas(:value='pipelineMapped', width='40px' height='40px')
+    
 
+    //- OBJECTS LIST
+
+    j-panel(icon='business', title='Objects', :width='400', :height='550', :x='195', :y='360')
+      //- SELECTION
+      div
+        pre
+          |object.
+
+      //- OBJECTS
       div.j-tray.area.panel-item-grow(slot='content')
+        q-card.bg-light
+          q-scroll-area(style="height: 400px" :thumb-style="{right: '4px',borderRadius: '2px',background: 'black',width: '5px', opacity: 1}"  :delay="1500")
 
-          q-card-main
-            //- FILTERS
-            q-scroll-area(style="height: 400px" :thumb-style="{right: '4px',borderRadius: '2px',background: 'black',width: '5px', opacity: 1}"  :delay="1500")
+            q-list.item-separator
 
+              div.row(v-for='(object, i) in objects' :key='i')
+                div.col-1
+                  img(v-if='object._element' :src='object._element.src' height='40'  @click='selectObject(i)' )
+                  j-canvas(v-else-if="object._cacheCanvas" :value='object._cacheCanvas'  height='40px')
 
-              div.row(v-for='filter, i in value.filters' @click='setActiveFilter(i)')
-                q-card(style='width: 100%;' color='dark' :class='i === activeFilter ? "active" : ""')
-
-                  //- SLIDER
-                  q-card-main(v-if='filter.type === "slider"')
-                    div.row
-                        q-checkbox(v-model="filter.active", :label='i +" SLIDER"')
-                        q-btn(small push @click='deleteFilter(i)')|-
+                div.col-11
+                  q-collapsible(:label='`${object.type} : [${Math.floor(object.left)},${Math.floor(object.top)},${object.scaleX.toFixed(2)},${object.scaleY.toFixed(2)}]`')
                     div.row
                       div.col
-                        j-canvas(:id='"Filter"+i+"Delta"' :value='value.filters[i].delta', width='60px' height='60px')
-                        q-btn(small push @click='filter.delta = new Array().fill(0)')|Zero
-                      pre(v-html='value.filters[i].pixelSummary')
-                      j-canvas(:id='"Filter"+i+"ImageData"' :value='value.filters[i].imageData', width='60px' height='60px')
+                        pre
+                          //- |L:{{Math.floor(object.left)}} T:{{Math.floor(object.top)}} W:{{object.width}} H:{{object.height}} X:{{object.scaleX.toFixed(2)}} Y:{{object.scaleY.toFixed(2)}}
+                          //- |cacheKey:"{{object.cacheKey}}" ownCaching:{{object.ownCaching}} 
+                          //- |dirty:{{object.dirty}} loaded:{{object.loaded}} filters:[{{object.fiters ? object.filters.length : ''}}]
+                          //- |Bitmap:{{object.bitmap}}
+                    
+                    div.col(v-if='object.type==="group"')
+                      div.row
+                        //- |{{object.item(0).type}} -{{object.item(1).type}} - {{object.item(3).type}}
+                        div.col(v-if='object._cacheCanvas')
+                          |grpCache
+                          div(style='border:3px dashed #333;width:50px;height:50px;')
+                            //- cacheCanvas
+                            j-canvas(:value='object._cacheCanvas'  width="100%")             
 
-                  //- BITMAP
-                  q-card-main(v-else-if='filter.type === "bitmap"')
-                    div.row
-                        q-checkbox(v-model="filter.active", :label='i +" BITMAP"')
-                        q-btn(small push @click='deleteFilter(i)')|-
-                    div.row
-                      div.col
-                        |B:{{filter.bitmapX}},{{filter.bitmapY}}
-                        q-btn(small push @click='(filter.bitmapX =0, filter.bitmapY = 0)')|Zero
-                        |G:{{filter.goboX}},{{filter.goboY}}
-                        q-btn(small push @click='(filter.goboX =0, filter.goboY = 0)')|Zero
-                        br
-                        |{{filter.mode}}
-                        
-                      div.col
-                        |BMP
-                        j-drop-target(:selected='filter.mode===1' :value='value.filters[i].bitmap', @add='dropBitmapOnBitmapFilter($event, i)', @select='selectBitmapFilterBitmap(i)' style='width:60px;height:60px;')
-                      div.col
-                        |GOBO
-                        j-drop-target(:selected='filter.mode===2' :value='value.filters[i].gobo', @add='dropGoboOnBitmapFilter($event, i)', @select='selectBitmapFilterGobo(i)' style='width:60px;height:60px;')
-                        q-checkbox(v-model="filter.goboInvert", :label='i +" SLIDER"')
-                        q-slider(dark v-model='filter.goboThreshold' :min='0' :max='255' label)
-                      div.col
-                        |RAW
-                        j-canvas(:id='"Filter"+i+"ImageData"' :value='myValue.filters[i].imageData', width='60px' height='60px')
-                      div.col
-                        pre(v-html='value.filters[i].pixelSummary')
+                        div.col(v-if='object.item(0) && object.item(0)._originalElement')                      
+                          |orig 
+                          div(style='border:3px dashed #333;width:50px;height:50px;')
+                            img(:src='object.item(0)._originalElement.src' width="100%")
 
+                        div.col(v-if='object.item(0) && object.item(0)._filteredEl')   
+                          |filtered
+                          div(style='border:3px dashed #333;width:50px;height:50px;')
+                            //- cacheCanvas
+                            j-canvas(:value='object.item(0)._filteredEl'  width="100%")         
 
+                        div.col(v-if='object.item(0)._paletteImg && object.item(0)._paletteImg')
+                          |palette
+                          div(style='border:3px dashed #333;width:50px;height:50px;')
+                            img(:src='object.item(0)._paletteImg.src' width='100%')
+                            
+                        div.col(v-if='object.item(0)._bitmapImg && object.item(0)._bitmapImg')
+                          |= 8bit
+                          div(style='border:3px dashed #333;width:50px;height:50px;')
+                            img(:src='object.item(0)._bitmapImg.src' width='100%')
 
+                      div.row
+                        div.col(v-if='true || object.item(0)._cacheCanvas')
+                          |0:bmpCache
+                          div(style='border:3px dashed #333;width:50px;height:50px;')
+                            //- cacheCanvas
+                            j-canvas(:value='object.item(0)._cacheCanvas'  width="100%")     
 
+                        div.col(v-if='true || object.item(1)._cacheCanvas')
+                          |1:maskCache
+                          div(style='border:3px dashed #333;width:50px;height:50px;')
+                            //- cacheCanvas
+                            j-canvas(:value='object.item(1)._cacheCanvas'  width="100%") 
 
+                    //- div.row          
 
-    </q-card-main>
-  </q-card-media>
+                    //-   div.col(v-if='object.item(1)')                      
+                    //-     |mask
+                    //-     div(style='border:3px dashed #333;width:5-px;height:50px;')
+                    //-       j-canvas( :value='object.item(1)._cacheCanvas'  width="100%")
+ 
 
+    //-  FABRIC CANVAS
+
+    j-panel(icon='business' :title='value.name + " Preview " + (objects ? objects.length : "empty")', :width='600', :height='800', :x='600', :y='5')
+      div(slot='toolbar')
+        div.row
+          j-lever(v-model='controlTargetPower', rest='50%', :markers='true',:labelAlways='true',orientation='vertical',@start='__startSliding',@stop='__stopSliding',:range={'min': -10000,'35%': -1200,'45%': -100,'50%': 0,'55%': 100,'65%': 1200,'max': 10000})
+        div.row
+          q-btn(v-if='canvasOptions.isDrawingMode' icon='create' @click='canvasOptions.isDrawingMode = false')
+          q-btn(v-else  icon='dialpad' @click='canvasOptions.isDrawingMode = true')
+          q-checkbox(v-model='canvasOptions.preserveObjectStacking' label='Stack')
+          q-checkbox(v-model='canvasOptions.imageSmoothingEnabled' label='Smoothing')
+          q-btn(icon='' @click='$refs.fabric.selectAll()')|All
+          q-btn(icon='' @click='$refs.fabric.selectNone()')|None
+          |--
+          q-btn(icon='' @click='$refs.fabric.group()')|Group
+          q-btn(icon='' @click='$refs.fabric.ungroup()')|Ungroup
+          |-
+          q-btn(icon='' @click='$refs.fabric.fill()')|Fill 
+          q-btn(icon='' @click='$refs.fabric.halve()')|/2
+          q-btn(icon='' @click='$refs.fabric.straighten()')|STR8
+          |-
+          q-btn(icon='' @click='$refs.fabric.sendToBack()')|<<
+          q-btn(icon='' @click='$refs.fabric.sendBackwards()')|<
+          q-btn(icon='' @click='$refs.fabric.bringForward()')|>
+          q-btn(icon='' @click='$refs.fabric.bringToFront()')|>>
+          |-
+          q-btn(icon='' @click='$refs.fabric.centerObject()')|C
+          q-btn(icon='' @click='$refs.fabric.centerObjectH()')|Ch
+          q-btn(icon='' @click='$refs.fabric.centerObjectV()')|Cv
+          |-
+          q-btn(icon='' @click='$refs.fabric.removeSelected()')|Del
+          q-btn(icon='' @click='$refs.fabric.clear()')|Clear
+        //- clear
+        //- clearContext
+        //- clone
+        //- cloneWithoutData
+        //- discardActiveObject
+        //- getActiveObject
+        //- getActiveObjects
+        //- insertAt(object, index, nonSplicing) → {Self}
+        //- item(index) → {Self}
+        //- moveTo  (object, stacklevel)
+        //- straightenObject (object)
+        //- ---
+        //- fill
+
+      div.j-tray.area.panel-item-grow(slot='content')    
+        j-fabric-canvas(ref='fabric' @input='onInput' :canvasOptions='canvasOptions')
+          
+          //- div(:class='value.options.frame') picture-frame
+          //-   div.picture-mat
+          //-     div.picture-art
+
+              //- croppa(v-model='myCroppa' disable-click-to-choose :initial-image="myCroppaInitialImage" auto-sizing style="border:1px solid red;")
+              //- j-canvas( ref='preview' v-touch-pan="previewPan" :value='pipelineMapped' @click="clickPreview", width='256', height='256' style='width:100%;height:100%;')
+              //- j-canvas.frame-type-grid(:image-data='filterFinalImageData')
+
+    
 </template>
 
 <script>
@@ -163,9 +220,10 @@
 // import { Platform } from 'quasar'
 // const TWEEN = require('es6-tween')
 
-import { QSlider, QCheckbox, QScrollArea, QPopover, QList, QItem, QItemMain, QToggle, QOptionGroup, QBtn, QCard, QCardMain, QCardSeparator, QCardMedia, QCardTitle, QField, QInput, QSelect} from 'quasar'
+import { QItemSeparator, QCollapsible, QSlider, QCheckbox, QScrollArea, QPopover, QList, QItem, QItemMain, QToggle, QOptionGroup, QBtn, QCard, QCardMain, QCardSeparator, QCardMedia, QCardTitle, QField, QInput, QSelect} from 'quasar'
 import { TouchPan } from 'quasar'
 var jLever = require('components/custom/j-lever')
+var jFabricCanvas = require('components/custom/j-fabric-canvas')
 var jCanvas = require('components/custom/j-canvas')
 var jCollection = require('components/custom/j-collection')
 var jDropTarget = require('components/custom/j-droptarget')
@@ -196,8 +254,8 @@ export default {
     TouchPan
   },
   components: {
-    jCanvas, jLever, jCollection, jDropTarget,
-    QSlider, QCheckbox, QScrollArea, QPopover, QList, QItem, QItemMain, QToggle, QOptionGroup, QBtn, QCard, QCardMain, QCardSeparator, QCardMedia, QCardTitle, QField, QInput, QSelect
+    jCanvas, jFabricCanvas, jLever, jCollection, jDropTarget,
+    QItemSeparator, QCollapsible, QSlider, QCheckbox, QScrollArea, QPopover, QList, QItem, QItemMain, QToggle, QOptionGroup, QBtn, QCard, QCardMain, QCardSeparator, QCardMedia, QCardTitle, QField, QInput, QSelect
   },
   props: {
     value: {
@@ -206,11 +264,19 @@ export default {
   },
   data () {
     return {
+      // Fabric canvas things...
+      canvasOptions: {
+        isDrawingMode: false,
+        preserveObjectStacking: false,
+        imageSmoothingEnabled: false
+      },
+      objects: [],
+      selectedObject: null,
 
+
+      // Sliding things...
       previewResponsive: true,
-      myCroppa: { },
-      myCroppaInitialImage: null,
-
+      
       paletteOptions: ColorUtils.presetPalettes.map(v=>{return {'label':v, 'value':v}}),
       frameOptions: [
         {label: 'Classic', value:'picture-frame-classic'},
@@ -501,7 +567,22 @@ export default {
    *  --== METHODS =================METHODS===================METHODS=======================METHODS============================--
    */
   methods: {
+    // Fabric emitted 'input' event
+    onInput(e) {
+      console.log('input', e)
+      this.objects = extend({}, e)
+    },
 
+    selectObject(i) {
+      console.log('selectObject', i)
+      this.selectedObject = i;
+      this.$refs.fabric.selectObject(i)
+    },
+
+
+    updateObjects(objectList) {
+      console.log("UPDATING OBJECTLIST", objectList)
+    },
     __updatePreview(bitmap) {
       let imageData = MoeUtils.imageDataFromPixelsAndColors(this.mapOutput(bitmap))
       this.$refs.preview.putImageData(imageData)
@@ -984,121 +1065,6 @@ export default {
     this.myPreview = this.$refs.preview
 
 
-  // // SETUP FABRIC CANVAS EVENTS ETc.
-  // let handleDragOver = function(e) {
-  //     if (e.preventDefault) {
-  //         e.preventDefault(); // Necessary. Allows us to drop.
-  //     }
-
-  //     e.dataTransfer.dropEffect = 'copy'; // See the section on the DataTransfer object.
-  //     // NOTE: comment above refers to the article (see top) -natchiketa
-  //     return false;
-  // }
-
-  // let handleDragEnter = function(e) {
-  //     // this / e.target is the current hover target.
-  //     this.classList.add('over');
-  // }
-
-  // let handleDragLeave  = function(e) {
-  //     this.classList.remove('over'); // this / e.target is previous target element.
-  // }
-
-  // let handleDrop = function (e) {
-  //     // this / e.target is current target element.
-
-  //     e.preventDefault(); //I've altert this line for FireFox
-
-  //     var img = document.querySelector('#images img.img_dragging');
-  //     var test = e.clone
-  //     console.log('event: ', e);
-
-  //     var newImage = new fabric.Image(img, {
-  //         width: img.width,
-  //         height: img.height,
-  //         // Set the center of the new object based on the event coordinates relative
-  //         // to the canvas container.
-  //         left: e.layerX,
-  //         top: e.layerY
-  //     });
-  //     canvas.add(newImage);
-
-
-  //     canvas.on('drop', function(e) {
-  //       console.log('dropped splat', e)
-  //       debugger
-  //     })
-  //     return false;
-
-  //     // oRIG dropPixelMapInput  console.log('dropPixelMapInput')
-  //     // e.item.remove() // will be added by v-for instead
-  //     // this.pixelMapInput = e.clone.obj
-  //     // let pixelsIn = this.pixelMapInput.pixels
-  //     // let pixelmap = []
-  //     // let pixelunmap = []
-  //     // let ci, mi, ui = 0 // Indices: color, mapped, unmapped
-  //     // for (ci = 0; ci < 256; ci++) {
-  //     //   for (mi = 0; mi < 65536; mi++) {
-  //     //     if (pixelsIn[mi] === ci)  {
-  //     //       pixelmap[ui] = mi
-  //     //       pixelunmap[mi] = ui
-  //     //       ui++
-  //     //     }
-  //     //   }
-  //     // }
-  // }
-
-
-  //   let handleDragEnd = function(e) {
-  //       // this/e.target is the source node.
-  //       [].forEach.call(images, function (img) {
-  //           img.classList.remove('img_dragging');
-  //       });
-  //   }
-
-    var canvas  = new fabric.Canvas('c');
-      canvas.on('drop', function(e) {
-      console.log('dropped splat', e)
-      debugger
-    })
-    var shadow = {
-        color: 'rgba(0,0,0,0.6)',
-        blur: 20,    
-        offsetX: 10,
-        offsetY: 10,
-        opacity: 0.6,
-        fillShadow: true, 
-        strokeShadow: true 
-    }
-
-    var rect = new fabric.Rect({
-            left: 100,
-            top: 100,
-            fill:  "#FF0000",
-            stroke: "#000",
-            width: 100,
-            height: 100,
-            strokeWidth: 10, 
-            opacity: .8      
-        });
-
-    rect.setShadow(shadow)
-    canvas.add(rect)
-
-    // Bind the event listeners for the image elements
-    // var images = document.querySelectorAll('#images img');
-    // [].forEach.call(images, function (img) {
-    //     img.addEventListener('dragstart', handleDragStart, false);
-    //     img.addEventListener('dragend', handleDragEnd, false);
-    // });
-    // Bind the event listeners for the canvas
-    // var canvasContainer = this.$refs.canvasContainer
-    // canvasContainer.addEventListener('dragenter', handleDragEnter, false);
-    // canvasContainer.addEventListener('dragover', handleDragOver, false);
-    // canvasContainer.addEventListener('dragleave', handleDragLeave, false);
-    // canvasContainer.addEventListener('drop', handleDrop, false);
-
-
 
   },
   created () {
@@ -1335,3 +1301,72 @@ export default {
             //-             //- j-drop-target(:value='gobo', @add='dropGobo($event)', style='width:80px;height:80px;')
             //-             //- j-drop-target(:value='goboFrame', @add='dropGoboFrame($event)', style='width:80px;height:80px;')
             //-             //- j-canvas(:value='bitmapFilterOutput.colors', style='width:80px;height:80px;')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+              //-   q-card(style='width: 100%;' color='dark' :class='i === activeFilter ? "active" : ""')
+
+              //-     //- SLIDER
+              //-     q-card-main(v-if='filter.type === "slider"')
+                //-       div.row
+                //-           q-checkbox(v-model="filter.active", :label='i +" SLIDER"')
+                //-           q-btn(small push @click='deleteFilter(i)')|-
+                //-       div.row
+              //- div.row(v-for='filter, i in value.filters' @click='setActiveFilter(i)')
+
+              //-         div.col
+              //-           j-canvas(:id='"Filter"+i+"Delta"' :value='value.filters[i].delta', width='60px' height='60px')
+              //-           q-btn(small push @click='filter.delta = new Array().fill(0)')|Zero
+              //-         pre(v-html='value.filters[i].pixelSummary')
+              //-         j-canvas(:id='"Filter"+i+"ImageData"' :value='value.filters[i].imageData', width='60px' height='60px')
+
+              //-     //- BITMAP
+              //-     q-card-main(v-else-if='filter.type === "bitmap"')
+              //-       div.row
+              //-           q-checkbox(v-model="filter.active", :label='i +" BITMAP"')
+              //-           q-btn(small push @click='deleteFilter(i)')|-
+              //-       div.row
+              //-         div.col
+              //-           |B:{{filter.bitmapX}},{{filter.bitmapY}}
+              //-           q-btn(small push @click='(filter.bitmapX =0, filter.bitmapY = 0)')|Zero
+              //-           |G:{{filter.goboX}},{{filter.goboY}}
+              //-           q-btn(small push @click='(filter.goboX =0, filter.goboY = 0)')|Zero
+              //-           br
+              //-           |{{filter.mode}}
+                        
+              //-         div.col
+              //-           |BMP
+              //-           j-drop-target(:selected='filter.mode===1' :value='value.filters[i].bitmap', @add='dropBitmapOnBitmapFilter($event, i)', @select='selectBitmapFilterBitmap(i)' style='width:60px;height:60px;')
+              //-         div.col
+              //-           |GOBO
+              //-           j-drop-target(:selected='filter.mode===2' :value='value.filters[i].gobo', @add='dropGoboOnBitmapFilter($event, i)', @select='selectBitmapFilterGobo(i)' style='width:60px;height:60px;')
+              //-           q-checkbox(v-model="filter.goboInvert", :label='i +" SLIDER"')
+              //-           q-slider(dark v-model='filter.goboThreshold' :min='0' :max='255' label)
+              //-         div.col
+              //-           |RAW
+              //-           j-canvas(:id='"Filter"+i+"ImageData"' :value='myValue.filters[i].imageData', width='60px' height='60px')
+              //-         div.col
+              //-           pre(v-html='value.filters[i].pixelSummary')
+
+
+
+
+
+
+
+
+
+
+
+

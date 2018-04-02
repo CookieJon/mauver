@@ -18,6 +18,10 @@ export default class MoeUtils {
 		return MoeUtils.imageFromImageData(MoeUtils.imageDataFromBitmap(bitmap))
 	}
 
+	static imageFromColors(colors) {
+		return MoeUtils.imageFromImageData(MoeUtils.imageDataFromColors(colors))
+	}
+
 	static imageFromImageData(imagedata) {
     var canvas = document.createElement('canvas');
     var ctx = canvas.getContext('2d');
@@ -25,10 +29,10 @@ export default class MoeUtils {
     canvas.height = imagedata.height;
     ctx.putImageData(imagedata, 0, 0);
 
-    var image = new Image();
+		var image = new Image();
     image.src = canvas.toDataURL();
     return image;
-}
+	}
 
 
 

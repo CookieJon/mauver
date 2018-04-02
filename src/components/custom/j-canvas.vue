@@ -39,7 +39,7 @@ export default {
       default: 256
     },
     value: {
-      type: [Object, Array, ImageData, Image]
+      type: [Object, Array, ImageData, Image, HTMLCanvasElement]
     },
     responsive: {
       type: Boolean,
@@ -85,7 +85,7 @@ export default {
       handler (newVal) {
 
         if (!this.responsive) return
-        console.log( '(⌐■_■) Canvas#' + this.id + '.value ==> ', typeof(newVal), newVal)
+        //console.log( '(⌐■_■) Canvas#' + this.id + '.value ==> ', typeof(newVal), newVal)
 
         let imgData
         let msg
@@ -93,6 +93,17 @@ export default {
         if (!newVal) {
           msg = 'undefined'
           imgData = MoeUtils.imageDataEmpty()
+        }
+
+        else if (newVal instanceof HTMLCanvasElement) {          
+          msg = "HTMLCanvasElement"
+          imgData = newVal.getContext('2d').getImageData(0, 0, 255, 255)
+        }
+
+        // Fabric Object? (just check for canvas, so far)
+        else if (newVal.canvas) {
+          msg = "FabricObject"
+          imgData = newVal.canvas.getContext('2d').getImageData(0, 0, 255, 255)
         }
 
         // ImageData
@@ -144,7 +155,7 @@ export default {
           imgData = MoeUtils.imageDataEmpty()
         }
 
-        console.log(this.id + ' CANVAS TYPE: *' + msg + '*')
+        // console.log(this.id + ' CANVAS TYPE: *' + msg + '*')
 
         this.msg = msg
         this.$nextTick(function() {

@@ -165,6 +165,7 @@ export default class Factory {
           img.onload = () => {
             let pixPalImagedata = this.bitmapFromImg(img)
             let bmp = {
+              srcImg: img,
               id: UID++,
               ...pixPalImagedata
             }
@@ -245,7 +246,7 @@ export default class Factory {
     return ppid
   }
 
-  static bitmapFromImg (img) {
+  static bitmapFromImg (img, palFrom, palTo) {
     // NB: IMAGE must have loaded by this  time.
     // Converts a true-color image to 256-color palette & 256x256 pixels
     // imgSrc = [img|dataURL]
@@ -267,7 +268,9 @@ export default class Factory {
     palette = Factory.createPalette('raw')
     // palette = Factory.createPalette('bichromal')
 
-    let colors = palette.colors 
+    let pFrom = palFrom || 0
+    let pTo = palTo || 255
+    let colors = palette.colors.slice(pFrom, pTo)
 
     // * iq.palette <= material colors
     let iqPalette = new iq.utils.Palette()
@@ -293,7 +296,7 @@ export default class Factory {
     // pixels
     let pixels = Array(65536).fill(0) // default all to 0
     let pixelIndex = 0
-    console.log('match this!>>', uint8array)
+    //console.log('match this!>>', uint8array)
 
     // Loop through imagedata
     for (let i=0; i < uint8array.length; i+=4) {
@@ -313,7 +316,7 @@ export default class Factory {
     }
 
 
-    // generate imageData
+    // generate  8-bit imageData
     let imageData = new ImageData(256, 256)
     // From original...
       for (let i = 0; i < uint8array.length; i++) {

@@ -247,7 +247,7 @@ import { extend, QBtn, QIcon, QPopover, QScrollArea, QTooltip } from 'quasar'
           vm.moveToFront()
         })
         .draggable({
-          handle: '.j-panel-header',
+          handle: '.j-panel-titlebar',
           start: function (event, ui) {
             $el.removeClass('shadow-4')
             $el.addClass('shadow-2')
