@@ -14,12 +14,12 @@
         ref="container"
         :class='this.myClass'
         class='frame'
-      >    
+      >
         <j-item
           v-for='(item, i) in value'
           :key='item.id'
           :value='value[i]'
-          @click='onSelect(i, $event)' 
+          @click='onSelect(i, $event)'
         ></j-item>
       </div>
     </q-scroll-area>
@@ -28,7 +28,7 @@
 /* eslint-disable */
   import { extend, QScrollArea } from 'quasar'
   import Sortable from 'sortablejs'
- 
+
   export default {
     name: 'j-collection-rubaxax',
     components: { QScrollArea },
@@ -49,7 +49,7 @@
       //     elm.removeChild(elm.lastChild);
       //   }
       // }
-    },    
+    },
     data () {
       let self = this // <- the j-collection component
       return {
@@ -59,47 +59,48 @@
           chosenClass: 'sortable-chosen',  // Class name for the chosen item
           dragClass: 'sortable-drag',  // Class name for the dragging item
           group: {
-            name: 'general', 
-            pull: 'clone', 
-            revertClone: true 
-          },    
+            name: 'general',
+            pull: 'clone',
+            revertClone: true
+          },
           setData: (dataTransfer, element) => {
-            // ## na ##  
+            // ## na ##
             // element.objs = self.value // Attach 'myObjs' reference to my Object array
             // // console.log('onClone cloneEl.objs', element.objs)
-          },                
-          onClone: (e) => { 
+          },
+          onClone: (e) => {
             let origEl = e.item;
             let cloneEl = e.clone;
-            
-            // Manually set new imagedata because that's how it rolls!
-            let fromCanvas = origEl.getElementsByTagName('canvas')[0]
-            let fromCtx = fromCanvas.getContext('2d');
-            let fromImageData = fromCtx.getImageData(0,0,fromCanvas.width, fromCanvas.height)
-            let toCanvas = cloneEl.getElementsByTagName('canvas')[0]
-            let toCtx = toCanvas.getContext('2d');
-            toCtx.putImageData(fromImageData, 0, 0)
 
-            // ## 1 ##    
+
+            // // Manually set new imagedata because that's how it rolls!
+            // let fromCanvas = origEl.getElementsByTagName('canvas')[0]
+            // let fromCtx = fromCanvas.getContext('2d');
+            // let fromImageData = fromCtx.getImageData(0,0,fromCanvas.width, fromCanvas.height)
+            // let toCanvas = cloneEl.getElementsByTagName('canvas')[0]
+            // let toCtx = toCanvas.getContext('2d');
+            // toCtx.putImageData(fromImageData, 0, 0)
+
+            // ## 1 ##
             cloneEl.objs = self.value
             // console.log('onClone cloneEl.objs', cloneEl.objs)
             this.$emit("clone", e)
-          },      
+          },
           onStart: (e) => {
 
           },
           onAdd: (e) => {
-            // ## 2 ##  
-            e.clone.obj = e.clone.objs[e.oldIndex] 
+            // ## 2 ##
+            e.clone.obj = e.clone.objs[e.oldIndex]
             // console.log('onAdd e.clone.obj', e.clone.obj)
             this.$emit('add', e)
-          },     
+          },
           onEnd: (e)=> {
             // console.log(">>>>> onEnd ", e,  self.value)
           },
           onUpdate: (e)=> {
             // console.log(">>>>> onUpdate ", e, self.value)
-    
+
             // ** ASSOCIATE THE MOE OBJECT WITH DRAGGED HTML **
             let itemEl = e.item // dragged HTMLElement
             itemEl.obj = self.value[e.oldIndex]
@@ -137,7 +138,7 @@
       //   // same properties as onEnd
       //   // console.log('onSort',e)
       // },
-      // // sortablejs events.. 
+      // // sortablejs events..
       // // Element is dropped into the list from another list
       // onAdd: function (/**Event*/e) {
       //   // console.log('onAdd',e)
@@ -155,7 +156,7 @@
         // same properties as onEnd
         // console.log('onRemove',e)
         this.$emit("add", e)
-      },      
+      },
       // Called when creating a clone of element
       // onClone: function (/**Event*/e) {
       //   var origEl = e.item;
@@ -168,7 +169,7 @@
       // onChoose: function (/**Event*/e) {
       //   this.$emit("choose", e.oldIndex)// element index within parent
       // }
-    
+
     }
   }
 </script>
@@ -203,7 +204,7 @@
   padding 0px
 
 .frame.frame-type-grid > .frame > img
-  display none
+  // display none
   width 111px
   height 111px
 
@@ -241,7 +242,7 @@
   padding 0px
 
 .frame.frame-type-list > .frame > img
-  display none
+  // display none
   height 11px
 .frame.frame-type-list > .frame > canvas
   height 180px

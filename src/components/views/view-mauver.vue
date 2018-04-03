@@ -3,24 +3,28 @@
 div
 
   //- do not delete upload zone!
-  j-upload-zone.hidden(ref='zone',@select='addBitmapsFromFiles') 
+  j-upload-zone.hidden(ref='zone',@select='addImagesFromFiles')
 
   //- selectedArtwork SLIDER
   div(v-if='selectedArtwork != null')
     j-artwork(v-model='selectedArtwork')
-    
+
   // COLLECTION
   j-panel(icon='business', title='O', :width='185', :height='850', :x='5', :y='5')
     div.j-panel-toolbar.text-black(slot='toolbar', style='padding:4px;')
       q-btn(small,push,icon='art track', @click='addArtwork')
-      q-btn(small,push,icon='satellite', @click='openFileInput')
+      //- q-btn(small,push,icon='satellite', @click='openFileInput')
+      q-btn(small,push,icon='insert_photo', @click='openFileInput')
       //- q-btn(small,push,icon='color lens', @click='addPalette')
     // artworks
     div.j-tray.area.panel-item-grow(slot='content')
-      j-collection.frame-type-grid(v-model='artworks', @select='selectArtwork')
-    // bitmaps
+      j-collection.frame-type-grid(v-model='artworks' @select='selectArtwork')
+    // images
     div.j-tray.area.panel-item-grow(slot='content')
-      j-collection.frame-type-grid(v-model='bitmaps', @select='selectBitmap')
+      j-collection.frame-type-grid(v-model='images')
+    //- // bitmaps
+    //- div.j-tray.area.panel-item-grow(slot='content')
+    //-   j-collection.frame-type-grid(v-model='bitmaps')
     //- palettes
     //- div.j-tray.area.panel-item-grow(slot='content')
     //-   j-collection.frame-type-grid(v-model='palettes', @select='selectPalette')
@@ -61,11 +65,11 @@ export default {
   created () {
     // Create Default Palette & Bitmnap
     //
-    var defaultPalette = Factory.createPalette('raw') 
+    var defaultPalette = Factory.createPalette('raw')
     var defaultBitmap = Factory.createBitmap('raw', defaultPalette)
 
     this.$store.dispatch('updateEntities', { palettes: defaultPalette, bitmaps: defaultBitmap })
-    
+
 
     // Here we are stubbing the initial data. In the real world, this
     // should be the response from the API Backend.
@@ -76,6 +80,7 @@ export default {
   },
   data () {
     return {
+      images: [],
       selectedPaletteId: null,
       selectedBitmapId: null,
       selectedArtworkId: null,
@@ -168,6 +173,24 @@ export default {
 
     openFileInput() {
       this.$refs.zone.openFileInput()
+    },
+
+    addImagesFromFiles (files) {
+      for (let i = 0; i < files.length; i++) {
+        let file = files[i]
+        let reader = new FileReader();
+        reader.onload = (e) => {
+          let img = {
+            type: 'image',
+            id: 'IMG_' + this.uid++,
+            title: file.name,
+            src: e.target.result
+          }
+          console.log('add image from file' + img.id, img)
+          this.images.push(img)
+        }
+        reader.readAsDataURL(file);
+      }
     },
 
     addBitmapsFromFiles (files) {

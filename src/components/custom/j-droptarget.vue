@@ -175,7 +175,7 @@
   padding 0px
 
 .frame > .frame > img
-  display none
+  // display none
   width 111px
   height 111px
 
