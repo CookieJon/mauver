@@ -1,8 +1,8 @@
 <template lang='pug'>
   //- Fabric is loaded in main.html as a CSN because node version has too many dependencies.
-  div.drop-container(ref='canvasDropContainer')  
-    canvas(id='c' width='256' height='256')  
-    //- div.text-white|{{canvasOptions}}  
+  div.drop-container(ref='canvasDropContainer')
+    canvas(id='c' width='256' height='256')
+    //- div.text-white|{{canvasOptions}}
 </template>
 
 <script>
@@ -31,21 +31,8 @@
       // Create the bitmap
       this.bitmap = Factory.bitmapFromImg(img, 0, 22)
       // Bitmap preview
-      this._bitmapImg = MoeUtils.imageFromBitmap(this.bitmap) 
+      this._bitmapImg = MoeUtils.imageFromBitmap(this.bitmap)
       this._paletteImg = MoeUtils.imageFromColors(this.bitmap.palette.colors)
-
-      // apply filters and re-render canvas when done
-
-      // // add image onto canvas
-      // canvas.add(img);
-
-      // var rect1 = new fabric.Rect({
-      //   width: 200, height: 100, left: 0, top: 50, angle: 30,
-      //   fill: 'rgba(255,0,0,0.5)'
-      // });
-      // console.log('I AM ', this)
-      // console.log('C', canvas, 'CC', this.canvas, canvas === this.canvas)
-      // canvas.add(rect1)
 
       this._bitmapImg.onload = (function() {
         this.set('dirty', true)
@@ -77,9 +64,21 @@
         this.applyResizeFilters();
       }
       this._stroke(ctx);
-      //this._renderPaintInOrder(ctx);
-       ctx.drawImage(this._bitmapImg, -128, -128)
+      this._renderPaintInOrder(ctx);
+      ctx.drawImage(this._bitmapImg, -128, -128)
     },
+
+    _renderFill: function(ctx) {
+      var w = this.width, h = this.height, sW = w * this._filterScalingX, sH = h * this._filterScalingY,
+          x = -w / 2, y = -h / 2, elementToDraw = this._element;
+      elementToDraw && ctx.drawImage(elementToDraw,
+        this.cropX * this._filterScalingX,
+        this.cropY * this._filterScalingY,
+        sW,
+        sH,
+        x, y, w, h);
+    },
+
     // _render: function(ctx) {
 
     //   console.log('_render', this.dirty, this.filters)
@@ -94,10 +93,9 @@
 
     //   // ctx.drawImage(this._originalElement, -128, -128)
     //   // ctx.drawImage(this._paletteImg, 0, -128)
-      
+
     //   ctx.drawImage(this._bitmapImg, -128, -128)
     // },
-
 
   });
 
@@ -107,7 +105,7 @@
     props: {
       // value: Array of canvas' getObjects()
       //
-      value: { 
+      value: {
         type: Array
       },
       // options: canvas-level options
@@ -141,7 +139,7 @@
         let out = extend({}, this.value)
       }
     },
-    
+
     data () {
       let self = this // <- the j-collection component
       return {
@@ -172,7 +170,9 @@
         onAdd: function(e) {
           e.clone.obj = e.clone.objs[e.oldIndex]
           e.item.remove()
-          let img = MoeUtils.imageFromBitmap(e.clone.obj)
+          //let img = MoeUtils.imageFromBitmap(e.clone.obj)
+          let img = new Image()
+          img.src = e.clone.obj.src
           img.onload = ()=>self.addImage(img)
           return false
           }
@@ -186,29 +186,29 @@
     canvas.setWidth('100%', {cssOnly: true})
     canvas.isDrawingMode = false
     canvas.preserveObjectStacking = false
-    canvas.imageSmoothingEnabled= false      
+    canvas.imageSmoothingEnabled= false
     canvas.freeDrawingBrush.color = '#ff0000'
     canvas.freeDrawingBrush.width = 30
-    //canvas.backgroundColor='white'  
-  
+    //canvas.backgroundColor='white'
+
     canvas.on('object:modified', function(e) {
       console.log('object:modified', e)
       self.__sync()
-    });      
+    });
 
     canvas.on('object:added', function(e) {
       console.log('object:added', e)
       self.__sync()
-    });      
+    });
 
     canvas.on('mouse:move', function(e) {
       canvas.lastX = e.e.offsetX
       canvas.lastY = e.e.offsetY
       // console.log('mouse:move', e.e.offsetX, e.e.offsetY)
       //self.__sync()
-    });       
+    });
 
-  },    
+  },
     methods: {
 
       doCommand(command, args) {
@@ -217,14 +217,14 @@
 
       __sync() {
         // Re-render canvas, and emit $input event for v-model
-        //  
-        //canvas.requestRenderAll() 
+        //
+        //canvas.requestRenderAll()
         canvas.renderAll()
         //
-        // let out = JSON.parse( JSON.stringify( canvas.getObjects() ) ) 
+        // let out = JSON.parse( JSON.stringify( canvas.getObjects() ) )
         let out = extend(true, {}, {value: canvas.getObjects()}).value
         this.$nextTick(()=>self.$emit("input", out))
-        console.log('Fabric synced') 
+        console.log('Fabric synced')
       },
 
       addImage(img) {
@@ -233,14 +233,15 @@
             label: 'Hi there',
             width: img.width,
             height: img.height,
-            left: 10,
-            top: 10,
-            scaleX: .4,
-            scaleY: .4,
+            // left: 10,
+            // top: 10,
+            // scaleX: .4,
+            // scaleY: .4,
             objectCaching: true
             // statefullCache: false,
             // noScaleCache: false,
-        })    
+        })
+
         var f = new fabric.Image.filters.Convolute({
               matrix: [ 0, -1, 0, -1, 5, -1, 0, -1, 0 ]
             })
@@ -249,14 +250,17 @@
         //oBitmap.filters.push(f)
         // oBitmap.filters.push(new fabric.Image.filters.Sepia());
 
+        var oMask = new fabric.Circle({
+          top:0,
+          left:0,
+          radius: 30,
+          fill: 'red',
+          objectCaching: true,
+          globalCompositeOperation: 'destinationsource-in'
+        });
+        oMask.needsItsOwnCache = ()=>true
 
-        var circle1 = new fabric.Circle({	  radius: 10,	  fill: 'red',	  left: -40	,objectCaching: true});
-        var circle2 = new fabric.Circle({	  radius: 10,	  fill: 'blue',	  left: 40	,objectCaching: true});
-        var circle3 = new fabric.Circle({	  radius: 10,	  fill: 'green',	  left: 0		,objectCaching: true});
-
-        circle2.needsItsOwnCache = ()=>true 
-
-        var group = new fabric.Group([  oBitmap, circle2, circle3 ],)
+        var group = new fabric.Group([  oBitmap, oMask  ])
 
         group.setOptions({
           left: (255 * canvas.lastX / canvas.wrapperEl.offsetWidth) - (group.width / 2) ,
@@ -264,7 +268,6 @@
         })
 
         console.log('addImage', group)
-
 
         var test = new fabric.Image(img, {
           label: 'Hi there',
@@ -277,17 +280,16 @@
           objectCaching: true
           // statefullCache: false,
           // noScaleCache: false,
-        })    
+        })
         test.filters.push(s);
         test.applyFilters();
-        
-        oBitmap.filters.push(s);
-        oBitmap.applyFilters();
+
+        oBitmap.filters.push(f);
+        //oBitmap.applyFilters();
         this.$nextTick(()=>{
-          canvas.add(test)
+          // canvas.add(test)
           canvas.add(group)
         })
- 
 
         // //oBitmap.set('objectCaching', true)
 
@@ -301,22 +303,21 @@
         //     objectCaching: true
         //     // statefullCache: false,
         //     // noScaleCache: false,
-        // })     
-
+        // })
 
         // var group = new fabric.Group([oBitmap, oMask])
         // // group.addWithUpdate(oBitmap)
         // // group.addWithUpdate(oMask)
 
- 
         //this.__sync()
+
       },
 
       selectObject(i) {
-        
+
         let a = canvas.getActiveObject()
         let b = canvas.getActiveObjects()
-        canvas.discardActiveObject()        
+        canvas.discardActiveObject()
         var sel = new fabric.ActiveSelection([canvas.getObjects()[i]], {
           canvas: canvas,
         });
@@ -379,7 +380,7 @@
       bringForward () {
         if (!canvas.getActiveObject()) {
           return;
-        }
+        } 
         canvas.bringForward(canvas.getActiveObject())
         canvas.requestRenderAll()
       },
@@ -389,14 +390,14 @@
         }
         canvas.sendBackwards(canvas.getActiveObject())
         canvas.requestRenderAll()
-      },      
+      },
       bringToFront () {
         if (!canvas.getActiveObject()) {
           return;
         }
         canvas.bringToFront(canvas.getActiveObject())
         canvas.requestRenderAll()
-      },      
+      },
       sendToBack () {
         if (!canvas.getActiveObject()) {
           return;
@@ -425,14 +426,14 @@
         }
         canvas.centerObjectV(canvas.getActiveObject())
         canvas.requestRenderAll()
-      },            
+      },
       clear () {
         canvas.clear(canvas)
-        canvas.backgroundColor='white'  
+        canvas.backgroundColor='white'
         canvas.requestRenderAll()
         this._sync()
       // self.$emit("input", this.myValue)
-      },    
+      },
 
       fill () {
         if (!canvas.getActiveObject()) {
@@ -456,10 +457,10 @@
         }
         canvas.getActiveObject().straighten()
         canvas.requestRenderAll()
-      },            
+      },
     }
-  } 
-  
+  }
+
 
 
 </script>
@@ -480,6 +481,75 @@
     -webkit-box-direction: normal;
     -ms-flex-direction: column;
     flex-direction: column;
+
+    .frame
+      display none
+
+
+
+// .ui-resizable
+//   position absolute
+
+// /* frame-type-grid */
+// .frame.frame-type-droptarget
+//   padding 5px
+//   background-color rgba(0, 0, 0, 0.3)
+//   width 100px
+//   height 100px
+
+//   &.selected
+//     border 2px solid white !important
+
+
+// .frame.frame-type-droptarget > .frame
+
+//   position relative
+//   xfloat left
+//   min-height 48px
+//   border 2px solid #333
+//   //border-left 4px solid #2196F3
+//   box-shadow 0 3px 6px 3px rgba(1,1,1,0.4)
+//   background-color rgba(0, 0, 0, 0.3)
+//   box-shadow 4px 4px 2px rgba(0, 0, 0, 0.3)
+//   z-index 10
+//   padding 0px
+
+// .frame > .frame > img
+//   display none
+//   width 111px
+//   height 111px
+
+// .frame > .frame > canvas
+//   display inline-block
+//   margin 0
+//   padding 0
+//   width 111px
+//   height 111px
+
+// .frame > .frame > canvas.image
+//   width 111px
+//   height 111px
+
+// .frame > .frame > canvas.palette
+//   position absolute
+//   width 14%
+//   right 6px
+//   margin-top -30%
+//   background white
+
+
+
+// .item-label
+//   position absolute
+//   height 16px
+//   padding 2px
+//   bottom 0
+//   width 100%
+//   color white
+//   font-size .6rem
+//   background-color  rgba(0, 0, 0, .47)
+//   z-index 12
+
 
 
 </style>

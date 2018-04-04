@@ -255,16 +255,18 @@ export default class Factory {
     // * scale img to 256x256 via canvas
     let canvas = document.createElement('canvas')
     // canvas = this.$refs.testcanvas
-    canvas.width = 256
-    canvas.height = 256
-    let ctx = canvas.getContext('2d')
-    ctx.drawImage(img, 0, 0, 256, 256)
 
+    let w = img.offsetWidth
+    let h = img.offsetHeight
+    canvas.width = w
+    canvas.height = h
+    let ctx = canvas.getContext('2d')
+    ctx.drawImage(img, 0, 0, w, h)
 
         // OR
     // palette
     let palette
-    
+
     palette = Factory.createPalette('raw')
     // palette = Factory.createPalette('bichromal')
 
