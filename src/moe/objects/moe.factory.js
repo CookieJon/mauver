@@ -246,6 +246,8 @@ export default class Factory {
     return ppid
   }
 
+
+
   static bitmapFromImg (img, palFrom, palTo) {
     // NB: IMAGE must have loaded by this  time.
     // Converts a true-color image to 256-color palette & 256x256 pixels
@@ -256,8 +258,8 @@ export default class Factory {
     let canvas = document.createElement('canvas')
     // canvas = this.$refs.testcanvas
 
-    let w = img.offsetWidth
-    let h = img.offsetHeight
+    let w = img.width
+    let h = img.width
     canvas.width = w
     canvas.height = h
     let ctx = canvas.getContext('2d')
@@ -296,7 +298,7 @@ export default class Factory {
 
 
     // pixels
-    let pixels = Array(65536).fill(0) // default all to 0
+    let pixels = Array(w*h).fill(0) // default all to 0
     let pixelIndex = 0
     //console.log('match this!>>', uint8array)
 
@@ -319,7 +321,7 @@ export default class Factory {
 
 
     // generate  8-bit imageData
-    let imageData = new ImageData(256, 256)
+    let imageData = new ImageData(w, h)
     // From original...
       for (let i = 0; i < uint8array.length; i++) {
         imageData.data[i] = uint8array[i]
@@ -327,7 +329,7 @@ export default class Factory {
     // From pixels & palette...
     let data = imageData.data
     let index = 0
-    for (let i = 0; i < 65535; i++) {
+    for (let i = 0; i < w*h; i++) {
       let theColor = palette.colors[pixels[i]]
       data[index++] = theColor.r
       data[index++] = theColor.g

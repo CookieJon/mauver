@@ -180,14 +180,20 @@ export default {
         let file = files[i]
         let reader = new FileReader();
         reader.onload = (e) => {
-          let img = {
-            type: 'image',
-            id: 'IMG_' + this.uid++,
-            title: file.name,
-            src: e.target.result
+          let img = new Image()
+          img.onload = (e) => {
+            let image = {
+              type: 'image',
+              id: 'IMG_' + this.uid++,
+              title: file.name,
+              src: img.src,
+              width: img.width,
+              height:img.height
+            }
+            console.log('add image from file' + image.id, image)
+            this.images.push(image)
           }
-          console.log('add image from file' + img.id, img)
-          this.images.push(img)
+          img.src = e.target.result
         }
         reader.readAsDataURL(file);
       }

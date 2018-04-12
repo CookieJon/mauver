@@ -1,4 +1,8 @@
 /* eslint-disable */
+
+import Factory from '../../moe/objects/moe.factory.js'
+import iq from 'image-q'
+
 export default class MoeUtils {
 	constructor () {
 	}
@@ -13,6 +17,46 @@ export default class MoeUtils {
 		return out
 	}
 
+
+  /**
+   *
+   * Convert an image to material colors. Returns image.
+	 *
+   */
+  static quantizeImage(img) {
+
+    let palette = Factory.createPalette('raw')
+    let pFrom =  0
+    let pTo = 155
+    let colors = palette.colors.slice(pFrom, pTo)
+
+    // * iq.palette <= material colors
+    let iqPalette = new iq.utils.Palette()
+    for (let j = 0, l = colors.length; j < l; j++) {
+      let color = colors[j]
+      iqPalette.add(iq.utils.Point.createByRGBA(color.r, color.g, color.b, color.a))
+    }
+    // * iq.distance.?
+    // iq.distance.Euclidean();Manhattan();IEDE2000(); etc...
+    let iqDistance = new iq.distance.EuclideanRgbQuantWOAlpha()
+
+    // let inPointContainer = iq.utils.PointContainer.fromHTMLCanvasElement(canvas) // use canvas to scale to 256x256
+    let inPointContainer = iq.utils.PointContainer.fromHTMLImageElement(img)
+		console.log('inPointContainer', inPointContainer)
+    let iqImage = new iq.image.ErrorDiffusionArray(iqDistance, iq.image.ErrorDiffusionArrayKernel.SierraLite)
+    // let iqImage = new iq.image.NearestColor(iqDistance)
+
+		let outPointContainer = iqImage.quantize(inPointContainer, iqPalette)
+	
+    //let uint8array = outPointContainer.toUint8Array() // <- imagedata data
+
+    return MoeUtils.imageFromIqPointContainer(outPointContainer)
+
+  }
+
+
+
+
 	// Get Image
 	static imageFromBitmap(bitmap) {
 		return MoeUtils.imageFromImageData(MoeUtils.imageDataFromBitmap(bitmap))
@@ -22,12 +66,17 @@ export default class MoeUtils {
 		return MoeUtils.imageFromImageData(MoeUtils.imageDataFromColors(colors))
 	}
 
-	static imageFromImageData(imagedata) {
+	static imageFromIqPointContainer(pointContainer) {
+		let imageData = new ImageData(Uint8ClampedArray.from(pointContainer.toUint8Array()), pointContainer.getWidth(), pointContainer.getHeight())
+		return MoeUtils.imageFromImageData(imageData)
+	}
+
+	static imageFromImageData(imageData) {
     var canvas = document.createElement('canvas');
     var ctx = canvas.getContext('2d');
-    canvas.width = imagedata.width;
-    canvas.height = imagedata.height;
-    ctx.putImageData(imagedata, 0, 0);
+    canvas.width = imageData.width;
+    canvas.height = imageData.height;
+    ctx.putImageData(imageData, 0, 0);
 
 		var image = new Image();
     image.src = canvas.toDataURL();
