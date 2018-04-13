@@ -1,8 +1,8 @@
 <template lang='pug'>
-  //- Fabric is loaded in main.html as a CSN because node version has too many dependencies.
+  //- Fabric is loaded in main.html as a CSN because node version has too many dependencies.  
   div.drop-container(ref='canvasDropContainer')
     canvas(id='c' width='256' height='256')
-    //- div.text-white|{{canvasOptions}}
+      //- div.text-white|{{canvasOptions}}
 </template>
 
 <script>
@@ -12,7 +12,7 @@
   import MoeUtils from '../../moe/utils/moe.utils.js'
   import Factory from '../../moe/objects/moe.factory.js'
 
-  var canvas
+  var canvas, upperCanvasEl
 
 
   // BITMAP OBJECT
@@ -104,7 +104,7 @@
 
       // ctx.drawImage(this._originalElement, -128, -128)
       // ctx.drawImage(this._paletteImg, 0, -128)
-      alert(this.qImage.width + " " + this.qImage.height)
+      // alert(this.qImage.width + " " + this.qImage.height)
       ctx.drawImage(this.qImage, -this.qImage.width / 2, -this.qImage.height /2)
     },
 
@@ -173,23 +173,23 @@
 
     mounted () {
 
-      self = this
+    self = this
 
-      // Sortable on container purely to drop objs from other sortables.
-      let rubaxa = Sortable.create(this.$refs.canvasDropContainer, extend(true, {}, this.options, {
-        // Rubaxa sortable drop event -->
-        onAdd: function(e) {
-          e.clone.obj = e.clone.objs[e.oldIndex]
-          e.item.remove()
-          //let img = MoeUtils.imageFromBitmap(e.clone.obj)
-          let img = new Image()
-          img.src = e.clone.obj.src
-          img.onload = ()=>self.addImage(img)
-          return false
-          }
-        }
-      )
-    )
+    // Sortable on container purely to drop objs from other sortables.
+    let rubaxa = Sortable.create(this.$refs.canvasDropContainer, extend(true, {}, this.options, {
+      // Rubaxa sortable drop event -->
+      onAdd: function(e) {
+        e.clone.obj = e.clone.objs[e.oldIndex]
+        e.item.remove()
+        //let img = MoeUtils.imageFromBitmap(e.clone.obj)
+        let img = new Image()
+        img.src = e.clone.obj.src
+        img.onload = ()=>self.addImage(img)
+        return false
+      }
+    }))
+
+
 
     // Init fabric canvas
     canvas = new fabric.Canvas('c')
@@ -202,9 +202,13 @@
     canvas.freeDrawingBrush.width = 30
     //canvas.backgroundColor='white'
 
+    upperCanvasEl = canvas.upperCanvasEl
+
+
     canvas.on('object:modified', function(e) {
       console.log('object:modified', e)
-
+      
+      e.target.render(canvas.contextTop)
       if (e.target.type==='bitmap') {
 
       }
@@ -248,16 +252,15 @@
 
       addImage(img) {
 
+
+        console.log("CANVAS", canvas)
         var f = new fabric.Image.filters.Convolute({  matrix: [ 0, -1, 0, -1, 5, -1, 0, -1, 0 ] })
         var s = new fabric.Image.filters.Sepia()
         //oBitmap.filters.push(f)
         //oBitmap.filters.push(new fabric.Image.filters.Sepia());
 
-        // var group = new fabric.Group([  oBitmap, oMask  ])
-        // group.setOptions({
-        //   left: (255 * canvas.lastX / canvas.wrapperEl.offsetWidth) - (group.width / 2) ,
-        //   top: (255 * canvas.lastY / canvas.wrapperEl.offsetHeight) - (group.width / 2)
-        // })
+        let x =  (Number.isNaN(canvas.lastX) ? 128 : canvas.lastX)
+        let y = (Number.isNaN(canvas.lastY) ? 128 : canvas.lastY)
 
         var oMask = new fabric.Circle({
           top:0,
@@ -269,38 +272,40 @@
         });
         oMask.needsItsOwnCache = ()=>true
 
-
-
         var oBitmap = new BitmapObject(img, {
           label: 'Hi there',
           // width: img.width,
           // height: img.height,
-          left: canvas.lastX - img.width/2,
-          top: canvas.lastY - img.height/2,
+          // left: x - img.width/2,
+          // top: x - img.height/2,
           scaleX: 1,
           scaleY: 1,
           objectCaching: true
         })
 
-        var test = new fabric.Image(img, {
-          label: 'Hi there',
-          width: img.width,
-          height: img.height,
-          left: 10,
-          top: 10,
-          scaleX: .4,
-          scaleY: .4,
-          objectCaching: true
+        var oGroup = new fabric.Group([  oBitmap, oMask  ])
+        oGroup.setOptions({
+          left: x - (oGroup.width / 2) ,
+          top: y - (oGroup.width / 2)
         })
+
+        // var test = new fabric.Image(img, {
+        //   label: 'Hi there',
+        //   width: img.width,
+        //   height: img.height,
+        //   left: 10,
+        //   top: 10,
+        //   scaleX: .4,
+        //   scaleY: .4,
+        //   objectCaching: true
+        // })
         //test.filters.push(s);
         //test.applyFilters();
         // oBitmap.filters.push(f);
         //oBitmap.applyFilters();
         this.$nextTick(()=>{
-          //canvas.add(test)
-          canvas.add(oBitmap)
+          canvas.add(oGroup)
         })
-
 
         this.__sync()
 
