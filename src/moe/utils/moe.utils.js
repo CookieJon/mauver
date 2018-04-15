@@ -23,13 +23,13 @@ export default class MoeUtils {
    * Convert an image to material colors. Returns image.
 	 *
    */
-  static quantizeImage(img) {
+  static quantizeImage(img, colors) {
 
-    let palette = Factory.createPalette('raw')
+    // let palette = Factory.createPalette('raw')
     let pFrom =  0
-    let pTo = 155
-    let colors = palette.colors.slice(pFrom, pTo)
-
+    let pTo = 255
+  	colors = colors.slice(pFrom, pTo)
+		
     // * iq.palette <= material colors
     let iqPalette = new iq.utils.Palette()
     for (let j = 0, l = colors.length; j < l; j++) {
@@ -83,6 +83,47 @@ export default class MoeUtils {
     return image;
 	}
 
+
+	// Get Pixels
+	static pixelsFromImageDataAndColors({imageData, colors}) {
+		// assumes imageData contains only same colors in list.
+		
+    let pixels = Array(256 * 256).fill(-1) // default all to 0
+		let pixelIndex = 0
+		let data = imageData.data
+
+		// build a little color key map for speed
+		let map = {}
+		for (let i=0; i < colors.length; i++) {
+			let c = colors[i]
+			let key = c.r + c.g +c.b
+			map[key] = i
+		}
+		// console.log('d', data)
+    // Loop through imagedata
+    for (let i=0; i < data.length; i+=4) {
+
+			let palIndex = map[data[i] + data[i + 1] + data[i + 2]]
+			pixels[pixelIndex++] = palIndex
+
+      // // Find matching palette color
+			// // console.log(data[i], data[i+1], data[i+2])
+      // for (let c=0; c < colors.length; c++) {
+      //   let col = colors[c]
+      //   if (
+      //     col.r === data[i] &&
+      //     col.g === data[i+1] &&
+      //     col.b === data[i+2]
+      //   ) {
+			// 		// console.log(col.name)
+      //     pixels[pixelIndex++] = c
+      //     break
+			// 	} 
+      // }
+		}
+		console.log('pixels', pixels)
+		return pixels
+	}
 
 
 	// Get ImageData

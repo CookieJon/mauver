@@ -29,11 +29,9 @@
 
       this.loaded = false
       this.type = 'bitmap'
-      this.qImage = MoeUtils.quantizeImage(img)
-      this.qImage.onload = (function() {
-        console.log('QUANTIZED IMAGE LOADEWD', this.qImage)
+      this.qImage = MoeUtils.quantizeImage(img, options.colors)
+      this.qImage.onload = (function() {        
         this.set('dirty', true)
-        //this.dirty = true
         canvas.renderAll.bind(canvas)()
       }).bind(this)
 
@@ -58,55 +56,16 @@
 
     },
 
-    // toObject: function() {
-    //   return fabric.util.object.extend(this.callSuper('toObject'), {
-    //     label: this.get('label')
-    //   });
-    // },
-    /**
-     * @private
-     * @param {CanvasRenderingContext2D} ctx Context to render on
-     */
-    // _render: function(ctx) {
-    //   if (this.isMoving === false && this.resizeFilter && this._needsResize()) {
-    //     this._lastScaleX = this.scaleX;
-    //     this._lastScaleY = this.scaleY;
-    //     this.applyResizeFilters();
-    //   }
-    //   this._stroke(ctx);
-    //   // this._renderPaintInOrder(ctx);
-    //   //ctx.drawImage(this.qImage)
-    //   console.log('RENDER BITMAP')
-    // },
-
-    // _renderFill: function(ctx) {
-    //   var w = this.width, h = this.height, sW = w * this._filterScalingX, sH = h * this._filterScalingY,
-    //       x = -w / 2, y = -h / 2, elementToDraw = this._element;
-    //   elementToDraw && ctx.drawImage(elementToDraw,
-    //     this.cropX * this._filterScalingX,
-    //     this.cropY * this._filterScalingY,
-    //     sW,
-    //     sH,
-    //     x, y, w, h);
-    //   },
-
-    _render: function(ctx) {
-
-      console.log('_render', this.dirty, this.filters)
-      //this.applyFilters();
-      // if (this.isMoving === false && this.resizeFilter && this._needsResize()) {
-      //   this._lastScaleX = this.scaleX;
-      //   this._lastScaleY = this.scaleY;
-      //   this.applyResizeFilters();
-      // }
-      // this._stroke(ctx);
-      // this._renderPaintInOrder(ctx);
-
-      // ctx.drawImage(this._originalElement, -128, -128)
-      // ctx.drawImage(this._paletteImg, 0, -128)
-      // alert(this.qImage.width + " " + this.qImage.height)
+    
+    renderBitmap: function(ctx) {
+      console.log('renderBitmap()')
+      ctx.imageSmoothingEnabled = false
+      if (this.transformMatrix) {
+        ctx.transform.apply(ctx, this.transformMatrix);
+      }
+      this.transform(ctx);
       ctx.drawImage(this.qImage, -this.qImage.width / 2, -this.qImage.height /2)
-    },
+    }
 
   });
 
@@ -117,7 +76,11 @@
       // value: Array of canvas' getObjects()
       //
       value: {
-        type: Array
+        type: Array // <- Objects
+      },
+      colors: {
+        type: Array,
+        default: [] // <- Artwork's Colors
       },
       // options: canvas-level options
       //
@@ -140,6 +103,7 @@
           canvas.isDrawingMode = val.isDrawingMode
           canvas.preserveObjectStacking = val.preserveObjectStacking
           canvas.imageSmoothingEnabled = val.imageSmoothingEnabled
+          this.colors = extend(true, {}, )
         },
         deep: true
       }
@@ -173,42 +137,42 @@
 
     mounted () {
 
-    self = this
+      self = this
 
-    // Sortable on container purely to drop objs from other sortables.
-    let rubaxa = Sortable.create(this.$refs.canvasDropContainer, extend(true, {}, this.options, {
-      // Rubaxa sortable drop event -->
-      onAdd: function(e) {
-        e.clone.obj = e.clone.objs[e.oldIndex]
-        e.item.remove()
-        //let img = MoeUtils.imageFromBitmap(e.clone.obj)
-        let img = new Image()
-        img.src = e.clone.obj.src
-        img.onload = ()=>self.addImage(img)
-        return false
-      }
-    }))
+      // Sortable on container purely to drop objs from other sortables.
+      let rubaxa = Sortable.create(this.$refs.canvasDropContainer, extend(true, {}, this.options, {
+        // Rubaxa sortable drop event -->
+        onAdd: function(e) {
+          e.clone.obj = e.clone.objs[e.oldIndex]
+          e.item.remove()
+          //let img = MoeUtils.imageFromBitmap(e.clone.obj)
+          let img = new Image()
+          img.src = e.clone.obj.src
+          img.onload = ()=>self.addImage(img)
+          return false
+        }
+      }))
 
 
 
-    // Init fabric canvas
-    canvas = new fabric.Canvas('c')
-    canvas.setHeight('100%', {cssOnly: true})
-    canvas.setWidth('100%', {cssOnly: true})
-    canvas.isDrawingMode = false
-    canvas.preserveObjectStacking = false
-    canvas.imageSmoothingEnabled= false
-    canvas.freeDrawingBrush.color = '#ff0000'
-    canvas.freeDrawingBrush.width = 30
-    //canvas.backgroundColor='white'
+      // Init fabric canvas
+      canvas = new fabric.Canvas('c', {imageSmoothingEnabled: false})
+      canvas.setHeight('100%', {cssOnly: true})
+      canvas.setWidth('100%', {cssOnly: true})
+      canvas.isDrawingMode = false
+      canvas.preserveObjectStacking = false
+      canvas.imageSmoothingEnabled= false
+      canvas.freeDrawingBrush.color = '#ff0000'
+      canvas.freeDrawingBrush.width = 30
+      //canvas.backgroundColor='white'
 
-    upperCanvasEl = canvas.upperCanvasEl
+      upperCanvasEl = canvas.upperCanvasEl
 
 
     canvas.on('object:modified', function(e) {
       console.log('object:modified', e)
       
-      e.target.render(canvas.contextTop)
+      // e.target.render(canvas.contextTop)
       if (e.target.type==='bitmap') {
 
       }
@@ -229,241 +193,270 @@
     });
 
   },
-    methods: {
+  methods: {
 
-      doCommand(command, args) {
-        canvas[command].call(...args)
-      },
+    doCommand(command, args) {
+      canvas[command].call(...args)
+    },
 
-      __sync() {
-        // Re-render canvas, and emit $input event for v-model
-        //
-        //canvas.requestRenderAll()
-        canvas.renderAll()
-        //
-        // let out = JSON.parse( JSON.stringify( canvas.getObjects() ) )
-        let start = Date.now()
-        console.log('start timer', start)
-        let out = extend(true, {}, {value: canvas.getObjects()}).value
-        console.log('end  timer', Date.now() - start)
-        this.$nextTick(()=>self.$emit("input", out))
-        console.log('Fabric synced')
-      },
+    getBitmapFromObject() {
+      // create a colormapped bitmap from the obejct's transformed image.
+      let obj = canvas.getActiveObject()
+      if (!obj) return
 
-      addImage(img) {
+      // a. render the transformed object to a tmp canvas
+      let tmpCanvas = document.createElement('canvas')
+      tmpCanvas.width = 256
+      tmpCanvas.height = 256
+      let ctx = tmpCanvas.getContext('2d')      
+      ctx.imageSmoothingEnabled = false
+      obj.renderBitmap(ctx)
+      //obj._render(ctx)
+      // obj.render(ctx)
 
+      // b. get the imageData from canvas and convert to pixels per colors
+      let imageData = ctx.getImageData(0, 0, 256, 256)
+      let colors = this.colors
+      let pixels =  MoeUtils.pixelsFromImageDataAndColors({imageData , colors})
+      obj.pixels = pixels
+      // compose bitmap
 
-        console.log("CANVAS", canvas)
-        var f = new fabric.Image.filters.Convolute({  matrix: [ 0, -1, 0, -1, 5, -1, 0, -1, 0 ] })
-        var s = new fabric.Image.filters.Sepia()
-        //oBitmap.filters.push(f)
-        //oBitmap.filters.push(new fabric.Image.filters.Sepia());
+      //console.log(tmpCanvas.toDataURL())
+      
+      console.log('a', imageData.data, colors)
+        console.log('%c       ', 'font-size:256px; border:1px solid black; background: url(' + tmpCanvas.toDataURL() + ') no-repeat;')
 
-        let x =  (Number.isNaN(canvas.lastX) ? 128 : canvas.lastX)
-        let y = (Number.isNaN(canvas.lastY) ? 128 : canvas.lastY)
+    },
 
-        var oMask = new fabric.Circle({
-          top:0,
-          left:0,
-          radius: 30,
-          fill: 'red',
-          objectCaching: true,
-          globalCompositeOperation: 'destination-in'
-        });
-        oMask.needsItsOwnCache = ()=>true
+    __sync() {
+      // Re-render canvas, and emit $input event for v-model
+      //
+      //canvas.requestRenderAll()
+      canvas.renderAll()
+      //
+      // let out = JSON.parse( JSON.stringify( canvas.getObjects() ) )
+      let start = Date.now()
+      console.log('start timer', start)
+      let out = extend(true, {}, {value: canvas.getObjects()}).value
+      console.log('end  timer', Date.now() - start)
+      this.$nextTick(()=>self.$emit("input", out))
+      console.log('Fabric synced')
+    },
 
-        var oBitmap = new BitmapObject(img, {
-          label: 'Hi there',
-          // width: img.width,
-          // height: img.height,
-          // left: x - img.width/2,
-          // top: x - img.height/2,
-          scaleX: 1,
-          scaleY: 1,
-          objectCaching: true
-        })
+    addImage(img) {
 
-        var oGroup = new fabric.Group([  oBitmap, oMask  ])
-        oGroup.setOptions({
-          left: x - (oGroup.width / 2) ,
-          top: y - (oGroup.width / 2)
-        })
+      console.log("CANVAS", canvas)
+      var f = new fabric.Image.filters.Convolute({  matrix: [ 0, -1, 0, -1, 5, -1, 0, -1, 0 ] })
+      var s = new fabric.Image.filters.Sepia()
+      //oBitmap.filters.push(f)
+      //oBitmap.filters.push(new fabric.Image.filters.Sepia());
 
-        // var test = new fabric.Image(img, {
-        //   label: 'Hi there',
-        //   width: img.width,
-        //   height: img.height,
-        //   left: 10,
-        //   top: 10,
-        //   scaleX: .4,
-        //   scaleY: .4,
-        //   objectCaching: true
-        // })
-        //test.filters.push(s);
-        //test.applyFilters();
-        // oBitmap.filters.push(f);
-        //oBitmap.applyFilters();
-        this.$nextTick(()=>{
-          canvas.add(oGroup)
-        })
+      let x =  (Number.isNaN(canvas.lastX) ? 128 : canvas.lastX)
+      let y = (Number.isNaN(canvas.lastY) ? 128 : canvas.lastY)
 
-        this.__sync()
+      var oMask = new fabric.Circle({
+        top:0,
+        left:0,
+        radius: 30,
+        fill: 'red',
+        objectCaching: true,
+        globalCompositeOperation: 'destination-in'
+      });
+      oMask.needsItsOwnCache = ()=>true
 
-      },
+      var oBitmap = new BitmapObject(img, {
+        label: 'Hi there',
+        width: img.width,
+        height: img.height,
+        left: x - img.width/2,
+        top: x - img.height/2,
+        scaleX: 1,
+        scaleY: 1,
+        objectCaching: true,
+        colors: this.colors
+      })
 
-      selectObject(i) {
+      var oGroup = new fabric.Group([  oBitmap, oMask  ])
+      oGroup.setOptions({
+        left: x - (oGroup.width / 2) ,
+        top: y - (oGroup.width / 2)
+      })
 
-        let a = canvas.getActiveObject()
-        let b = canvas.getActiveObjects()
-        canvas.discardActiveObject()
-        var sel = new fabric.ActiveSelection([canvas.getObjects()[i]], {
-          canvas: canvas,
-        });
-        canvas.setActiveObject(sel)
-        canvas.requestRenderAll();
-        console.log('select object', i)
-      },
+      // var test = new fabric.Image(img, {
+      //   label: 'Hi there',
+      //   width: img.width,
+      //   height: img.height,
+      //   left: 10,
+      //   top: 10,
+      //   scaleX: .4,
+      //   scaleY: .4,
+      //   objectCaching: true
+      // })
+      //test.filters.push(s);
+      //test.applyFilters();
+      // oBitmap.filters.push(f);
+      //oBitmap.applyFilters();
+      this.$nextTick(()=>{
+        canvas.add(oBitmap)
+      })
 
-      selectAll() {
-        canvas.discardActiveObject();
-        var sel = new fabric.ActiveSelection(canvas.getObjects(), {
-          canvas: canvas,
-        });
-        canvas.setActiveObject(sel);
-        canvas.requestRenderAll();
-      },
+      this.__sync()
 
-      selectNone() {
-        canvas.discardActiveObject();
-        canvas.requestRenderAll();
-      },
+    },
 
-      removeSelected() {
-        var activeObjects = canvas.getActiveObjects()
-        canvas.discardActiveObject()
-        if (activeObjects.length) {
-          canvas.remove.apply(canvas, activeObjects)
-        }
-        this.__sync()
-      },
+    selectObject(i) {
 
-      group () {
-        if (!canvas.getActiveObject()) {
-          return;
-        }
-        if (canvas.getActiveObject().type !== 'activeSelection') {
-          return;
-        }
-        canvas.getActiveObject().toGroup();
-        canvas.requestRenderAll();
-        // self.$emit("input", this.myValue)
-      },
+      let a = canvas.getActiveObject()
+      let b = canvas.getActiveObjects()
+      canvas.discardActiveObject()
+      var sel = new fabric.ActiveSelection([canvas.getObjects()[i]], {
+        canvas: canvas,
+      });
+      canvas.setActiveObject(sel)
+      canvas.requestRenderAll();
+      console.log('select object', i)
+    },
 
-      ungroup () {
-        if (!canvas.getActiveObject()) {
-          return;
-        }
-        if (canvas.getActiveObject().type !== 'group') {
-          return;
-        }
-        canvas.getActiveObject().toActiveSelection();
-        canvas.requestRenderAll();
-      },
+    selectAll() {
+      canvas.discardActiveObject();
+      var sel = new fabric.ActiveSelection(canvas.getObjects(), {
+        canvas: canvas,
+      });
+      canvas.setActiveObject(sel);
+      canvas.requestRenderAll();
+    },
 
-        // q-btn(icon='' @click='$refs.fabric.bringForward()')|>
-        // q-btn(icon='' @click='$refs.fabric.sendBackward()')|<
-        // q-btn(icon='' @click='$refs.fabric.bringToFront()')|>>
-        // q-btn(icon='' @click='$refs.fabric.sendToBack()')|<<
+    selectNone() {
+      canvas.discardActiveObject();
+      canvas.requestRenderAll();
+    },
 
-      bringForward () {
-        if (!canvas.getActiveObject()) {
-          return;
-        }
-        canvas.bringForward(canvas.getActiveObject())
-        canvas.requestRenderAll()
-      },
-      sendBackwards () {
-        if (!canvas.getActiveObject()) {
-          return;
-        }
-        canvas.sendBackwards(canvas.getActiveObject())
-        canvas.requestRenderAll()
-      },
-      bringToFront () {
-        if (!canvas.getActiveObject()) {
-          return;
-        }
-        canvas.bringToFront(canvas.getActiveObject())
-        canvas.requestRenderAll()
-      },
-      sendToBack () {
-        if (!canvas.getActiveObject()) {
-          return;
-        }
-        canvas.sendToBack(canvas.getActiveObject())
-        canvas.requestRenderAll()
-      },
+    removeSelected() {
+      var activeObjects = canvas.getActiveObjects()
+      canvas.discardActiveObject()
+      if (activeObjects.length) {
+        canvas.remove.apply(canvas, activeObjects)
+      }
+      this.__sync()
+    },
 
-      centerObject () {
-        if (!canvas.getActiveObject()) {
-          return;
-        }
-        canvas.centerObject(canvas.getActiveObject())
-        self._sync()
-        //canvas.requestRenderAll()
-      },
-      centerObjectH () {
-        if (!canvas.getActiveObject()) {
-          return;
-        }
-        canvas.centerObjectH(canvas.getActiveObject())
-        canvas.requestRenderAll()
-        self._sync()
-      },
-      centerObjectV () {
-        if (!canvas.getActiveObject()) {
-          return;
-        }
-        canvas.centerObjectV(canvas.getActiveObject())
-        canvas.requestRenderAll()
-        self._sync()
-      },
-      clear () {
-        canvas.clear(canvas)
-        canvas.backgroundColor='white'
-        canvas.requestRenderAll()
-        self._sync()
+    group () {
+      if (!canvas.getActiveObject()) {
+        return;
+      }
+      if (canvas.getActiveObject().type !== 'activeSelection') {
+        return;
+      }
+      canvas.getActiveObject().toGroup();
+      canvas.requestRenderAll();
       // self.$emit("input", this.myValue)
-      },
+    },
 
-      fill () {
-        if (!canvas.getActiveObject()) {
-          return;
-        }
-        let obj = canvas.getActiveObject()
-        obj.setOptions({scaleX: obj.width / 256, scaleY: obj.height / 256, angle:0, top:0, left:0})
-        canvas.requestRenderAll()
-        self._sync()
-      },
-      halve () {
-        if (!canvas.getActiveObject()) {
-          return;
-        }
-        let obj = canvas.getActiveObject()
-        obj.setOptions({width: obj.width/2, height:obj.height/2})
-        canvas.requestRenderAll()
-        self._sync()
-      },
-      straighten () {
-        if (!canvas.getActiveObject()) {
-          return;
-        }
-        canvas.getActiveObject().straighten()
-        canvas.requestRenderAll()
-        self._sync()
-      },
-    }
+    ungroup () {
+      if (!canvas.getActiveObject()) {
+        return;
+      }
+      if (canvas.getActiveObject().type !== 'group') {
+        return;
+      }
+      canvas.getActiveObject().toActiveSelection();
+      canvas.requestRenderAll();
+    },
+
+      // q-btn(icon='' @click='$refs.fabric.bringForward()')|>
+      // q-btn(icon='' @click='$refs.fabric.sendBackward()')|<
+      // q-btn(icon='' @click='$refs.fabric.bringToFront()')|>>
+      // q-btn(icon='' @click='$refs.fabric.sendToBack()')|<<
+
+    bringForward () {
+      if (!canvas.getActiveObject()) {
+        return;
+      }
+      canvas.bringForward(canvas.getActiveObject())
+      canvas.requestRenderAll()
+    },
+    sendBackwards () {
+      if (!canvas.getActiveObject()) {
+        return;
+      }
+      canvas.sendBackwards(canvas.getActiveObject())
+      canvas.requestRenderAll()
+    },
+    bringToFront () {
+      if (!canvas.getActiveObject()) {
+        return;
+      }
+      canvas.bringToFront(canvas.getActiveObject())
+      canvas.requestRenderAll()
+    },
+    sendToBack () {
+      if (!canvas.getActiveObject()) {
+        return;
+      }
+      canvas.sendToBack(canvas.getActiveObject())
+      canvas.requestRenderAll()
+    },
+
+    centerObject () {
+      if (!canvas.getActiveObject()) {
+        return;
+      }
+      canvas.centerObject(canvas.getActiveObject())
+      self._sync()
+      //canvas.requestRenderAll()
+    },
+    centerObjectH () {
+      if (!canvas.getActiveObject()) {
+        return;
+      }
+      canvas.centerObjectH(canvas.getActiveObject())
+      canvas.requestRenderAll()
+      self._sync()
+    },
+    centerObjectV () {
+      if (!canvas.getActiveObject()) {
+        return;
+      }
+      canvas.centerObjectV(canvas.getActiveObject())
+      canvas.requestRenderAll()
+      self._sync()
+    },
+    clear () {
+      canvas.clear(canvas)
+      canvas.backgroundColor='white'
+      canvas.requestRenderAll()
+      self._sync()
+    // self.$emit("input", this.myValue)
+    },
+
+    fill () {
+      if (!canvas.getActiveObject()) {
+        return;
+      }
+      let obj = canvas.getActiveObject()
+      obj.setOptions({scaleX: obj.width / 256, scaleY: obj.height / 256, angle:0, top:0, left:0})
+      canvas.requestRenderAll()
+      self._sync()
+    },
+    halve () {
+      if (!canvas.getActiveObject()) {
+        return;
+      }
+      let obj = canvas.getActiveObject()
+      obj.setOptions({width: obj.width/2, height:obj.height/2})
+      canvas.requestRenderAll()
+      self._sync()
+    },
+    straighten () {
+      if (!canvas.getActiveObject()) {
+        return;
+      }
+      canvas.getActiveObject().straighten()
+      canvas.requestRenderAll()
+      self._sync()
+    },
   }
+}
 
 
 

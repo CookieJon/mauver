@@ -160,6 +160,9 @@
         div.row
           j-lever(v-model='controlTargetPower', rest='50%', :markers='true',:labelAlways='true',orientation='vertical',@start='__startSliding',@stop='__stopSliding',:range={'min': -10000,'35%': -1200,'45%': -100,'50%': 0,'55%': 100,'65%': 1200,'max': 10000})
         div.row
+        
+          q-btn(icon='' @click='$refs.fabric.getBitmapFromObject()')|BMP!
+
           q-btn(v-if='canvasOptions.isDrawingMode' icon='create' @click='canvasOptions.isDrawingMode = false')
           q-btn(v-else  icon='dialpad' @click='canvasOptions.isDrawingMode = true')
           q-checkbox(v-model='canvasOptions.preserveObjectStacking' label='Stack')
@@ -200,7 +203,7 @@
         //- fill
 
       div.j-tray.area.panel-item-grow(slot='content')    
-        j-fabric-canvas(ref='fabric' @input='onInput' :canvasOptions='canvasOptions')
+        j-fabric-canvas(ref='fabric' @input='onInput' :canvasOptions='canvasOptions' :colors='this.value.palette.colors')
           
           //- div(:class='value.options.frame') picture-frame
           //-   div.picture-mat
@@ -579,7 +582,6 @@ export default {
       this.$refs.fabric.selectObject(i)
     },
 
-
     updateObjects(objectList) {
       console.log("UPDATING OBJECTLIST", objectList)
     },
@@ -709,6 +711,9 @@ export default {
       let tmp = extend({}, {val: this.myValue}).val
       this.$emit('input', tmp)
     },
+
+
+
 
     // FILTER TINGS
     addFilter(type) {

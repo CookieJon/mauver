@@ -80,6 +80,8 @@ export default class Factory {
         colorMapOffset: 0
       },
 
+      objects: [],
+
       pixels: Array(65536).fill(244),
       bitmap: null,
       palette: oPalette,
