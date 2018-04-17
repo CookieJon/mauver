@@ -1,5 +1,5 @@
 <template lang='pug'>
-  //- Fabric is loaded in main.html as a CSN because node version has too many dependencies.  
+  //- Fabric is loaded in main.html as a CSN because node version has too many dependencies.
   div.drop-container(ref='canvasDropContainer')
     canvas(id='c' width='256' height='256')
       //- div.text-white|{{canvasOptions}}
@@ -30,43 +30,12 @@
       this.loaded = false
       this.type = 'bitmap'
       this.qImage = MoeUtils.quantizeImage(img, options.colors)
-      this.qImage.onload = (function() {        
+      this.qImage.onload = (function() {
         this.set('dirty', true)
         canvas.renderAll.bind(canvas)()
       }).bind(this)
 
-
-      // // Create the bitmap
-      // this.bitmap = Factory.bitmapFromImg(img, 0, 255)
-      // // Bitmap preview
-      // this._bitmapImg = MoeUtils.imageFromBitmap(this.bitmap)
-      // this._paletteImg = MoeUtils.imageFromColors(this.bitmap.palette.colors)
-
-      // this._bitmapImg.onload = (function() {
-      //   this.set('dirty', true)
-      //   //this.dirty = true
-      //   canvas.renderAll.bind(canvas)()
-      // }).bind(this)
-
-      // this._paletteImg.onload = (function() {
-      //   this.set('dirty', true)
-      //   //this.dirty = true
-      //   canvas.renderAll.bind(canvas)()
-      // }).bind(this)
-
-    },
-
-    
-    renderBitmap: function(ctx) {
-      console.log('renderBitmap()')
-      ctx.imageSmoothingEnabled = false
-      if (this.transformMatrix) {
-        ctx.transform.apply(ctx, this.transformMatrix);
-      }
-      this.transform(ctx);
-      ctx.drawImage(this.qImage, -this.qImage.width / 2, -this.qImage.height /2)
     }
-
   });
 
 
@@ -171,7 +140,7 @@
 
     canvas.on('object:modified', function(e) {
       console.log('object:modified', e)
-      
+
       // e.target.render(canvas.contextTop)
       if (e.target.type==='bitmap') {
 
@@ -208,11 +177,9 @@
       let tmpCanvas = document.createElement('canvas')
       tmpCanvas.width = 256
       tmpCanvas.height = 256
-      let ctx = tmpCanvas.getContext('2d')      
+      let ctx = tmpCanvas.getContext('2d')
       ctx.imageSmoothingEnabled = false
-      obj.renderBitmap(ctx)
-      //obj._render(ctx)
-      // obj.render(ctx)
+      obj.render(ctx)
 
       // b. get the imageData from canvas and convert to pixels per colors
       let imageData = ctx.getImageData(0, 0, 256, 256)
@@ -222,7 +189,7 @@
       // compose bitmap
 
       //console.log(tmpCanvas.toDataURL())
-      
+
       console.log('a', imageData.data, colors)
         console.log('%c       ', 'font-size:256px; border:1px solid black; background: url(' + tmpCanvas.toDataURL() + ') no-repeat;')
 
@@ -254,33 +221,42 @@
       let x =  (Number.isNaN(canvas.lastX) ? 128 : canvas.lastX)
       let y = (Number.isNaN(canvas.lastY) ? 128 : canvas.lastY)
 
-      var oMask = new fabric.Circle({
-        top:0,
-        left:0,
-        radius: 30,
-        fill: 'red',
-        objectCaching: true,
-        globalCompositeOperation: 'destination-in'
-      });
-      oMask.needsItsOwnCache = ()=>true
+      // var oMask = new fabric.Circle({
+      //   top:0,
+      //   left:0,
+      //   radius: 30,
+      //   fill: 'red',
+      //   objectCaching: true,
+      //   globalCompositeOperation: 'destination-in'
+      // });
+      // oMask.needsItsOwnCache = ()=>true
 
-      var oBitmap = new BitmapObject(img, {
+      // var oBitmap = new BitmapObject(img, {
+      //   label: 'Hi there',
+      //   width: img.width,
+      //   height: img.height,
+      //   left: x - img.width/2,
+      //   top: x - img.height/2,
+      //   scaleX: 1,
+      //   scaleY: 1,
+      //   objectCaching: true,
+      //   colors: this.colors
+      // })
+
+      var oImage = new fabric.Image(img, {
         label: 'Hi there',
         width: img.width,
         height: img.height,
         left: x - img.width/2,
         top: x - img.height/2,
         scaleX: 1,
-        scaleY: 1,
-        objectCaching: true,
-        colors: this.colors
+        scaleY: 1
       })
-
-      var oGroup = new fabric.Group([  oBitmap, oMask  ])
-      oGroup.setOptions({
-        left: x - (oGroup.width / 2) ,
-        top: y - (oGroup.width / 2)
-      })
+      // var oGroup = new fabric.Group([  oBitmap, oMask  ])
+      // oGroup.setOptions({
+      //   left: x - (oGroup.width / 2) ,
+      //   top: y - (oGroup.width / 2)
+      // })
 
       // var test = new fabric.Image(img, {
       //   label: 'Hi there',
@@ -297,7 +273,7 @@
       // oBitmap.filters.push(f);
       //oBitmap.applyFilters();
       this.$nextTick(()=>{
-        canvas.add(oBitmap)
+        canvas.add(oImage)
       })
 
       this.__sync()

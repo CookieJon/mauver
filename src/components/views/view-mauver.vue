@@ -49,6 +49,7 @@ import { dom, event, openURL, QLayout, QToolbar, QToolbarTitle, QBtn, QIcon, QLi
 
 
 import Factory from '../../moe/objects/moe.factory.js'
+import MoeUtils from '../../moe/utils/moe.utils.js'
 import dataColors from '../../data'
 import iq from 'image-q'
 
@@ -182,16 +183,19 @@ export default {
         reader.onload = (e) => {
           let img = new Image()
           img.onload = (e) => {
-            let image = {
-              type: 'image',
-              id: 'IMG_' + this.uid++,
-              title: file.name,
-              src: img.src,
-              width: img.width,
-              height:img.height
+            let qImg = MoeUtils.quantizeImage(img)
+            qImg.onload = (e) => {
+              let image = {
+                type: 'image',
+                id: 'IMG_' + this.uid++,
+                title: file.name,
+                src: qImg.src,
+                width: qImg.width,
+                height:qImg.height
+              }
+              console.log('add image from file' + image.id, image)
+              this.images.push(image)
             }
-            console.log('add image from file' + image.id, image)
-            this.images.push(image)
           }
           img.src = e.target.result
         }
@@ -214,7 +218,8 @@ export default {
       this.$store.dispatch('updateEntities', {palettes: [pal]})
     },
     addArtwork () {
-      let art = Factory.createArtwork(Factory.createPalette('w_rgby1234_b_lumaUndulating'))
+      //   let art = Factory.createArtwork(Factory.createPalette('w_rgby1234_b_lumaUndulating'))
+      let art = Factory.createArtwork(Factory.createPalette('raw'))      
       this.$store.dispatch('updateEntities', {artworks: [art]} )
     },
 
