@@ -587,7 +587,9 @@ export default {
     },
     __updatePreview(bitmap) {
       let imageData = MoeUtils.imageDataFromPixelsAndColors(this.mapOutput(bitmap))
-      this.$refs.preview.putImageData(imageData)
+      //this.$refs.preview.putImageData(imageData)
+      console.log('FABRIC', this.$refs.fabric)
+      this.$refs.fabric.contextTop.putImageData(imageData)
       //console.log('** __updatePreview() -->', bitmap, imageData)
      },
 
