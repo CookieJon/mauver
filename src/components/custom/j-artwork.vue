@@ -27,7 +27,7 @@
                     q-item(
                       v-for="(n, i) in presetSlidingSpeedOptions",
                       :key='i',
-                      @click='slidingSpeedsPattern=presetSlidingSpeedOptions[i].value,$refs.popover.close()')            
+                      @click='slidingSpeedsPattern=presetSlidingSpeedOptions[i].value,$refs.popover.close()')
                         q-item-main(:label='n.label')
               q-checkbox(v-model="myValue.options.slidingLocked", label='Lock')
               q-btn(small,push,@click='changePeriod(-1)')|<
@@ -70,7 +70,7 @@
               q-btn(small push @click='unmapColorsToZero()')|Zero
 
 
-    
+
 
     //- OBJECTS LIST
 
@@ -98,10 +98,10 @@
                       div.col
                         pre
                           //- |L:{{Math.floor(object.left)}} T:{{Math.floor(object.top)}} W:{{object.width}} H:{{object.height}} X:{{object.scaleX.toFixed(2)}} Y:{{object.scaleY.toFixed(2)}}
-                          //- |cacheKey:"{{object.cacheKey}}" ownCaching:{{object.ownCaching}} 
+                          //- |cacheKey:"{{object.cacheKey}}" ownCaching:{{object.ownCaching}}
                           //- |dirty:{{object.dirty}} loaded:{{object.loaded}} filters:[{{object.fiters ? object.filters.length : ''}}]
                           //- |Bitmap:{{object.bitmap}}
-                    
+
                     div.col(v-if='object.type==="group"')
                       div.row
                         //- |{{object.item(0).type}} -{{object.item(1).type}} - {{object.item(3).type}}
@@ -109,24 +109,24 @@
                           |grpCache
                           div(style='border:3px dashed #333;width:50px;height:50px;')
                             //- cacheCanvas
-                            j-canvas(:value='object._cacheCanvas'  width="100%")             
+                            j-canvas(:value='object._cacheCanvas'  width="100%")
 
-                        div.col(v-if='object.item(0) && object.item(0)._originalElement')                      
-                          |orig 
+                        div.col(v-if='object.item(0) && object.item(0)._originalElement')
+                          |orig
                           div(style='border:3px dashed #333;width:50px;height:50px;')
                             img(:src='object.item(0)._originalElement.src' width="100%")
 
-                        div.col(v-if='object.item(0) && object.item(0)._filteredEl')   
+                        div.col(v-if='object.item(0) && object.item(0)._filteredEl')
                           |filtered
                           div(style='border:3px dashed #333;width:50px;height:50px;')
                             //- cacheCanvas
-                            j-canvas(:value='object.item(0)._filteredEl'  width="100%")         
+                            j-canvas(:value='object.item(0)._filteredEl'  width="100%")
 
                         div.col(v-if='object.item(0)._paletteImg && object.item(0)._paletteImg')
                           |palette
                           div(style='border:3px dashed #333;width:50px;height:50px;')
                             img(:src='object.item(0)._paletteImg.src' width='100%')
-                            
+
                         div.col(v-if='object.item(0)._bitmapImg && object.item(0)._bitmapImg')
                           |= 8bit
                           div(style='border:3px dashed #333;width:50px;height:50px;')
@@ -137,21 +137,21 @@
                           |0:bmpCache
                           div(style='border:3px dashed #333;width:50px;height:50px;')
                             //- cacheCanvas
-                            j-canvas(:value='object.item(0)._cacheCanvas'  width="100%")     
+                            j-canvas(:value='object.item(0)._cacheCanvas'  width="100%")
 
                         div.col(v-if='true || object.item(1)._cacheCanvas')
                           |1:maskCache
                           div(style='border:3px dashed #333;width:50px;height:50px;')
                             //- cacheCanvas
-                            j-canvas(:value='object.item(1)._cacheCanvas'  width="100%") 
+                            j-canvas(:value='object.item(1)._cacheCanvas'  width="100%")
 
-                    //- div.row          
+                    //- div.row
 
-                    //-   div.col(v-if='object.item(1)')                      
+                    //-   div.col(v-if='object.item(1)')
                     //-     |mask
                     //-     div(style='border:3px dashed #333;width:5-px;height:50px;')
                     //-       j-canvas( :value='object.item(1)._cacheCanvas'  width="100%")
- 
+
 
     //-  FABRIC CANVAS
 
@@ -160,7 +160,7 @@
         div.row
           j-lever(v-model='controlTargetPower', rest='50%', :markers='true',:labelAlways='true',orientation='vertical',@start='__startSliding',@stop='__stopSliding',:range={'min': -10000,'35%': -1200,'45%': -100,'50%': 0,'55%': 100,'65%': 1200,'max': 10000})
         div.row
-        
+
           q-btn(icon='' @click='$refs.fabric.getBitmapFromObject()')|BMP!
 
           q-btn(v-if='canvasOptions.isDrawingMode' icon='create' @click='canvasOptions.isDrawingMode = false')
@@ -173,7 +173,7 @@
           q-btn(icon='' @click='$refs.fabric.group()')|Group
           q-btn(icon='' @click='$refs.fabric.ungroup()')|Ungroup
           |-
-          q-btn(icon='' @click='$refs.fabric.fill()')|Fill 
+          q-btn(icon='' @click='$refs.fabric.fill()')|Fill
           q-btn(icon='' @click='$refs.fabric.halve()')|/2
           q-btn(icon='' @click='$refs.fabric.straighten()')|STR8
           |-
@@ -202,9 +202,9 @@
         //- ---
         //- fill
 
-      div.j-tray.area.panel-item-grow(slot='content')    
+      div.j-tray.area.panel-item-grow(slot='content')
         j-fabric-canvas(ref='fabric' @input='onInput' :canvasOptions='canvasOptions' :colors='this.value.palette.colors')
-          
+
           //- div(:class='value.options.frame') picture-frame
           //-   div.picture-mat
           //-     div.picture-art
@@ -213,7 +213,7 @@
               //- j-canvas( ref='preview' v-touch-pan="previewPan" :value='pipelineMapped' @click="clickPreview", width='256', height='256' style='width:100%;height:100%;')
               //- j-canvas.frame-type-grid(:image-data='filterFinalImageData')
 
-    
+
 </template>
 
 <script>
@@ -246,6 +246,7 @@ let
   ELAPSED_TIME
 
 let
+  FABRIC,
   CANVAS,
   SLIDING_PIXELS,
   SLIDING_COLORS,
@@ -279,7 +280,7 @@ export default {
 
       // Sliding things...
       previewResponsive: true,
-      
+
       paletteOptions: ColorUtils.presetPalettes.map(v=>{return {'label':v, 'value':v}}),
       frameOptions: [
         {label: 'Classic', value:'picture-frame-classic'},
@@ -586,11 +587,8 @@ export default {
       console.log("UPDATING OBJECTLIST", objectList)
     },
     __updatePreview(bitmap) {
-      let imageData = MoeUtils.imageDataFromPixelsAndColors(this.mapOutput(bitmap))
-      //this.$refs.preview.putImageData(imageData)
-      console.log('FABRIC', this.$refs.fabric)
-      this.$refs.fabric.contextTop.putImageData(imageData)
-      //console.log('** __updatePreview() -->', bitmap, imageData)
+      FABRIC.__updatePreview(bitmap)
+      //FABRIC.__updatePreview(this.mapOutput(bitmap))
      },
 
     mapOutput(bitmap) {
@@ -923,10 +921,11 @@ export default {
 
       this.previewResponsive = false
 
-      SLIDING_PIXELS = i > -1 ? this.value.filters[i].pixelsOut.slice() : SLIDING_PIXELS
+      // LIDING_PIXELS = i > -1 ? this.value.filters[i].pixelsOut.slice() : SLIDING_PIXELS
+      SLIDING_PIXELS = [100].concat(FABRIC.getBitmapFromObject())
       // Hacvk for first time
       if (!SLIDING_PIXELS) {
-        SLIDING_PIXELS = [100].concat(new Array(65536).fill(87)) 
+        SLIDING_PIXELS = [100].concat(new Array(65536).fill(87))
                        // ^^^ 100 as first item to prevent leading 0's being truncated during SUB. & detect top/bottom passed.
       }
 
@@ -1006,7 +1005,7 @@ export default {
         //oRangeDisplay.val(oRangeDisplay.val() + " \n " + " Stopping @ " + (controlDirection > 0 ? "UPPER":"LOWER") );
         // this.__stopSliding();
 
-      } 
+      }
       // update Preview
       this.__updatePreview({
         pixels: SLIDING_PIXELS,
@@ -1051,6 +1050,8 @@ export default {
 
 	    this.slidingSpeed = this.slidingSpeeds.slice(0, this.slidingSpeedPower); // GOOD METHOD (but Remember the better one you thought of!!!)
 
+      this.slidingSpeed.unshift(0)
+
       // Visualisation
       let tmp = new ImageData(256,256)
       let inset = (65536 * 4) - this.slidingSpeedPower * 4
@@ -1070,7 +1071,7 @@ export default {
     //this.myCtx = this.$refs.preview.getContext('2d') // <- canvas
     //this.myCtx = this.$refs.preview.getContext('2d') // <-jCanvas
     this.myPreview = this.$refs.preview
-
+    FABRIC = this.$refs.fabric
 
 
   },
@@ -1351,7 +1352,7 @@ export default {
               //-           q-btn(small push @click='(filter.goboX =0, filter.goboY = 0)')|Zero
               //-           br
               //-           |{{filter.mode}}
-                        
+
               //-         div.col
               //-           |BMP
               //-           j-drop-target(:selected='filter.mode===1' :value='value.filters[i].bitmap', @add='dropBitmapOnBitmapFilter($event, i)', @select='selectBitmapFilterBitmap(i)' style='width:60px;height:60px;')

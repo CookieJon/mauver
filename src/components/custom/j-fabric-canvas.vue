@@ -168,6 +168,13 @@
       canvas[command].call(...args)
     },
 
+    __updatePreview(bitmap) {
+      let imageData = MoeUtils.imageDataFromPixelsAndColors(bitmap)
+      //this.$refs.preview.putImageData(imageData)
+      canvas.contextTop.putImageData(imageData, 0, 0)
+      //console.log('** __updatePreview() -->', bitmap, imageData)
+     },
+
     getBitmapFromObject() {
       // create a colormapped bitmap from the obejct's transformed image.
       let obj = canvas.getActiveObject()
@@ -188,11 +195,13 @@
       obj.pixels = pixels
       // compose bitmap
 
+
       //console.log(tmpCanvas.toDataURL())
 
       console.log('a', imageData.data, colors)
         console.log('%c       ', 'font-size:256px; border:1px solid black; background: url(' + tmpCanvas.toDataURL() + ') no-repeat;')
 
+      return pixels
     },
 
     __sync() {
