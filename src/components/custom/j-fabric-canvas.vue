@@ -170,6 +170,7 @@
 
     __updatePreview(bitmap) {
       let imageData = MoeUtils.imageDataFromPixelsAndColors(bitmap)
+      console.log(bitmap.pixels.length, imageData.data.length)
       //this.$refs.preview.putImageData(imageData)
       canvas.contextTop.putImageData(imageData, 0, 0)
       //console.log('** __updatePreview() -->', bitmap, imageData)

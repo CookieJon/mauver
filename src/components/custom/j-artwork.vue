@@ -854,10 +854,25 @@ export default {
     },
 
     dropPixelMapInput(e) {
-      console.log('dropPixelMapInput')
+      console.log('dropPixelMapInput', e.clone.obj)
       e.item.remove() // will be added by v-for instead
+
+          // e.clone.obj = e.clone.objs[e.oldIndex]
+          // e.item.remove()
+          // //let img = MoeUtils.imageFromBitmap(e.clone.obj)
+          // let img = new Image()
+          // img.src = e.clone.obj.src
+          // img.onload = ()=>self.addImage(img)
+          // return false
+
+
       this.pixelMapInput = e.clone.obj
-      let pixelsIn = this.pixelMapInput.pixels
+
+      let pixelsIn = MoeUtils.pixelsFromImageAndColors({
+        image: this.pixelMapInput.img,
+        colors: this.value.palette.colors
+      })
+
       let pixelmap = []
       let pixelunmap = []
       let ci, mi, ui = 0 // Indices: color, mapped, unmapped
@@ -879,9 +894,6 @@ export default {
     },
     //
     __init() {
-
-
-
       this.slidingLower = new Array(65536).fill(0)
       //this.slidingCurrent = new Array(65536).fill(0)
       this.slidingUpper = new Array(65536).fill(255)
@@ -923,6 +935,7 @@ export default {
 
       // LIDING_PIXELS = i > -1 ? this.value.filters[i].pixelsOut.slice() : SLIDING_PIXELS
       SLIDING_PIXELS = [100].concat(FABRIC.getBitmapFromObject())
+      //alert(SLIDING_PIXELS.length)
       // Hacvk for first time
       if (!SLIDING_PIXELS) {
         SLIDING_PIXELS = [100].concat(new Array(65536).fill(87))
@@ -996,10 +1009,10 @@ export default {
         : crunch.sub(SLIDING_PIXELS, this.slidingSpeed)
 
       // recCounter++;
-      if (SLIDING_PIXELS[0])
+
       if (SLIDING_PIXELS.length > 65536) {
 
-        SLIDING_PIXELS.shift(1);
+        // SLIDING_PIXELS.shift(1);
 
         console.log('too high beep!')
         //oRangeDisplay.val(oRangeDisplay.val() + " \n " + " Stopping @ " + (controlDirection > 0 ? "UPPER":"LOWER") );

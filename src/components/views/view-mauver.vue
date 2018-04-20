@@ -190,6 +190,7 @@ export default {
                 id: 'IMG_' + this.uid++,
                 title: file.name,
                 src: qImg.src,
+                img: qImg,
                 width: qImg.width,
                 height:qImg.height
               }

@@ -19,50 +19,19 @@ export default class MoeUtils {
 
 	static MATERIAL_PALETTE = Factory.createPalette('raw')
 
-  /**
-   *
-   * Convert an image to material colors. Returns image.
-	 *
-   */
-  static quantizeImage(img, colors) {
+	// pxiels From...
+	//
+	static pixelsFromImageAndColors({image, colors}) {
+		let imageData = MoeUtils.imageDataFromImage(image)
+		return MoeUtils.pixelsFromImageDataAndColors({imageData, colors})
+	}
 
-    // let palette = Factory.createPalette('raw')
-    let pFrom =  0
-    let pTo = 255
-  	colors = MoeUtils.MATERIAL_PALETTE.colors.slice(pFrom, pTo)
-		
-		console.log('QUANTIZE COLORS', colors)
-
-    // * iq.palette <= material colors
-    let iqPalette = new iq.utils.Palette()
-    for (let j = 0, l = colors.length; j < l; j++) {
-      let color = colors[j]
-      iqPalette.add(iq.utils.Point.createByRGBA(color.r, color.g, color.b, color.a))
-    }
-    // * iq.distance.?
-    // iq.distance.Euclidean();Manhattan();IEDE2000(); etc...
-    let iqDistance = new iq.distance.EuclideanRgbQuantWOAlpha()
-		iq.utils.PointContainer.fromHTMLImageElement
-    // let inPointContainer = iq.utils.PointContainer.fromHTMLCanvasElement(canvas) // use canvas to scale to 256x256
-    let inPointContainer = iq.utils.PointContainer.fromHTMLImageElement(img)
-		console.log('inPointContainer', inPointContainer)
-    let iqImage = new iq.image.ErrorDiffusionArray(iqDistance, iq.image.ErrorDiffusionArrayKernel.SierraLite)
-    // let iqImage = new iq.image.NearestColor(iqDistance)
-
-		let outPointContainer = iqImage.quantize(inPointContainer, iqPalette)
-	
-    //let uint8array = outPointContainer.toUint8Array() // <- imagedata data
-
-    return MoeUtils.imageFromIqPointContainer(outPointContainer)
-
-  }
-
-
-
-	// Get Pixels
 	static pixelsFromImageDataAndColors({imageData, colors}) {
-		// assumes imageData contains only same colors in list.
-		
+		//
+		// NN: Assumes imageData contains only same colors in list!
+		//
+		console.log('pixelsFromImageDataAndColors', {imageData, colors})
+
     let pixels = Array(256 * 256).fill(-1) // default all to 0
 		let pixelIndex = 0
 		let data = imageData.data
@@ -79,32 +48,16 @@ export default class MoeUtils {
 		// console.log('d', data)
     // Loop through imagedata
     for (let i=0; i < data.length; i+=4) {
-
 			let palIndex = map[data[i] + '-'+ data[i + 1] + '-' + data[i + 2]]
 			pixels[pixelIndex++] = palIndex
-
-      // // Find matching palette color
-			// // console.log(data[i], data[i+1], data[i+2])
-      // for (let c=0; c < colors.length; c++) {
-      //   let col = colors[c]
-      //   if (
-      //     col.r === data[i] &&
-      //     col.g === data[i+1] &&
-      //     col.b === data[i+2]
-      //   ) {
-			// 		// console.log(col.name)
-      //     pixels[pixelIndex++] = c
-      //     break
-			// 	} 
-      // }
 		}
 		console.log('pixels', pixels)
 		return pixels
 	}
 
 
-
-	// Get Image
+	// image From...
+	//
 	static imageFromBitmap(bitmap) {
 		return MoeUtils.imageFromImageData(MoeUtils.imageDataFromBitmap(bitmap))
 	}
@@ -130,9 +83,55 @@ export default class MoeUtils {
     return image;
 	}
 
+  static quantizeImage(img, colors) {
 
-	// Get ImageData
+    // let palette = Factory.createPalette('raw')
+    let pFrom =  0
+		let pTo = 255
+		if (!colors) {
+			colors = MoeUtils.MATERIAL_PALETTE.colors.slice(pFrom, pTo)
+		} 
+  	
+
+		console.log('QUANTIZE COLORS', colors)
+
+    // * iq.palette <= material colors
+    let iqPalette = new iq.utils.Palette()
+    for (let j = 0, l = colors.length; j < l; j++) {
+      let color = colors[j]
+      iqPalette.add(iq.utils.Point.createByRGBA(color.r, color.g, color.b, color.a))
+    }
+    // * iq.distance.?
+    // iq.distance.Euclidean();Manhattan();IEDE2000(); etc...
+    let iqDistance = new iq.distance.EuclideanRgbQuantWOAlpha()
+		iq.utils.PointContainer.fromHTMLImageElement
+    // let inPointContainer = iq.utils.PointContainer.fromHTMLCanvasElement(canvas) // use canvas to scale to 256x256
+    let inPointContainer = iq.utils.PointContainer.fromHTMLImageElement(img)
+		console.log('inPointContainer', inPointContainer)
+    let iqImage = new iq.image.ErrorDiffusionArray(iqDistance, iq.image.ErrorDiffusionArrayKernel.SierraLite)
+    // let iqImage = new iq.image.NearestColor(iqDistance)
+
+		let outPointContainer = iqImage.quantize(inPointContainer, iqPalette)
+
+    //let uint8array = outPointContainer.toUint8Array() // <- imagedata data
+
+    return MoeUtils.imageFromIqPointContainer(outPointContainer)
+
+  }
+
+	
+	// imageData From...
 	//
+	static imageDataFromImage(image) {
+		var canvas = document.createElement('canvas')
+		var ctx = canvas.getContext('2d')
+		canvas.width = image.naturalWidth
+		canvas.height = image.naturalHeight
+		ctx.drawImage(image, 0, 0 )
+		var imageData = ctx.getImageData(0, 0, image.naturalWidth, image.naturalHeight)
+		return imageData
+	}
+
 	static imageDataEmpty() {
 		let imgData = new ImageData(256, 256)
 		for (let i=0; i< 65536; i++) {
@@ -141,7 +140,7 @@ export default class MoeUtils {
 			imgData.data[mappedIndex] = rgb
 			imgData.data[mappedIndex+1] = rgb
 			imgData.data[mappedIndex+2] = rgb
-			imgData.data[mappedIndex+3] = 255;
+			imgData.data[mappedIndex+3] = 255
 		}
 		return imgData
 	}
@@ -157,11 +156,13 @@ export default class MoeUtils {
 	}
 
 	static imageDataFromPixelsAndColors({pixels, colors}) {
-      let imgData = MoeUtils.imageDataEmpty()
+			let imgData = MoeUtils.imageDataEmpty()
+			let l = pixels.length
+			let start = l - 65536 // might be 65537 because of shifted pixel to preserve leading zeros
       try {
-        for (var i=0; i<65536; i++ ) {
+        for (var i = 0; i < 65536; i++ ) {
           let mappedIndex = i * 4;
-          let theColor = colors[pixels[i]]
+          let theColor = colors[pixels[i + start]]
           imgData.data[mappedIndex] = theColor.r
           imgData.data[mappedIndex+1] = theColor.g
           imgData.data[mappedIndex+2] = theColor.b
