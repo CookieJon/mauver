@@ -983,7 +983,7 @@ export default {
       this.slidingStarted = false
       cancelAnimationFrame(this.slidingAnimId)
 
-      this.$refs.preview.responsive=true
+      // this.$refs.preview.responsive=true
 
     },
 
