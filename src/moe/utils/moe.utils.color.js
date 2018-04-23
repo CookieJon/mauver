@@ -19,7 +19,7 @@ export default class ColorUtils {
         // this._distance.setWhitePoint(255 << networkBiasShift,255 << networkBiasShift,255 << networkBiasShift,255 << networkBiasShift);
   }
 
-  static presetPalettes = ['greyscale','bichromal','experiment1','experiment2','experiment3','experiment4','raw','raw_lumaUndulating','b_rbgy12_rgby34_g123_w_lumaRising','b_rbgy12_rgby34_g123_w_lumaFalling','w_rgby1234_b_lumaUndulating','w_rgby1234_b_lumaRising','w_rgby1234_b_lumaFalling','supercolor_red','supercolor_green','empty']
+  static presetPalettes = ['greyscale','bichromal','experiment1','experiment2','experiment3','experiment4','raw', 'lumawave', 'raw_lumaUndulating','b_rbgy12_rgby34_g123_w_lumaRising','b_rbgy12_rgby34_g123_w_lumaFalling','w_rgby1234_b_lumaUndulating','w_rgby1234_b_lumaRising','w_rgby1234_b_lumaFalling','supercolor_red','supercolor_green','empty']
 	// Palette
 	//
 
@@ -134,6 +134,7 @@ export default class ColorUtils {
       // w_rgby1234_b  <-- Nicest!!
       //
       case "w_rgby1234_b_lumaUndulating":
+      case 'lumawave':
         paletteTo = paletteTo
         .concat(groups.black)
         .concat(ColorUtils.sortColorsByLuma(groups.allReds.concat(groups.grey).concat(groups.white)))

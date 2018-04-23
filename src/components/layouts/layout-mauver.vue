@@ -143,8 +143,9 @@ export default {
       moveY: 0,
       rotateY: 0,
       rotateX: 0,
-      'selectedBg': '/statics/img/resource/bg/tron/tron1.png',
+      'selectedBg': '/statics/img/resource/bg/simple1.jpg',
       'bgs': [
+        '/statics/img/resource/bg/tsimple1.jpg',
         '/statics/img/resource/bg/tron/tron1.png',
         '/statics/img/resource/bg/tron/tron2.jpg',
         '/statics/img/resource/bg/tron/tron3.jpg',

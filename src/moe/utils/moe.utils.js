@@ -90,8 +90,8 @@ export default class MoeUtils {
 		let pTo = 255
 		if (!colors) {
 			colors = MoeUtils.MATERIAL_PALETTE.colors.slice(pFrom, pTo)
-		} 
-  	
+		}
+
 
 		console.log('QUANTIZE COLORS', colors)
 
@@ -119,7 +119,7 @@ export default class MoeUtils {
 
   }
 
-	
+
 	// imageData From...
 	//
 	static imageDataFromImage(image) {
@@ -154,6 +154,37 @@ export default class MoeUtils {
 			colors: bitmap.palette.colors
 		})
 	}
+
+
+	static mapPixels({pixels, pixelmap, colormap}) {
+
+		let
+			mappedPixels = [].concat(pixels),
+			start = pixels.length - 65536
+
+		if (pixelmap && colormap) {
+			// Map pixels and colors
+			for (let i = 0; i < 65536; i++) {
+				mappedPixels[i + start] = colormap[pixels[pixelmap[i] + start]]
+			}
+		}
+		else if (pixelmap) {
+			// Map pixels only
+			for (let i = 0; i < 65536; i++) {
+				mappedPixels[i + start] = pixels[pixelmap[i] + start]
+			}
+		}
+		else if (colormap) {
+			// Map colors only
+			for (let i = 0; i < 65536; i++) {
+				mappedPixels[i + start] = colormap[pixels[i + start]]
+			}
+		}
+
+		return mappedPixels
+
+	}
+
 
 	static imageDataFromPixelsAndColors({pixels, colors}) {
 			let imgData = MoeUtils.imageDataEmpty()

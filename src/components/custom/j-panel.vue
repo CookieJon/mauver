@@ -365,7 +365,8 @@ import { extend, QBtn, QIcon, QPopover, QScrollArea, QTooltip } from 'quasar'
 
 
   & .j-panel-titlebar
-    background $primary
+    // background $primary
+    background rgba(145,145,145,0.45)
     // background $toolbar-background
     z-index 10
     color white

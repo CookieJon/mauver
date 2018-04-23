@@ -929,20 +929,19 @@ export default {
     __startSliding() {
 
       // If activeFilter, pick up the pixels from that filter's output otherwise use what's there.
-      let i = this.activeFilter
+      // let i = this.activeFilter
+      // this.previewResponsive = false
 
-      this.previewResponsive = false
-
-      // LIDING_PIXELS = i > -1 ? this.value.filters[i].pixelsOut.slice() : SLIDING_PIXELS
-      SLIDING_PIXELS = [100].concat(FABRIC.getBitmapFromObject())
-      //alert(SLIDING_PIXELS.length)
-      // Hacvk for first time
-      if (!SLIDING_PIXELS) {
-        SLIDING_PIXELS = [100].concat(new Array(65536).fill(87))
-                       // ^^^ 100 as first item to prevent leading 0's being truncated during SUB. & detect top/bottom passed.
-      }
-
-
+      // 1. PREPARE THE PIXELS!!
+      // TODO: Can be either a single layer+mask, or the pipeline output.
+      SLIDING_PIXELS = [100].concat( FABRIC.getBitmapFromObject() || new Array(65536).fill(0) )
+    
+      // UNMAP pixels & colors
+      SLIDING_PIXELS = MoeUtils.mapPixels({
+        pixels: SLIDING_PIXELS,
+        pixelmap: this.value.pixelunmap,
+        colormap: this.value.colorunmap
+      })
 
       SLIDING_COLORS = this.value.palette.colors
 
@@ -1010,16 +1009,17 @@ export default {
 
       // recCounter++;
 
-      if (SLIDING_PIXELS.length > 65536) {
-
-        // SLIDING_PIXELS.shift(1);
-
-        console.log('too high beep!')
+      // if (SLIDING_PIXELS.length > 65536) {
+      if (SLIDING_PIXELS[0] != 100) {
+        console.log('too high beep!', SLIDING_PIXELS[0])
         //oRangeDisplay.val(oRangeDisplay.val() + " \n " + " Stopping @ " + (controlDirection > 0 ? "UPPER":"LOWER") );
-        // this.__stopSliding();
-
+        // this.__stopSliding();        
       }
-      // update Preview
+
+
+        // update Preview
+
+
       this.__updatePreview({
         pixels: SLIDING_PIXELS,
         colors: this.value.palette.colors
