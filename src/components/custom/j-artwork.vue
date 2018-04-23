@@ -936,7 +936,7 @@ export default {
       // TODO: Can be either a single layer+mask, or the pipeline output.
       SLIDING_PIXELS = [100].concat( FABRIC.getBitmapFromObject() || new Array(65536).fill(0) )
     
-      // UNMAP pixels & colors
+      // *** A> UNMAP *** pixels & colors
       SLIDING_PIXELS = MoeUtils.mapPixels({
         pixels: SLIDING_PIXELS,
         pixelmap: this.value.pixelunmap,
@@ -1016,14 +1016,22 @@ export default {
         // this.__stopSliding();        
       }
 
-
-        // update Preview
-
-
       this.__updatePreview({
-        pixels: SLIDING_PIXELS,
+        pixels:SLIDING_PIXELS,
         colors: this.value.palette.colors
       })
+
+      // *** (B) MAP *** pixels & colors
+      
+      // this.__updatePreview({
+      //   pixels: MoeUtils.mapPixels({
+      //     pixels: SLIDING_PIXELS,
+      //     pixelmap: this.value.pixelmap,
+      //     colormap: this.value.colormap
+      //   }),
+      //   colors: this.value.palette.colors
+      // })
+      
       // DEBUG
       //
       // var position = "";
