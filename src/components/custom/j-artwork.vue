@@ -879,8 +879,8 @@ export default {
       for (ci = 0; ci < 256; ci++) {
         for (mi = 0; mi < 65536; mi++) {
           if (pixelsIn[mi] === ci)  {
-            pixelmap[ui] = mi
-            pixelunmap[mi] = ui
+            pixelmap[mi] = ui
+            pixelunmap[ui] = mi
             ui++
           }
         }
@@ -961,7 +961,7 @@ export default {
       if (!this.slidingStarted) return
       console.log('__stopSliding')
 
-      this.previewResponsive = true
+      // this.previewResponsive = true
       // If activeFilter, pick up the pixels from that filter's output otherwise use the final filter pipeline output.
       let i = this.activeFilter
       if (i > -1) {
@@ -1016,21 +1016,21 @@ export default {
         // this.__stopSliding();        
       }
 
-      this.__updatePreview({
-        pixels:SLIDING_PIXELS,
-        colors: this.value.palette.colors
-      })
-
       // *** (B) MAP *** pixels & colors
       
       // this.__updatePreview({
-      //   pixels: MoeUtils.mapPixels({
-      //     pixels: SLIDING_PIXELS,
-      //     pixelmap: this.value.pixelmap,
-      //     colormap: this.value.colormap
-      //   }),
+      //   pixels: SLIDING_PIXELS,
       //   colors: this.value.palette.colors
       // })
+
+      this.__updatePreview({
+        pixels: MoeUtils.mapPixels({
+          pixels: SLIDING_PIXELS,
+          pixelmap: this.value.pixelmap,
+          colormap: this.value.colormap
+        }),
+        colors: this.value.palette.colors
+      })
       
       // DEBUG
       //
