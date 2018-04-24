@@ -879,8 +879,8 @@ export default {
       for (ci = 0; ci < 256; ci++) {
         for (mi = 0; mi < 65536; mi++) {
           if (pixelsIn[mi] === ci)  {
-            pixelmap[ui] = mi
-            pixelunmap[mi] = ui
+            pixelunmap[ui] = mi
+            pixelmap[mi] = ui
             ui++
           }
         }
@@ -923,9 +923,6 @@ export default {
       this.value.speedmap = [].concat(this.slidingSpeeds)
     },
 
-
-
-
     __startSliding() {
 
       // If activeFilter, pick up the pixels from that filter's output otherwise use what's there.
@@ -935,7 +932,7 @@ export default {
       // 1. PREPARE THE PIXELS!!
       // TODO: Can be either a single layer+mask, or the pipeline output.
       SLIDING_PIXELS = [100].concat( FABRIC.getBitmapFromObject() || new Array(65536).fill(0) )
-    
+
       // *** A> UNMAP *** pixels & colors
       SLIDING_PIXELS = MoeUtils.mapPixels({
         pixels: SLIDING_PIXELS,
@@ -983,7 +980,7 @@ export default {
       this.slidingStarted = false
       cancelAnimationFrame(this.slidingAnimId)
 
-      this.$refs.preview.responsive=true
+      // this.$refs.preview.responsive=true
 
     },
 
@@ -1013,32 +1010,27 @@ export default {
       if (SLIDING_PIXELS[0] != 100) {
         console.log('too high beep!', SLIDING_PIXELS[0])
         //oRangeDisplay.val(oRangeDisplay.val() + " \n " + " Stopping @ " + (controlDirection > 0 ? "UPPER":"LOWER") );
-        // this.__stopSliding();        
+        // this.__stopSliding();
       }
 
+      // this.__updatePreview({
+      //   pixels:SLIDING_PIXELS,
+      //   colors: this.value.palette.colors
+      // })
+
+      // *** (B) MAP *** pixels & colors
+
       this.__updatePreview({
-        pixels:SLIDING_PIXELS,
+        pixels: MoeUtils.mapPixels({
+          pixels: SLIDING_PIXELS,
+          pixelmap: this.value.pixelmap,
+          colormap: this.value.colormap
+        }),
         colors: this.value.palette.colors
       })
 
-      // *** (B) MAP *** pixels & colors
-      
-      // this.__updatePreview({
-      //   pixels: MoeUtils.mapPixels({
-      //     pixels: SLIDING_PIXELS,
-      //     pixelmap: this.value.pixelmap,
-      //     colormap: this.value.colormap
-      //   }),
-      //   colors: this.value.palette.colors
-      // })
-      
       // DEBUG
-      //
-      // var position = "";
-      // for (var p=0;p<256;p+=32) {
-      //   position+=(slidingCurrent[p*256+p]+"-");
-      // }
-      // oRangeDisplay.val(position + "\n Power: " + controlPower + "\nRate: " + slidingSpeedPower); 	// readout
+      // var position = ""; for (var p=0;p<256;p+=32) { position+=(slidingCurrent[p*256+p]+"-");};oRangeDisplay.val(position + "\n Power: " + controlPower + "\nRate: " + slidingSpeedPower); 	// readout
 
       // 2. Continue @ANIM
       //

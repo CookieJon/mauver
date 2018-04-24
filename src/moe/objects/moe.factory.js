@@ -20,7 +20,6 @@ export default class Factory {
 	constructor () {
 	}
 
-
   // FILTERS
   //
   // Filter 1 - Slider
@@ -58,10 +57,17 @@ export default class Factory {
     return filter
   }
 
+
   // ARTWORK
   //
 	static createArtwork(oPalette) {
     let id= 'ART'+UID++
+
+    // Whip up some quick do-nothing maps
+    let pixelmap = [], colormap = []
+    for (let i=0; i < 65536; i++) pixelmap.push(i)
+    for (let i=0; i < 256; i++) colormap.push(i)
+
     let art = {
       id: id,
       name: id,
@@ -89,13 +95,13 @@ export default class Factory {
       slidingCurrent: [],
       filters: [],
       // 1. artwork components. MUCH TODO:!
-      pixelmap: null,   // <- NB: NOT a BITMAP!!!
-      colormap: null,
+      pixelmap: pixelmap,
+      colormap: colormap,
       speedmap: null,
       slider: null,
       gobo: null
-    }
 
+    }
     return art
 
   }
@@ -114,7 +120,7 @@ export default class Factory {
     // return palette
     let pal = {
       id: 'PAL'+ UID++,
-      name: 'Default',
+      name: presetId.substr(0,8),
       colors: ColorUtils.GeneratePaletteColors(presetId || 'raw')
     }
 

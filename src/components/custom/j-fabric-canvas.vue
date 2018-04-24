@@ -17,7 +17,6 @@
 
   // BITMAP OBJECT
   //
-
   var BitmapObject = fabric.util.createClass(fabric.Image, {
 
     type: 'bitmapObject',
@@ -122,8 +121,6 @@
         }
       }))
 
-
-
       // Init fabric canvas
       canvas = new fabric.Canvas('c', {imageSmoothingEnabled: false})
       canvas.setHeight('100%', {cssOnly: true})
@@ -170,14 +167,14 @@
 
     __updatePreview(bitmap) {
       let imageData = MoeUtils.imageDataFromPixelsAndColors(bitmap)
-      
+
       //this.$refs.preview.putImageData(imageData)
       canvas.contextTop.putImageData(imageData, 0, 0)
       //console.log('** __updatePreview() -->', bitmap, imageData)
      },
 
     getBitmapFromObject() {
-      // create a colormapped bitmap from the obejct's transformed image.
+      // create a colormapped bitmap from the object's transformed image.
       let obj = canvas.getActiveObject()
       if (!obj) return
 
@@ -223,50 +220,51 @@
     addImage(img) {
 
       console.log("CANVAS", canvas)
-      var f = new fabric.Image.filters.Convolute({  matrix: [ 0, -1, 0, -1, 5, -1, 0, -1, 0 ] })
-      var s = new fabric.Image.filters.Sepia()
+      // var f = new fabric.Image.filters.Convolute({  matrix: [ 0, -1, 0, -1, 5, -1, 0, -1, 0 ] })
+      // var s = new fabric.Image.filters.Sepia()
       //oBitmap.filters.push(f)
       //oBitmap.filters.push(new fabric.Image.filters.Sepia());
 
       let x =  (Number.isNaN(canvas.lastX) ? 128 : canvas.lastX)
       let y = (Number.isNaN(canvas.lastY) ? 128 : canvas.lastY)
 
-      // var oMask = new fabric.Circle({
-      //   top:0,
-      //   left:0,
-      //   radius: 30,
-      //   fill: 'red',
-      //   objectCaching: true,
-      //   globalCompositeOperation: 'destination-in'
-      // });
-      // oMask.needsItsOwnCache = ()=>true
+      x = 0, y = 0
 
-      // var oBitmap = new BitmapObject(img, {
-      //   label: 'Hi there',
-      //   width: img.width,
-      //   height: img.height,
-      //   left: x - img.width/2,
-      //   top: x - img.height/2,
-      //   scaleX: 1,
-      //   scaleY: 1,
-      //   objectCaching: true,
-      //   colors: this.colors
-      // })
+
 
       var oImage = new fabric.Image(img, {
-        label: 'Hi there',
+        label: 'Original Image',
         width: img.width,
         height: img.height,
-        left: x - img.width/2,
-        top: x - img.height/2,
+        // left: x - img.width/2,
+        // top: y - img.height/2,
         scaleX: 1,
         scaleY: 1
       })
-      // var oGroup = new fabric.Group([  oBitmap, oMask  ])
-      // oGroup.setOptions({
-      //   left: x - (oGroup.width / 2) ,
-      //   top: y - (oGroup.width / 2)
-      // })
+
+      var oBitmap = new fabric.Image(img, {
+        label: 'Bitmap Image',
+        width: img.width,
+        height: img.height,
+        // left: x - img.width/2,
+        // top: y - img.height/2,
+        scaleX: 1,
+        scaleY: 1
+      })
+      // CHECK OUT: https://jsfiddle.net/Fidel90/md6rwg4b/
+      // GROUPS: https://www.sitepoint.com/fabric-js-advanced/
+
+      var oMask = new fabric.Circle({
+          radius: 50,
+          fill: 'red',
+          left: 0
+        });
+
+      var oGroup = new fabric.Group([ oImage, oBitmap, oMask ])
+      oGroup.setOptions({
+        // left: x - (oGroup.width / 2) ,
+        // top: y - (oGroup.width / 2)
+      })
 
       // var test = new fabric.Image(img, {
       //   label: 'Hi there',

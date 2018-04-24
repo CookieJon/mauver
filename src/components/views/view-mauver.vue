@@ -219,8 +219,7 @@ export default {
       this.$store.dispatch('updateEntities', {palettes: [pal]})
     },
     addArtwork () {
-      //   let art = Factory.createArtwork(Factory.createPalette('w_rgby1234_b_lumaUndulating'))
-      let art = Factory.createArtwork(Factory.createPalette('raw'))      
+      let art = Factory.createArtwork(Factory.createPalette('lumawave'))
       this.$store.dispatch('updateEntities', {artworks: [art]} )
     },
 
