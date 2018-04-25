@@ -28,6 +28,8 @@ export default class ColorUtils {
 
   static GeneratePaletteColors(id) {
 
+    console.log('GeneratePaletteColors()', id)
+
     // Material color groupings
     var groups = {}
     var colors = ["red","pink","purple","deepPurple","indigo","blue","lightBlue","cyan", "teal","green","lightGreen","lime","yellow","amber","orange","deepOrange"]
@@ -134,7 +136,7 @@ export default class ColorUtils {
       // w_rgby1234_b  <-- Nicest!!
       //
       case "w_rgby1234_b_lumaUndulating":
-      case 'lumawave':
+      case "lumawave":
         paletteTo = paletteTo
         .concat(groups.black)
         .concat(ColorUtils.sortColorsByLuma(groups.allReds.concat(groups.grey).concat(groups.white)))
